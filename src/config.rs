@@ -1,3 +1,5 @@
+use crate::register;
+
 use serde::Deserialize;
 use std::error::Error;
 use std::fmt;
@@ -6,7 +8,12 @@ use std::fs;
 #[derive(Deserialize, Clone)]
 pub struct Configuration {
     pub filer: Vec<NetAppConfiguration>,
+    #[serde(skip)]
+    pub register: ScrapeTargets,
+    #[serde(skip)]
+    pub register_mask: u64,
 }
+
 #[derive(Deserialize, Clone)]
 pub struct NetAppConfiguration {
     pub address: String,
@@ -16,12 +23,23 @@ pub struct NetAppConfiguration {
     pub timeout: Option<u32>,
     pub user: String,
     pub password: String,
+    pub targets: Option<ScrapeTargets>,
+    #[serde(skip)]
+    pub targets_mask: u64,
+}
+
+#[derive(Clone, Default, Deserialize)]
+pub struct ScrapeTargets {
+    pub aggregates: Option<bool>,
+    pub volumes: Option<bool>,
 }
 
 impl std::fmt::Debug for Configuration {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Configuration")
             .field("filer", &self.filer)
+            .field("register", &self.register)
+            .field("register_mask", &self.register_mask)
             .finish()
     }
 }
@@ -33,14 +51,32 @@ impl std::fmt::Debug for NetAppConfiguration {
             .field("ca_cert", &self.ca_cert)
             .field("insecure_ssl", &self.insecure_ssl)
             .field("name", &self.name)
+            .field("targets", &self.targets)
+            .field("targets_mask", &self.targets_mask)
             .field("timeout", &self.timeout)
+            .finish()
+    }
+}
+
+impl std::fmt::Debug for ScrapeTargets {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ScrapeTargets")
+            .field("aggregates", &self.aggregates)
+            .field("volumes", &self.volumes)
             .finish()
     }
 }
 
 pub fn parse_config_file(f: &str) -> Result<Configuration, Box<dyn Error>> {
     let unparsed = fs::read_to_string(f)?;
-    let config: Configuration = serde_yaml::from_str(unparsed.as_str())?;
+    let mut config: Configuration = serde_yaml::from_str(unparsed.as_str())?;
+
+    for filer in config.filer.iter_mut() {
+        if let Some(target) = &filer.targets {
+            filer.targets_mask = register::build_target_masks(&target);
+            //            register::targets(&mut config.register, &target);
+        }
+    }
 
     validate_configuration(&config)?;
 

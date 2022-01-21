@@ -1,15 +1,23 @@
 #[macro_use]
 extern crate simple_error;
 
+mod aggregates;
 mod config;
 mod constants;
+mod exporter;
+mod http;
 mod logging;
+mod register;
+mod storage_metrics;
 mod usage;
 
 use getopts::Options;
+use log::error;
 use std::{env, process};
+use warp::Filter;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let argv: Vec<String> = env::args().collect();
     let mut options = Options::new();
     let mut log_level = log::LevelFilter::Info;
@@ -61,7 +69,7 @@ fn main() {
 
     let listen_address = opts
         .opt_str("l")
-        .unwrap_or(constants::DEFAULT_PROMETHEUS_ADDRESS.to_string());
+        .unwrap_or_else(|| constants::DEFAULT_PROMETHEUS_ADDRESS.to_string());
 
     let config = match config::parse_config_file(&config_file) {
         Ok(v) => v,
@@ -81,4 +89,27 @@ fn main() {
 
     println!("{:?}", config);
     println!("{}", listen_address);
+
+    let socketaddr = match http::socketaddr_from_listen(listen_address) {
+        Ok(v) => v,
+        Err(e) => {
+            error!("{}", e);
+            process::exit(1);
+        }
+    };
+
+    let prometheus_route = warp::path(constants::METRICS_PATH)
+        .and(exporter::pass_configuration(config.clone()))
+        .and(warp::get())
+        .map(exporter::serve_metrics);
+
+    let root_route = warp::path::end()
+        .and(warp::get())
+        .map(move || warp::reply::html(constants::ROOT_HTML.to_string()));
+
+    let route = root_route.or(prometheus_route);
+
+    // XXX: async rust with tokio might provide a better solution enable graceful shutdown
+    //      e.g. https://docs.rs/warp/latest/warp/struct.Server.html#method.bind_with_graceful_shutdown
+    warp::serve(route).run(socketaddr).await;
 }
