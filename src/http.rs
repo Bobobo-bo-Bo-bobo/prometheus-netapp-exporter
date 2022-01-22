@@ -1,4 +1,4 @@
-// use crate::constants;
+use crate::constants;
 
 use log::info;
 use std::error::Error;
@@ -11,7 +11,6 @@ pub fn build_client(
     insecure_ssl: bool,
     ca_file: &str,
     timeout_sec: u64,
-    user_agent: &str,
 ) -> Result<reqwest::blocking::Client, Box<dyn Error>> {
     let timeout = Duration::from_secs(timeout_sec);
     let mut headers = reqwest::header::HeaderMap::new();
@@ -25,7 +24,7 @@ pub fn build_client(
     );
 
     let mut http_client_builder = reqwest::blocking::ClientBuilder::new()
-        .user_agent(user_agent)
+        .user_agent(constants::generate_default_user_agent())
         .default_headers(headers)
         .timeout(timeout);
 

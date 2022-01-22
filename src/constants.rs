@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220121";
+pub const VERSION: &str = "0.1.1-20220122";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -11,6 +11,8 @@ pub fn generate_default_user_agent() -> String {
 
 pub const ROOT_HTML: &str = "<html>\n<head><title>NetApp exporter</title></head>\n<body>\n<h1>NetApp exporter</h1>\n<p><a href=\"/metrics\">Metrics</a></p>\n</body>\n</html>\n";
 pub const METRICS_PATH: &str = "metrics";
+
+pub const API_AGGREGATES: &str = "/api/storage/aggregates";
 
 pub const NETAPP_STORAGE_AGGREGATES: &str = "/api/storage/aggregates";
 pub const NETAPP_STORAGE_VOLUMES: &str = "/api/storage/volumes";
