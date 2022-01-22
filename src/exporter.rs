@@ -93,11 +93,9 @@ pub fn serve_metrics(cfg: &config::Configuration) -> String {
         error!("Can't encode metrics as UTF8 string: {}", e);
     }
 
-    /*
-        if let Err(e) = encoder.encode_utf8(&prometheus::gather(), &mut buffer) {
-            error!("Can't encode metrics as UTF8 string: {}", e);
-        };
-    */
+    if let Err(e) = encoder.encode_utf8(&prometheus::gather(), &mut buffer) {
+        error!("Can't encode metrics as UTF8 string: {}", e);
+    };
     buffer
 }
 
