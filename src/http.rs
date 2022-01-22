@@ -1,7 +1,8 @@
 use crate::config;
 use crate::constants;
+use crate::exporter;
 
-use log::info;
+use log::debug;
 use std::error::Error;
 use std::fs::File;
 use std::io::Read;
@@ -64,7 +65,7 @@ pub fn get(
     user: &str,
     password: &str,
 ) -> Result<String, Box<dyn Error>> {
-    info!("GET {}", &url);
+    debug!("GET {}", &url);
 
     let response = http_client
         .get(url)
@@ -83,37 +84,49 @@ fn socketaddr_from_listen(listen: &str) -> Result<std::net::SocketAddr, Box<dyn 
     Ok(addresses[0])
 }
 
-pub fn server(cfg: &config::Configuration, listen_address: &str) -> Result<(), Box<dyn Error>> {
+pub fn server(cfg: config::Configuration, listen_address: &str) -> Result<(), Box<dyn Error>> {
     let socketaddr = socketaddr_from_listen(listen_address)?;
 
-    let mut srv = oxhttp::Server::new(|req| {
-        if req.method() != &oxhttp::model::Method::GET {
-            return oxhttp::model::Response::builder(oxhttp::model::Status::METHOD_NOT_ALLOWED)
-                .with_body("Method not allowed");
-        };
+    let mut srv = oxhttp::Server::new(move |req| {
+        let response: oxhttp::model::Response;
 
-        match req.url().path() {
-            "/" => {
-                return oxhttp::model::Response::builder(oxhttp::model::Status::OK)
-                    .with_body(constants::ROOT_HTML)
-            }
-            constants::METRICS_PATH => {
-                return oxhttp::model::Response::builder(oxhttp::model::Status::OK)
-                    .with_body("Foobar")
-            }
-            _ => {
-                return oxhttp::model::Response::builder(oxhttp::model::Status::NOT_FOUND)
-                    .with_body("Not found")
-            }
-        };
+        if req.method() != &oxhttp::model::Method::GET {
+            response = oxhttp::model::Response::builder(oxhttp::model::Status::METHOD_NOT_ALLOWED)
+                .with_body("Method not allowed");
+        } else {
+            match req.url().path() {
+                "/" => {
+                    response = oxhttp::model::Response::builder(oxhttp::model::Status::OK)
+                        .with_body(constants::ROOT_HTML);
+                }
+                constants::METRICS_PATH => {
+                    let reply = exporter::serve_metrics(&cfg);
+                    if reply.is_empty() {
+                        println!("empty reply");
+                        response = oxhttp::model::Response::builder(oxhttp::model::Status::OK)
+                            .with_body("\n");
+                    } else {
+                        response = oxhttp::model::Response::builder(oxhttp::model::Status::OK)
+                            .with_body(reply);
+                    }
+                }
+                _ => {
+                    response = oxhttp::model::Response::builder(oxhttp::model::Status::NOT_FOUND)
+                        .with_body("Not found");
+                }
+            };
+        }
+        response
     });
 
     srv.set_global_timeout(std::time::Duration::from_secs(
         constants::HTTP_CLIENT_TIMEOUT,
     ));
+
     match srv.listen(socketaddr) {
         Ok(_) => {}
         Err(e) => bail!("{}", e),
     };
+
     Ok(())
 }

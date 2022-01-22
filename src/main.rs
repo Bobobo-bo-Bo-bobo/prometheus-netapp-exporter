@@ -85,5 +85,10 @@ fn main() {
         }
     };
 
-    http::server(&config, &listen_address);
+    exporter::register_metrics();
+
+    if let Err(e) = http::server(config, &listen_address) {
+        error!("Cen't start HTTP server: {}", e);
+        process::exit(1);
+    };
 }

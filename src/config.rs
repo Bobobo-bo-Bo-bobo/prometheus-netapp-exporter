@@ -1,5 +1,3 @@
-use crate::constants;
-use crate::http;
 use crate::register;
 
 use serde::Deserialize;
@@ -28,8 +26,6 @@ pub struct NetAppConfiguration {
     pub targets: Option<ScrapeTargets>,
     #[serde(skip)]
     pub targets_mask: u64,
-    #[serde(skip)]
-    pub http_client: Option<reqwest::blocking::Client>,
 }
 
 #[derive(Clone, Default, Deserialize)]
@@ -77,24 +73,8 @@ pub fn parse_config_file(f: &str) -> Result<Configuration, Box<dyn Error>> {
 
     for filer in config.filer.iter_mut() {
         if let Some(target) = &filer.targets {
-            filer.targets_mask = register::build_target_masks(&target);
+            filer.targets_mask = register::build_target_masks(target);
             //            register::targets(&mut config.register, &target);
-            // Pre-build client structures
-            let insecure_ssl = filer
-                .insecure_ssl
-                .unwrap_or(constants::DEFAULT_INSECURE_SSL);
-            let ca_file = filer.ca_cert.clone().unwrap_or_default();
-            let timeout_sec = filer.timeout.unwrap_or(constants::DEFAULT_TIMEOUT);
-            filer.http_client = match http::build_client(insecure_ssl, &ca_file, timeout_sec) {
-                Ok(v) => Some(v),
-                Err(e) => {
-                    bail!(
-                        "can't build HTTP client structure for {}: {}",
-                        filer.name,
-                        e
-                    );
-                }
-            };
         }
     }
 

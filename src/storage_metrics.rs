@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct StorageMetric {
     pub duration: String,
     pub iops: StorageMetricData,
@@ -10,7 +10,7 @@ pub struct StorageMetric {
     pub timestamp: String,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct StorageMetricData {
     pub other: u64,
     pub read: u64,
@@ -18,7 +18,7 @@ pub struct StorageMetricData {
     pub write: u64,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, Debug)]
 pub struct StorageStatistics {
     pub timestamp: String,
     pub status: String,

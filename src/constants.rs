@@ -15,8 +15,11 @@ pub const HTTP_CLIENT_TIMEOUT: u64 = 15;
 
 pub const API_AGGREGATES: &str = "/api/storage/aggregates";
 
-pub const NETAPP_STORAGE_AGGREGATES: &str = "/api/storage/aggregates";
 pub const NETAPP_STORAGE_VOLUMES: &str = "/api/storage/volumes";
 
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
+
+pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_byte";
+pub const METRIC_AGGR_FOOTPRINT_HELP: &str =
+    "A summation of volume footprints (including volume guarantees), in bytes";
