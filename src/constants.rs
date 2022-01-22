@@ -10,7 +10,8 @@ pub fn generate_default_user_agent() -> String {
 }
 
 pub const ROOT_HTML: &str = "<html>\n<head><title>NetApp exporter</title></head>\n<body>\n<h1>NetApp exporter</h1>\n<p><a href=\"/metrics\">Metrics</a></p>\n</body>\n</html>\n";
-pub const METRICS_PATH: &str = "metrics";
+pub const METRICS_PATH: &str = "/metrics";
+pub const HTTP_CLIENT_TIMEOUT: u64 = 15;
 
 pub const API_AGGREGATES: &str = "/api/storage/aggregates";
 

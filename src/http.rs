@@ -1,3 +1,4 @@
+use crate::config;
 use crate::constants;
 
 use log::info;
@@ -73,11 +74,46 @@ pub fn get(
     Ok(reply)
 }
 
-pub fn socketaddr_from_listen(listen: String) -> Result<std::net::SocketAddr, Box<dyn Error>> {
+fn socketaddr_from_listen(listen: &str) -> Result<std::net::SocketAddr, Box<dyn Error>> {
     let sockaddrs = listen.to_socket_addrs()?;
     let addresses: Vec<_> = sockaddrs.collect();
     if addresses.is_empty() {
         bail!("can't resolve listener address");
     }
     Ok(addresses[0])
+}
+
+pub fn server(cfg: &config::Configuration, listen_address: &str) -> Result<(), Box<dyn Error>> {
+    let socketaddr = socketaddr_from_listen(listen_address)?;
+
+    let mut srv = oxhttp::Server::new(|req| {
+        if req.method() != &oxhttp::model::Method::GET {
+            return oxhttp::model::Response::builder(oxhttp::model::Status::METHOD_NOT_ALLOWED)
+                .with_body("Method not allowed");
+        };
+
+        match req.url().path() {
+            "/" => {
+                return oxhttp::model::Response::builder(oxhttp::model::Status::OK)
+                    .with_body(constants::ROOT_HTML)
+            }
+            constants::METRICS_PATH => {
+                return oxhttp::model::Response::builder(oxhttp::model::Status::OK)
+                    .with_body("Foobar")
+            }
+            _ => {
+                return oxhttp::model::Response::builder(oxhttp::model::Status::NOT_FOUND)
+                    .with_body("Not found")
+            }
+        };
+    });
+
+    srv.set_global_timeout(std::time::Duration::from_secs(
+        constants::HTTP_CLIENT_TIMEOUT,
+    ));
+    match srv.listen(socketaddr) {
+        Ok(_) => {}
+        Err(e) => bail!("{}", e),
+    };
+    Ok(())
 }
