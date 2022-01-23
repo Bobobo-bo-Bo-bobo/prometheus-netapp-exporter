@@ -104,3 +104,54 @@ pub const METRIC_AGGR_BLOCK_STORAGE_MIRROR_STATE_HELP: &str = "Current state of 
 
 pub const METRIC_AGGR_STATE_NAME: &str = "netapp_aggregate_state_info";
 pub const METRIC_AGGR_STATE_HELP: &str = "Operational state of the aggregate";
+
+pub const METRIC_AGGR_METRIC_THROUGHPUT_READ_NAME: &str =
+    "netapp_aggregate_metric_throughput_read_bytes_per_second";
+pub const METRIC_AGGR_METRIC_THROUGHPUT_READ_HELP: &str =
+    "Performance metric for read I/O operations in bytes per second";
+pub const METRIC_AGGR_METRIC_THROUGHPUT_WRITE_NAME: &str =
+    "netapp_aggregate_metric_throughput_write_bytes_per_second";
+pub const METRIC_AGGR_METRIC_THROUGHPUT_WRITE_HELP: &str =
+    "Performance metric for write I/O operations in bytes per second";
+pub const METRIC_AGGR_METRIC_THROUGHPUT_OTHER_NAME: &str =
+    "netapp_aggregate_metric_throughput_other_bytes_per_second";
+pub const METRIC_AGGR_METRIC_THROUGHPUT_OTHER_HELP: &str =
+    "Performance metric for other I/O operations in bytes per second";
+pub const METRIC_AGGR_METRIC_THROUGHPUT_TOTAL_NAME: &str =
+    "netapp_aggregate_metric_throughput_total_bytes_per_second";
+pub const METRIC_AGGR_METRIC_THROUGHPUT_TOTAL_HELP: &str =
+    "Performance metric for all I/O operations in bytes per second";
+
+pub const METRIC_AGGR_METRIC_LATENCY_READ_NAME: &str =
+    "netapp_aggregate_metric_latency_read_seconds";
+pub const METRIC_AGGR_METRIC_LATENCY_READ_HELP: &str =
+    "The round trip latency in microseconds observed at the storage object for read operations";
+pub const METRIC_AGGR_METRIC_LATENCY_WRITE_NAME: &str =
+    "netapp_aggregate_metric_latency_write_seconds";
+pub const METRIC_AGGR_METRIC_LATENCY_WRITE_HELP: &str =
+    "The round trip latency in microseconds observed at the storage object for write operations";
+pub const METRIC_AGGR_METRIC_LATENCY_OTHER_NAME: &str =
+    "netapp_aggregate_metric_latency_other_seconds";
+pub const METRIC_AGGR_METRIC_LATENCY_OTHER_HELP: &str =
+    "The round trip latency in microseconds observed at the storage object for other operations";
+pub const METRIC_AGGR_METRIC_LATENCY_TOTAL_NAME: &str =
+    "netapp_aggregate_metric_latency_total_seconds";
+pub const METRIC_AGGR_METRIC_LATENCY_TOTAL_HELP: &str =
+    "The round trip latency in microseconds observed at the storage object for all operations";
+
+pub const METRIC_AGGR_METRIC_IOPS_READ_NAME: &str =
+    "netapp_aggregate_metric_iops_read_iops_per_second";
+pub const METRIC_AGGR_METRIC_IOPS_READ_HELP: &str =
+    "The rate of I/O operations observed at the storage object for read operations";
+pub const METRIC_AGGR_METRIC_IOPS_WRITE_NAME: &str =
+    "netapp_aggregate_metric_iops_write_iops_per_second";
+pub const METRIC_AGGR_METRIC_IOPS_WRITE_HELP: &str =
+    "The rate of I/O operations observed at the storage object for write operations";
+pub const METRIC_AGGR_METRIC_IOPS_OTHER_NAME: &str =
+    "netapp_aggregate_metric_iops_other_iops_per_second";
+pub const METRIC_AGGR_METRIC_IOPS_OTHER_HELP: &str =
+    "The rate of I/O operations observed at the storage object for other operations";
+pub const METRIC_AGGR_METRIC_IOPS_TOTAL_NAME: &str =
+    "netapp_aggregate_metric_iops_total_iops_per_second";
+pub const METRIC_AGGR_METRIC_IOPS_TOTAL_HELP: &str =
+    "The rate of I/O operations observed at the storage object for all operations";

@@ -2,7 +2,7 @@ use crate::config;
 use crate::constants;
 use crate::exporter;
 
-use log::debug;
+use log::{debug, info};
 use std::error::Error;
 use std::fs::File;
 use std::io::Read;
@@ -123,6 +123,7 @@ pub fn server(cfg: config::Configuration, listen_address: &str) -> Result<(), Bo
         constants::HTTP_CLIENT_TIMEOUT,
     ));
 
+    info!("Starting web server on {}", listen_address);
     match srv.listen(socketaddr) {
         Ok(_) => {}
         Err(e) => bail!("{}", e),

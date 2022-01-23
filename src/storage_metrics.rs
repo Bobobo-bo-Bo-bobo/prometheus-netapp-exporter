@@ -12,10 +12,10 @@ pub struct StorageMetric {
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct StorageMetricData {
-    pub other: u64,
-    pub read: u64,
-    pub total: u64,
-    pub write: u64,
+    pub other: i64,
+    pub read: i64,
+    pub total: i64,
+    pub write: i64,
 }
 
 #[derive(Deserialize, Clone, Debug)]

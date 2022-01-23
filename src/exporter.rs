@@ -108,6 +108,57 @@ lazy_static! {
         Opts::new(constants::METRIC_AGGR_STATE_NAME, constants::METRIC_AGGR_STATE_HELP),
         &["filer", "home_node", "aggregate", "state"],
     ).unwrap();
+
+    pub static ref AGGREGATE_METRIC_THROUGHPUT_READ: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_THROUGHPUT_READ_NAME, constants::METRIC_AGGR_METRIC_THROUGHPUT_READ_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_THROUGHPUT_WRITE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_THROUGHPUT_WRITE_NAME, constants::METRIC_AGGR_METRIC_THROUGHPUT_WRITE_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_THROUGHPUT_OTHER: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_THROUGHPUT_OTHER_NAME, constants::METRIC_AGGR_METRIC_THROUGHPUT_OTHER_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_THROUGHPUT_TOTAL: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_THROUGHPUT_TOTAL_NAME, constants::METRIC_AGGR_METRIC_THROUGHPUT_TOTAL_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+
+    pub static ref AGGREGATE_METRIC_LATENCY_READ: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_LATENCY_READ_NAME, constants::METRIC_AGGR_METRIC_LATENCY_READ_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_LATENCY_WRITE: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_LATENCY_WRITE_NAME, constants::METRIC_AGGR_METRIC_LATENCY_WRITE_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_LATENCY_OTHER: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_LATENCY_OTHER_NAME, constants::METRIC_AGGR_METRIC_LATENCY_OTHER_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_LATENCY_TOTAL: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_LATENCY_TOTAL_NAME, constants::METRIC_AGGR_METRIC_LATENCY_TOTAL_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+
+    pub static ref AGGREGATE_METRIC_IOPS_READ: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_IOPS_READ_NAME, constants::METRIC_AGGR_METRIC_IOPS_READ_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_IOPS_WRITE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_IOPS_WRITE_NAME, constants::METRIC_AGGR_METRIC_IOPS_WRITE_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_IOPS_OTHER: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_IOPS_OTHER_NAME, constants::METRIC_AGGR_METRIC_IOPS_OTHER_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
+    pub static ref AGGREGATE_METRIC_IOPS_TOTAL: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_IOPS_TOTAL_NAME, constants::METRIC_AGGR_METRIC_IOPS_TOTAL_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
 }
 
 fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blocking::Client) {
@@ -241,5 +292,44 @@ pub fn register_metrics() {
 
     REGISTRY
         .register(Box::new(AGGREGATE_STATE.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_THROUGHPUT_READ.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_THROUGHPUT_WRITE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_THROUGHPUT_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_THROUGHPUT_TOTAL.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_LATENCY_READ.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_LATENCY_WRITE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_LATENCY_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_LATENCY_TOTAL.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_IOPS_READ.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_IOPS_WRITE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_IOPS_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_IOPS_TOTAL.clone()))
         .unwrap();
 }
