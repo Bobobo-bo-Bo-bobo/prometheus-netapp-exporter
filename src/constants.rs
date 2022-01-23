@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220122";
+pub const VERSION: &str = "0.1.1-20220123";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -20,6 +20,87 @@ pub const NETAPP_STORAGE_VOLUMES: &str = "/api/storage/volumes";
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
 
-pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_byte";
+pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_bytes";
 pub const METRIC_AGGR_FOOTPRINT_HELP: &str =
     "A summation of volume footprints (including volume guarantees), in bytes";
+
+pub const METRIC_AGGR_BLOCK_STORAGE_SIZE_NAME: &str = "netapp_aggregate_block_storage_size_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_SIZE_HELP: &str =
+    "Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve";
+pub const METRIC_AGGR_BLOCK_STORAGE_USED_NAME: &str = "netapp_aggregate_block_storage_used_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_USED_HELP: &str =
+    "Space used or reserved in bytes includes volume guarantees and aggregate metadata.";
+pub const METRIC_AGGR_BLOCK_STORAGE_AVAILABLE_NAME: &str =
+    "netapp_aggregate_block_storage_available_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_AVAILABLE_HELP: &str = "Space available in bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_FULL_THRESHOLD_NAME: &str =
+    "netapp_aggregate_block_storage_full_threshold_percent";
+pub const METRIC_AGGR_BLOCK_STORAGE_FULL_THRESHOLD_HELP: &str =
+    "The aggregate used percentage at which monitor.volume.full EMS is generated";
+
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_LOGICAL_USED_NAME: &str =
+    "netapp_aggregate_block_storage_efficiency_logical_used_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_LOGICAL_USED_HELP: &str =
+    "Logical used including snapshots";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_SAVINGS_NAME: &str =
+    "netapp_aggregate_block_storage_efficiency_savings_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_SAVINGS_HELP: &str =
+    "Space saved by storage efficiencies including snapshots";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_RATIO_NAME: &str =
+    "netapp_aggregate_block_storage_efficiency_ratio";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_RATIO_HELP: &str =
+    "Data reduction ratio including snapshots";
+
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_WO_SNAPSHOTS_LOGICAL_USED_NAME: &str =
+    "netapp_aggregate_block_storage_efficiency_without_snapshots_logical_used_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_WO_SNAPSHOTS_LOGICAL_USED_HELP: &str =
+    "Logical used without snapshots";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_WO_SNAPSHOTS_SAVINGS_NAME: &str =
+    "netapp_aggregate_block_storage_efficiency_without_snapshots_savings_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_WO_SNAPSHOTS_SAVINGS_HELP: &str =
+    "Space saved by storage efficiencies without snapshots";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_WO_SNAPSHOTS_RATIO_NAME: &str =
+    "netapp_aggregate_block_storage_efficiency_without_snapshots_ratio";
+pub const METRIC_AGGR_BLOCK_STORAGE_EFFICIENCY_WO_SNAPSHOTS_RATIO_HELP: &str =
+    "Data reduction ratio without snapshots";
+
+pub const METRIC_AGGR_CLOUD_STORAGE_USED_NAME: &str = "netapp_aggregate_cloud_storage_used_bytes";
+pub const METRIC_AGGR_CLOUD_STORAGE_USED_HELP: &str = "Used space in bytes in the cloud store";
+
+pub const METRIC_AGGR_BLOCK_STORAGE_PLEXES_NAME: &str = "netapp_aggregate_block_storage_plexes";
+pub const METRIC_AGGR_BLOCK_STORAGE_PLEXES_HELP: &str = "The number of plexes in the aggregate";
+
+pub const METRIC_AGGR_BLOCK_STORAGE_HYBRID_CACHE_ENABLED_NAME: &str =
+    "netapp_aggregate_block_storage_hybrid_cache_enabled_info";
+pub const METRIC_AGGR_BLOCK_STORAGE_HYBRID_CACHE_ENABLED_HELP: &str =
+    "Specifies whether the aggregate uses HDDs with SSDs as a cache";
+pub const METRIC_AGGR_BLOCK_STORAGE_HYBRID_CACHE_DISK_USED_NAME: &str =
+    "netapp_aggregate_block_storage_hybrid_cache_disk_used";
+pub const METRIC_AGGR_BLOCK_STORAGE_HYBRID_CACHE_DISK_USED_HELP: &str =
+    "Number of disks used in the cache tier of the aggregate";
+pub const METRIC_AGGR_BLOCK_STORAGE_HYBRID_CACHE_SIZE_NAME: &str =
+    "netapp_aggregate_block_storage_hybrid_cache_size_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_HYBRID_CACHE_SIZE_HELP: &str =
+    "Total usable space in bytes of SSD cache";
+pub const METRIC_AGGR_BLOCK_STORAGE_HYBRID_CACHE_USED_NAME: &str =
+    "netapp_aggregate_block_storage_hybrid_cache_used_bytes";
+pub const METRIC_AGGR_BLOCK_STORAGE_HYBRID_CACHE_USED_HELP: &str =
+    "Space used in bytes of SSD cache";
+
+pub const METRIC_AGGR_BLOCK_STORAGE_PRIMARY_DISK_COUNT_NAME: &str =
+    "netapp_aggregate_block_storage_primary_disks";
+pub const METRIC_AGGR_BLOCK_STORAGE_PRIMARY_DISK_COUNT_HELP: &str = "Number of disks used in the aggregate including parity disks, but excluding disks in the hybrid cache";
+pub const METRIC_AGGR_BLOCK_STORAGE_PRIMARY_RAID_SIZE_NAME: &str =
+    "netapp_aggregate_block_storage_primary_raid_size";
+pub const METRIC_AGGR_BLOCK_STORAGE_PRIMARY_RAID_SIZE_HELP: &str =
+    "The maximum number of disks that can be included in a RAID group";
+
+pub const METRIC_AGGR_BLOCK_STORAGE_MIRROR_ENABLED_NAME: &str =
+    "netapp_aggregate_block_storage_mirror_enabled_info";
+pub const METRIC_AGGR_BLOCK_STORAGE_MIRROR_ENABLED_HELP: &str = "Aggregate is SyncMirror protected";
+pub const METRIC_AGGR_BLOCK_STORAGE_MIRROR_STATE_NAME: &str =
+    "netapp_aggregate_block_storage_mirror_state_info";
+pub const METRIC_AGGR_BLOCK_STORAGE_MIRROR_STATE_HELP: &str = "Current state of SyncMirror";
+
+pub const METRIC_AGGR_STATE_NAME: &str = "netapp_aggregate_state_info";
+pub const METRIC_AGGR_STATE_HELP: &str = "Operational state of the aggregate";
