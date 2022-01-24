@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220123";
+pub const VERSION: &str = "0.1.1-20220124";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -155,3 +155,8 @@ pub const METRIC_AGGR_METRIC_IOPS_TOTAL_NAME: &str =
     "netapp_aggregate_metric_iops_total_iops_per_second";
 pub const METRIC_AGGR_METRIC_IOPS_TOTAL_HELP: &str =
     "The rate of I/O operations observed at the storage object for all operations";
+
+pub const METRIC_AGGR_METRIC_SAMPLE_DURATION_NAME: &str =
+    "netapp_aggregate_metric_sample_duration_seconds";
+pub const METRIC_AGGR_METRIC_SAMPLE_DURATION_HELP: &str =
+    "The duration over which the sample are calculated";

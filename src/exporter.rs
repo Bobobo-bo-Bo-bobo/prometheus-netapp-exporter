@@ -159,6 +159,10 @@ lazy_static! {
         Opts::new(constants::METRIC_AGGR_METRIC_IOPS_TOTAL_NAME, constants::METRIC_AGGR_METRIC_IOPS_TOTAL_HELP),
         &["filer", "home_node", "aggregate"],
     ).unwrap();
+    pub static ref AGGREGATE_METRIC_SAMPLE_DURATION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_AGGR_METRIC_SAMPLE_DURATION_NAME, constants::METRIC_AGGR_METRIC_SAMPLE_DURATION_HELP),
+        &["filer", "home_node", "aggregate"],
+    ).unwrap();
 }
 
 fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blocking::Client) {
@@ -331,5 +335,8 @@ pub fn register_metrics() {
         .unwrap();
     REGISTRY
         .register(Box::new(AGGREGATE_METRIC_IOPS_TOTAL.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(AGGREGATE_METRIC_SAMPLE_DURATION.clone()))
         .unwrap();
 }

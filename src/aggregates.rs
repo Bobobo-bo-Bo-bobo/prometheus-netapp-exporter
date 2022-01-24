@@ -470,6 +470,24 @@ pub fn update_aggregates(
                 warn!("Skipping metrics from aggregate {} on {} because metric state was reported as \"{}\" instead of \"ok\"", aggr.name, filer.name, v.status);
                 continue;
             };
+            let duration: i64 = match v.duration.as_str() {
+                "PT15S" => 15,
+                "PT1D" => 86400,
+                "PT2H" => 7200,
+                "PT30M" => 1800,
+                "PT4M" => 240,
+                "PT5M" => 300,
+                _ => {
+                    error!(
+                        "Invalid or unsupported sample duration {} for aggregate {} on {}",
+                        v.duration, aggr.name, filer.name
+                    );
+                    continue;
+                }
+            };
+            exporter::AGGREGATE_METRIC_SAMPLE_DURATION
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                .set(duration);
 
             debug!(
                 "Updating metrics for aggregate metric throughput read: {} {} {} -> {}",
@@ -566,6 +584,10 @@ pub fn update_aggregates(
             exporter::AGGREGATE_METRIC_IOPS_TOTAL
                 .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
                 .set(v.iops.total);
+            debug!(
+                "Updating metrics for aggregate metric duration: {} {} {} -> {}",
+                filer.name, aggr.home_node.name, aggr.name, v.duration
+            );
         }
     }
 
