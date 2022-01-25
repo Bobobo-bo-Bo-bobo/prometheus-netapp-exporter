@@ -205,6 +205,26 @@ lazy_static! {
         Opts::new(constants::METRIC_VOL_AUTOSIZE_GROW_THRESHOLD_NAME, constants::METRIC_VOL_AUTOSIZE_GROW_THRESHOLD_HELP),
         &["filer", "volume"]
     ).unwrap();
+    pub static ref VOLUME_IS_OBJECT_STORE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_IS_OBJECT_STORE_NAME, constants::METRIC_VOL_IS_OBJECT_STORE_HELP),
+        &["filer", "volume"]
+    ).unwrap();
+    pub static ref VOLUME_NUMBER_OF_AGGREGATES: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_NUMBER_OF_AGGREGATES_NAME, constants::METRIC_VOL_NUMBER_OF_AGGREGATES_HELP),
+        &["filer", "volume"]
+    ).unwrap();
+    pub static ref VOLUME_FLEX_CACHE_ENDPOINT_TYPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_FLEX_CACHE_ENDPOINT_TYPE_NAME, constants::METRIC_VOL_FLEX_CACHE_ENDPOINT_TYPE_HELP),
+        &["filer", "volume", "endpoint_type"]
+    ).unwrap();
+    pub static ref VOLUME_TYPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_TYPE_NAME, constants::METRIC_VOL_TYPE_HELP),
+        &["filer", "volume", "type"]
+    ).unwrap();
+    pub static ref VOLUME_CLOUD_RETRIEVAL_POLICY: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_CLOUD_RETRIEVAL_POLICY_NAME, constants::METRIC_VOL_CLOUD_RETRIEVAL_POLICY_HELP),
+        &["filer", "volume", "policy"]
+    ).unwrap();
 }
 
 pub fn register_metrics() {
@@ -365,6 +385,19 @@ pub fn register_metrics() {
         .unwrap();
     REGISTRY
         .register(Box::new(VOLUME_AUTOSIZE_MODE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_IS_OBJECT_STORE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_NUMBER_OF_AGGREGATES.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_FLEX_CACHE_ENDPOINT_TYPE.clone()))
+        .unwrap();
+    REGISTRY.register(Box::new(VOLUME_TYPE.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_CLOUD_RETRIEVAL_POLICY.clone()))
         .unwrap();
 }
 

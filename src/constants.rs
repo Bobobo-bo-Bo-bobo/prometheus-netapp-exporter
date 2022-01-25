@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220124";
+pub const VERSION: &str = "0.1.1-20220125";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -190,3 +190,15 @@ pub const METRIC_VOL_AUTOSIZE_GROW_THRESHOLD_HELP: &str =
     "Used space threshold for the automatic growth of the volume";
 pub const METRIC_VOL_AUTOSIZE_MODE_NAME: &str = "netapp_volume_autosize_mode_info";
 pub const METRIC_VOL_AUTOSIZE_MODE_HELP: &str = "Autosize mode for the volume";
+
+pub const METRIC_VOL_IS_OBJECT_STORE_NAME: &str = "netapp_volume_is_object_store_info";
+pub const METRIC_VOL_IS_OBJECT_STORE_HELP: &str =
+    "Specifies whether the volume is provisioned for an object store server";
+pub const METRIC_VOL_NUMBER_OF_AGGREGATES_NAME: &str = "netapp_volume_number_of_aggregates";
+pub const METRIC_VOL_NUMBER_OF_AGGREGATES_HELP: &str = "Aggregate hosting the volume";
+pub const METRIC_VOL_FLEX_CACHE_ENDPOINT_TYPE_NAME: &str = "netapp_volume_flex_cache_info";
+pub const METRIC_VOL_FLEX_CACHE_ENDPOINT_TYPE_HELP: &str = "FlexCache endpoint type";
+pub const METRIC_VOL_TYPE_NAME: &str = "netapp_volume_type_info";
+pub const METRIC_VOL_TYPE_HELP: &str = "Type of the volume";
+pub const METRIC_VOL_CLOUD_RETRIEVAL_POLICY_NAME: &str = "netapp_volume_cloud_retrieval_info";
+pub const METRIC_VOL_CLOUD_RETRIEVAL_POLICY_HELP: &str = "Cloud retrieval policy for the volume";
