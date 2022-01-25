@@ -14,8 +14,7 @@ pub const METRICS_PATH: &str = "/metrics";
 pub const HTTP_CLIENT_TIMEOUT: u64 = 15;
 
 pub const API_AGGREGATES: &str = "/api/storage/aggregates";
-
-pub const NETAPP_STORAGE_VOLUMES: &str = "/api/storage/volumes";
+pub const API_VOLUMES: &str = "/api/storage/volumes";
 
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
@@ -160,3 +159,34 @@ pub const METRIC_AGGR_METRIC_SAMPLE_DURATION_NAME: &str =
     "netapp_aggregate_metric_sample_duration_seconds";
 pub const METRIC_AGGR_METRIC_SAMPLE_DURATION_HELP: &str =
     "The duration over which the sample are calculated";
+
+// Volume metrics
+pub const METRIC_VOL_FILES_MAXIMUM_NAME: &str = "netapp_volumes_files_maximum";
+pub const METRIC_VOL_FILES_MAXIMUM_HELP: &str =
+    "The maximum number of files for user-visible data allowed on the volume";
+pub const METRIC_VOL_FILES_USED_NAME: &str = "netapp_volumes_files_used";
+pub const METRIC_VOL_FILES_USED_HELP: &str =
+    "Number of files used for user-visible data on the volume";
+
+pub const METRIC_VOL_STATE_NAME: &str = "netapp_volume_state_info";
+pub const METRIC_VOL_STATE_HELP: &str = "Volume state";
+
+pub const METRIC_VOL_ERROR_STATE_NAME: &str = "netapp_volume_error_state_info";
+pub const METRIC_VOL_ERROR_STATE_HELP: &str = "Reason why the volume is in an error state";
+
+pub const METRIC_VOL_AUTOSIZE_MINIMUM_NAME: &str = "netapp_volume_autosize_minimum_bytes";
+pub const METRIC_VOL_AUTOSIZE_MINIMUM_HELP: &str =
+    "Minimum size in bytes up to which the volume shrinks automatically";
+pub const METRIC_VOL_AUTOSIZE_MAXIMUM_NAME: &str = "netapp_volume_autosize_maximum_bytes";
+pub const METRIC_VOL_AUTOSIZE_MAXIMUM_HELP: &str =
+    "Maximum size in bytes up to which a volume grows automatically";
+pub const METRIC_VOL_AUTOSIZE_SHRINK_THRESHOLD_NAME: &str =
+    "netapp_volume_autosize_shrink_threshold_percent";
+pub const METRIC_VOL_AUTOSIZE_SHRINK_THRESHOLD_HELP: &str =
+    "Used space threshold for the automatic shrinkage of the volume";
+pub const METRIC_VOL_AUTOSIZE_GROW_THRESHOLD_NAME: &str =
+    "netapp_volume_autosize_grow_threshold_percent";
+pub const METRIC_VOL_AUTOSIZE_GROW_THRESHOLD_HELP: &str =
+    "Used space threshold for the automatic growth of the volume";
+pub const METRIC_VOL_AUTOSIZE_MODE_NAME: &str = "netapp_volume_autosize_mode_info";
+pub const METRIC_VOL_AUTOSIZE_MODE_HELP: &str = "Autosize mode for the volume";

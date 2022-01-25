@@ -2,6 +2,7 @@ use crate::aggregates;
 use crate::config;
 use crate::constants;
 use crate::http;
+use crate::volumes;
 
 use lazy_static::lazy_static;
 use log::{error, info};
@@ -9,8 +10,8 @@ use prometheus::{GaugeVec, IntGaugeVec, Opts, Registry};
 
 lazy_static! {
     pub static ref REGISTRY: Registry = Registry::new();
-    // Aggregate data
 
+    // Aggregate data
     pub static ref AGGREGATE_FOOTPRINT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(constants::METRIC_AGGR_FOOTPRINT_NAME, constants::METRIC_AGGR_FOOTPRINT_HELP),
         &["filer", "home_node", "aggregate"]
@@ -163,50 +164,47 @@ lazy_static! {
         Opts::new(constants::METRIC_AGGR_METRIC_SAMPLE_DURATION_NAME, constants::METRIC_AGGR_METRIC_SAMPLE_DURATION_HELP),
         &["filer", "home_node", "aggregate"],
     ).unwrap();
-}
 
-fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blocking::Client) {
-    if filer.targets_mask & constants::TARGET_AGGREGATES == constants::TARGET_AGGREGATES {
-        info!("Requesting aggregate information from {}", filer.name);
-        if let Err(e) = aggregates::update_aggregates(filer, client) {
-            error!(
-                "Unable to update aggregate statistics for {} - {}",
-                filer.name, e
-            );
-        }
-    }
-}
+    // Volume data
+    pub static ref VOLUME_FILES_MAX: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_FILES_MAXIMUM_NAME, constants::METRIC_VOL_FILES_MAXIMUM_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_FILES_USED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_FILES_USED_NAME, constants::METRIC_VOL_FILES_USED_HELP),
+        &["filer", "volume"],
+    ).unwrap();
 
-pub fn serve_metrics(cfg: &config::Configuration) -> String {
-    let filers = &cfg.filer;
+    pub static ref VOLUME_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_STATE_NAME, constants::METRIC_VOL_STATE_HELP),
+        &["filer", "volume", "state"]
+    ).unwrap();
 
-    for flr in filers {
-        let insecure_ssl = flr.insecure_ssl.unwrap_or(constants::DEFAULT_INSECURE_SSL);
-        let ca_file = flr.ca_cert.clone().unwrap_or_default();
-        let timeout_sec = flr.timeout.unwrap_or(constants::DEFAULT_TIMEOUT);
-        let mut client = match http::build_client(insecure_ssl, &ca_file, timeout_sec) {
-            Ok(v) => v,
-            Err(e) => {
-                error!(
-                    "Skipping scrape for {} - can't build HTTP client: {}",
-                    flr.name, e
-                );
-                continue;
-            }
-        };
-        update_metrics(flr, &mut client);
-    }
-    let encoder = prometheus::TextEncoder::new();
-    let mut buffer = String::new();
+    pub static ref VOLUME_ERROR_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_ERROR_STATE_NAME, constants::METRIC_VOL_ERROR_STATE_HELP),
+        &["filer", "volume", "error_state"]
+    ).unwrap();
 
-    if let Err(e) = encoder.encode_utf8(&REGISTRY.gather(), &mut buffer) {
-        error!("Can't encode metrics as UTF8 string: {}", e);
-    }
-
-    if let Err(e) = encoder.encode_utf8(&prometheus::gather(), &mut buffer) {
-        error!("Can't encode metrics as UTF8 string: {}", e);
-    };
-    buffer
+    pub static ref VOLUME_AUTOSIZE_MIN: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_AUTOSIZE_MINIMUM_NAME, constants::METRIC_VOL_AUTOSIZE_MINIMUM_HELP),
+        &["filer", "volume"]
+    ).unwrap();
+    pub static ref VOLUME_AUTOSIZE_MAX: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_AUTOSIZE_MAXIMUM_NAME, constants::METRIC_VOL_AUTOSIZE_MAXIMUM_HELP),
+        &["filer", "volume"]
+    ).unwrap();
+    pub static ref VOLUME_AUTOSIZE_MODE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_AUTOSIZE_MODE_NAME, constants::METRIC_VOL_AUTOSIZE_MODE_HELP),
+        &["filer", "volume", "mode"]
+    ).unwrap();
+    pub static ref VOLUME_AUTOSIZE_SHRINK_THRESHOLD: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_AUTOSIZE_SHRINK_THRESHOLD_NAME, constants::METRIC_VOL_AUTOSIZE_SHRINK_THRESHOLD_HELP),
+        &["filer", "volume"]
+    ).unwrap();
+    pub static ref VOLUME_AUTOSIZE_GROW_THRESHOLD: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_AUTOSIZE_GROW_THRESHOLD_NAME, constants::METRIC_VOL_AUTOSIZE_GROW_THRESHOLD_HELP),
+        &["filer", "volume"]
+    ).unwrap();
 }
 
 pub fn register_metrics() {
@@ -339,4 +337,91 @@ pub fn register_metrics() {
     REGISTRY
         .register(Box::new(AGGREGATE_METRIC_SAMPLE_DURATION.clone()))
         .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_FILES_MAX.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_FILES_USED.clone()))
+        .unwrap();
+
+    REGISTRY.register(Box::new(VOLUME_STATE.clone())).unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_ERROR_STATE.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_AUTOSIZE_MIN.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_AUTOSIZE_MAX.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_AUTOSIZE_SHRINK_THRESHOLD.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_AUTOSIZE_GROW_THRESHOLD.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_AUTOSIZE_MODE.clone()))
+        .unwrap();
+}
+
+fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blocking::Client) {
+    if filer.targets_mask & constants::TARGET_AGGREGATES == constants::TARGET_AGGREGATES {
+        info!("Requesting aggregate information from {}", filer.name);
+        if let Err(e) = aggregates::update_aggregates(filer, client) {
+            error!(
+                "Unable to update aggregate statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!("Aggregate information has been disabled for {}", filer.name);
+    }
+
+    if filer.targets_mask & constants::TARGET_VOLUMES == constants::TARGET_VOLUMES {
+        info!("Requesting volume information from {}", filer.name);
+        if let Err(e) = volumes::update_volumes(filer, client) {
+            error!(
+                "Unable to update volume statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!("Volume information has been disabled for {}", filer.name);
+    }
+}
+
+pub fn serve_metrics(cfg: &config::Configuration) -> String {
+    let filers = &cfg.filer;
+
+    for flr in filers {
+        let insecure_ssl = flr.insecure_ssl.unwrap_or(constants::DEFAULT_INSECURE_SSL);
+        let ca_file = flr.ca_cert.clone().unwrap_or_default();
+        let timeout_sec = flr.timeout.unwrap_or(constants::DEFAULT_TIMEOUT);
+        let mut client = match http::build_client(insecure_ssl, &ca_file, timeout_sec) {
+            Ok(v) => v,
+            Err(e) => {
+                error!(
+                    "Skipping scrape for {} - can't build HTTP client: {}",
+                    flr.name, e
+                );
+                continue;
+            }
+        };
+        update_metrics(flr, &mut client);
+    }
+    let encoder = prometheus::TextEncoder::new();
+    let mut buffer = String::new();
+
+    if let Err(e) = encoder.encode_utf8(&REGISTRY.gather(), &mut buffer) {
+        error!("Can't encode metrics as UTF8 string: {}", e);
+    }
+
+    if let Err(e) = encoder.encode_utf8(&prometheus::gather(), &mut buffer) {
+        error!("Can't encode metrics as UTF8 string: {}", e);
+    };
+    buffer
 }

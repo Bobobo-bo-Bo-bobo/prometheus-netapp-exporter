@@ -10,6 +10,7 @@ mod logging;
 mod register;
 mod storage_metrics;
 mod usage;
+mod volumes;
 
 use getopts::Options;
 use log::error;

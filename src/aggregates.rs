@@ -470,6 +470,11 @@ pub fn update_aggregates(
                 warn!("Skipping metrics from aggregate {} on {} because metric state was reported as \"{}\" instead of \"ok\"", aggr.name, filer.name, v.status);
                 continue;
             };
+
+            debug!(
+                "Updating metrics for aggregate metric duration: {} {} {} -> {}",
+                filer.name, aggr.home_node.name, aggr.name, v.duration
+            );
             let duration: i64 = match v.duration.as_str() {
                 "PT15S" => 15,
                 "PT1D" => 86400,
@@ -584,10 +589,6 @@ pub fn update_aggregates(
             exporter::AGGREGATE_METRIC_IOPS_TOTAL
                 .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
                 .set(v.iops.total);
-            debug!(
-                "Updating metrics for aggregate metric duration: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.duration
-            );
         }
     }
 
