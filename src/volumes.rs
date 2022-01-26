@@ -27,6 +27,21 @@ pub struct Volume {
     #[serde(rename = "type")]
     pub vol_type: Option<String>,
     pub cloud_retrieval_policy: Option<String>,
+    pub quota: Option<VolumeQuota>,
+    pub efficiency: Option<VolumeEfficiency>,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeEfficiency {
+    pub compression: Option<String>,
+    pub compaction: Option<String>,
+    pub dedupe: Option<String>,
+    pub cross_volume_dedupe: Option<String>,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeQuota {
+    pub state: String,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -164,7 +179,7 @@ pub fn update_volumes(
 
         if let Some(v) = vol.autosize {
             debug!(
-                "Updating metric for volume autosize minimum {} {} -> {}",
+                "Updating metrics for volume autosize minimum {} {} -> {}",
                 filer.name, vol.name, v.minimum
             );
             exporter::VOLUME_AUTOSIZE_MIN
@@ -172,7 +187,7 @@ pub fn update_volumes(
                 .set(v.minimum);
 
             debug!(
-                "Updating metric for volume autosize maximum {} {} -> {}",
+                "Updating metrics for volume autosize maximum {} {} -> {}",
                 filer.name, vol.name, v.maximum
             );
             exporter::VOLUME_AUTOSIZE_MAX
@@ -180,7 +195,7 @@ pub fn update_volumes(
                 .set(v.maximum);
 
             debug!(
-                "Updating metric for volume autosize mode {} {} -> {}",
+                "Updating metrics for volume autosize mode {} {} -> {}",
                 filer.name, vol.name, v.mode
             );
             let mut grow: i64 = 0;
@@ -215,7 +230,7 @@ pub fn update_volumes(
                 .set(off);
 
             debug!(
-                "Updating metric for volume autosize shrink_threshold {} {} -> {}",
+                "Updating metrics for volume autosize shrink_threshold {} {} -> {}",
                 filer.name, vol.name, v.shrink_threshold
             );
             exporter::VOLUME_AUTOSIZE_SHRINK_THRESHOLD
@@ -223,7 +238,7 @@ pub fn update_volumes(
                 .set(v.shrink_threshold);
 
             debug!(
-                "Updating metric for volume autosize grow_threshold {} {} -> {}",
+                "Updating metrics for volume autosize grow_threshold {} {} -> {}",
                 filer.name, vol.name, v.grow_threshold
             );
             exporter::VOLUME_AUTOSIZE_GROW_THRESHOLD
@@ -232,7 +247,7 @@ pub fn update_volumes(
         }
         if let Some(v) = vol.is_object_store {
             debug!(
-                "Updating metric for volume is_object_store {} {} -> {}",
+                "Updating metrics for volume is_object_store {} {} -> {}",
                 filer.name, vol.name, v
             );
             if v {
@@ -247,7 +262,7 @@ pub fn update_volumes(
         }
         if let Some(v) = vol.aggregates {
             debug!(
-                "Updating metric for volume aggregates {} {} -> {}",
+                "Updating metrics for volume aggregates {} {} -> {}",
                 filer.name,
                 vol.name,
                 v.len()
@@ -262,7 +277,7 @@ pub fn update_volumes(
             let mut origin: i64 = 0;
 
             debug!(
-                "Updating metric for volume flexcache_endpoint_type {} {} -> {}",
+                "Updating metrics for volume flexcache_endpoint_type {} {} -> {}",
                 filer.name, vol.name, v
             );
             match v.as_str() {
@@ -355,7 +370,7 @@ pub fn update_volumes(
                 }
                 _ => {
                     error!(
-                        "Invalid value for cloud_retrieval_policy {} for volume {} on {}",
+                        "Invalid value {} for cloud_retrieval_policy for volume {} on {}",
                         v, vol.name, filer.name
                     );
                     continue;
@@ -373,6 +388,251 @@ pub fn update_volumes(
             exporter::VOLUME_CLOUD_RETRIEVAL_POLICY
                 .with_label_values(&[&filer.name, &vol.name, "promote"])
                 .set(promote);
+        }
+        if let Some(v) = vol.quota {
+            debug!(
+                "Updating metrics for volume quota state {} {} -> {}",
+                filer.name, vol.name, v.state
+            );
+            let mut corrupt: i64 = 0;
+            let mut initializing: i64 = 0;
+            let mut mixed: i64 = 0;
+            let mut off: i64 = 0;
+            let mut on: i64 = 0;
+            let mut resizing: i64 = 0;
+            match v.state.as_str() {
+                "corrupt" => {
+                    corrupt = 1;
+                }
+                "initializing" => {
+                    initializing = 1;
+                }
+                "mixed" => {
+                    mixed = 1;
+                }
+                "off" => {
+                    off = 1;
+                }
+                "on" => {
+                    on = 1;
+                }
+                "resizing" => {
+                    resizing = 1;
+                }
+                _ => {
+                    error!(
+                        "Invalid value {} for volume quota state for volume {} on {}",
+                        v.state, vol.name, filer.name
+                    );
+                    continue;
+                }
+            };
+            exporter::VOLUME_QUOTA_STATE
+                .with_label_values(&[&filer.name, &vol.name, "corrupt"])
+                .set(corrupt);
+            exporter::VOLUME_QUOTA_STATE
+                .with_label_values(&[&filer.name, &vol.name, "initializing"])
+                .set(initializing);
+            exporter::VOLUME_QUOTA_STATE
+                .with_label_values(&[&filer.name, &vol.name, "mixed"])
+                .set(mixed);
+            exporter::VOLUME_QUOTA_STATE
+                .with_label_values(&[&filer.name, &vol.name, "off"])
+                .set(off);
+            exporter::VOLUME_QUOTA_STATE
+                .with_label_values(&[&filer.name, &vol.name, "on"])
+                .set(on);
+            exporter::VOLUME_QUOTA_STATE
+                .with_label_values(&[&filer.name, &vol.name, "resizing"])
+                .set(resizing);
+        }
+        if let Some(v) = vol.efficiency {
+            if let Some(c) = v.compression {
+                let mut inline: i64 = 0;
+                let mut background: i64 = 0;
+                let mut both: i64 = 0;
+                let mut none: i64 = 0;
+                let mut mixed: i64 = 0;
+
+                debug!(
+                    "Updating metrics for volume efficiency compression {} {} -> {}",
+                    filer.name, vol.name, c
+                );
+                match c.as_str() {
+                    "inline" => {
+                        inline = 1;
+                    }
+                    "background" => {
+                        background = 1;
+                    }
+                    "both" => {
+                        both = 1;
+                    }
+                    "none" => {
+                        none = 1;
+                    }
+                    "mixed" => {
+                        mixed = 1;
+                    }
+                    _ => {
+                        error!(
+                            "Invalid value {} for volume compression for volme {} on {}",
+                            c, vol.name, filer.name
+                        );
+                    }
+                };
+                exporter::VOLUME_EFFICIENCY_COMPRESSION
+                    .with_label_values(&[&filer.name, &vol.name, "inline"])
+                    .set(inline);
+                exporter::VOLUME_EFFICIENCY_COMPRESSION
+                    .with_label_values(&[&filer.name, &vol.name, "background"])
+                    .set(background);
+                exporter::VOLUME_EFFICIENCY_COMPRESSION
+                    .with_label_values(&[&filer.name, &vol.name, "both"])
+                    .set(both);
+                exporter::VOLUME_EFFICIENCY_COMPRESSION
+                    .with_label_values(&[&filer.name, &vol.name, "none"])
+                    .set(none);
+                exporter::VOLUME_EFFICIENCY_COMPRESSION
+                    .with_label_values(&[&filer.name, &vol.name, "mixed"])
+                    .set(mixed);
+            }
+            if let Some(c) = v.compaction {
+                let mut inline: i64 = 0;
+                let mut none: i64 = 0;
+                let mut mixed: i64 = 0;
+
+                debug!(
+                    "Updating metrics for volume efficiency compaction {} {} -> {}",
+                    filer.name, vol.name, c
+                );
+                match c.as_str() {
+                    "inline" => {
+                        inline = 1;
+                    }
+                    "none" => {
+                        none = 1;
+                    }
+                    "mixed" => {
+                        mixed = 1;
+                    }
+                    _ => {
+                        error!(
+                            "Invalid value {} for volume compaction for volme {} on {}",
+                            c, vol.name, filer.name
+                        );
+                    }
+                };
+                exporter::VOLUME_EFFICIENCY_COMPACTION
+                    .with_label_values(&[&filer.name, &vol.name, "inline"])
+                    .set(inline);
+                exporter::VOLUME_EFFICIENCY_COMPACTION
+                    .with_label_values(&[&filer.name, &vol.name, "none"])
+                    .set(none);
+                exporter::VOLUME_EFFICIENCY_COMPACTION
+                    .with_label_values(&[&filer.name, &vol.name, "mixed"])
+                    .set(mixed);
+            }
+            if let Some(d) = v.dedupe {
+                let mut inline: i64 = 0;
+                let mut background: i64 = 0;
+                let mut both: i64 = 0;
+                let mut none: i64 = 0;
+                let mut mixed: i64 = 0;
+
+                debug!(
+                    "Updating metrics for volume efficiency dedupe {} {} -> {}",
+                    filer.name, vol.name, d
+                );
+                match d.as_str() {
+                    "inline" => {
+                        inline = 1;
+                    }
+                    "background" => {
+                        background = 1;
+                    }
+                    "both" => {
+                        both = 1;
+                    }
+                    "none" => {
+                        none = 1;
+                    }
+                    "mixed" => {
+                        mixed = 1;
+                    }
+                    _ => {
+                        error!(
+                            "Invalid value {} for volume dedupe for volme {} on {}",
+                            d, vol.name, filer.name
+                        );
+                    }
+                };
+                exporter::VOLUME_EFFICIENCY_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "inline"])
+                    .set(inline);
+                exporter::VOLUME_EFFICIENCY_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "background"])
+                    .set(background);
+                exporter::VOLUME_EFFICIENCY_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "both"])
+                    .set(both);
+                exporter::VOLUME_EFFICIENCY_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "none"])
+                    .set(none);
+                exporter::VOLUME_EFFICIENCY_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "mixed"])
+                    .set(mixed);
+            }
+            if let Some(d) = v.cross_volume_dedupe {
+                let mut inline: i64 = 0;
+                let mut background: i64 = 0;
+                let mut both: i64 = 0;
+                let mut none: i64 = 0;
+                let mut mixed: i64 = 0;
+
+                debug!(
+                    "Updating metrics for volume efficiency cross_volume_dedupe {} {} -> {}",
+                    filer.name, vol.name, d
+                );
+                match d.as_str() {
+                    "inline" => {
+                        inline = 1;
+                    }
+                    "background" => {
+                        background = 1;
+                    }
+                    "both" => {
+                        both = 1;
+                    }
+                    "none" => {
+                        none = 1;
+                    }
+                    "mixed" => {
+                        mixed = 1;
+                    }
+                    _ => {
+                        error!(
+                            "Invalid value {} for volume cross_volume_dedupe for volme {} on {}",
+                            d, vol.name, filer.name
+                        );
+                    }
+                };
+                exporter::VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "inline"])
+                    .set(inline);
+                exporter::VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "background"])
+                    .set(background);
+                exporter::VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "both"])
+                    .set(both);
+                exporter::VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "none"])
+                    .set(none);
+                exporter::VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE
+                    .with_label_values(&[&filer.name, &vol.name, "mixed"])
+                    .set(mixed);
+            }
         }
     }
     Ok(())

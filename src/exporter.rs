@@ -225,6 +225,26 @@ lazy_static! {
         Opts::new(constants::METRIC_VOL_CLOUD_RETRIEVAL_POLICY_NAME, constants::METRIC_VOL_CLOUD_RETRIEVAL_POLICY_HELP),
         &["filer", "volume", "policy"]
     ).unwrap();
+    pub static ref VOLUME_QUOTA_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_QUOTA_STATE_NAME, constants::METRIC_VOL_QUOTA_STATE_HELP),
+        &["filer", "volume", "state"]
+    ).unwrap();
+    pub static ref VOLUME_EFFICIENCY_COMPRESSION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_EFFICIENCY_COMPRESSION_NAME, constants::METRIC_VOL_EFFICIENCY_COMPRESSION_HELP),
+        &["filer", "volume", "state"]
+    ).unwrap();
+    pub static ref VOLUME_EFFICIENCY_COMPACTION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_EFFICIENCY_COMPACTION_NAME, constants::METRIC_VOL_EFFICIENCY_COMPACTION_HELP),
+        &["filer", "volume", "state"]
+    ).unwrap();
+    pub static ref VOLUME_EFFICIENCY_DEDUPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_EFFICIENCY_DEDUPE_NAME, constants::METRIC_VOL_EFFICIENCY_DEDUPE_HELP),
+        &["filer", "volume", "state"]
+    ).unwrap();
+    pub static ref VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_EFFICIENCY_CROSS_VOLUME_DEDUPE_NAME, constants::METRIC_VOL_EFFICIENCY_CROSS_VOLUME_DEDUPE_HELP),
+        &["filer", "volume", "state"]
+    ).unwrap();
 }
 
 pub fn register_metrics() {
@@ -398,6 +418,21 @@ pub fn register_metrics() {
     REGISTRY.register(Box::new(VOLUME_TYPE.clone())).unwrap();
     REGISTRY
         .register(Box::new(VOLUME_CLOUD_RETRIEVAL_POLICY.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_QUOTA_STATE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_EFFICIENCY_COMPRESSION.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_EFFICIENCY_COMPACTION.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_EFFICIENCY_DEDUPE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE.clone()))
         .unwrap();
 }
 

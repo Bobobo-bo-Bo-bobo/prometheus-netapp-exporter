@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220125";
+pub const VERSION: &str = "0.1.1-20220126";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -202,3 +202,16 @@ pub const METRIC_VOL_TYPE_NAME: &str = "netapp_volume_type_info";
 pub const METRIC_VOL_TYPE_HELP: &str = "Type of the volume";
 pub const METRIC_VOL_CLOUD_RETRIEVAL_POLICY_NAME: &str = "netapp_volume_cloud_retrieval_info";
 pub const METRIC_VOL_CLOUD_RETRIEVAL_POLICY_HELP: &str = "Cloud retrieval policy for the volume";
+pub const METRIC_VOL_QUOTA_STATE_NAME: &str = "netapp_volume_quota_state_info";
+pub const METRIC_VOL_QUOTA_STATE_HELP: &str = "Quota state of the volume";
+pub const METRIC_VOL_EFFICIENCY_COMPRESSION_NAME: &str =
+    "netapp_volume_efficiency_compression_info";
+pub const METRIC_VOL_EFFICIENCY_COMPRESSION_HELP: &str = "Compression state of the volume";
+pub const METRIC_VOL_EFFICIENCY_COMPACTION_NAME: &str = "netapp_volume_efficiency_compaction_info";
+pub const METRIC_VOL_EFFICIENCY_COMPACTION_HELP: &str = "Compaction state of the volume";
+pub const METRIC_VOL_EFFICIENCY_DEDUPE_NAME: &str = "netapp_volume_efficiency_dedupe_info";
+pub const METRIC_VOL_EFFICIENCY_DEDUPE_HELP: &str = "Deduplication state of the volume";
+pub const METRIC_VOL_EFFICIENCY_CROSS_VOLUME_DEDUPE_NAME: &str =
+    "netapp_volume_efficiency_cross_volume_dedupe_info";
+pub const METRIC_VOL_EFFICIENCY_CROSS_VOLUME_DEDUPE_HELP: &str =
+    "Cross volume deduplication state of the volume";
