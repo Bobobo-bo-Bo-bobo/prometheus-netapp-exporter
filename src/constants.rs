@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220126";
+pub const VERSION: &str = "0.1.1-20220127";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -154,7 +154,6 @@ pub const METRIC_AGGR_METRIC_IOPS_TOTAL_NAME: &str =
     "netapp_aggregate_metric_iops_total_iops_per_second";
 pub const METRIC_AGGR_METRIC_IOPS_TOTAL_HELP: &str =
     "The rate of I/O operations observed at the storage object for all operations";
-
 pub const METRIC_AGGR_METRIC_SAMPLE_DURATION_NAME: &str =
     "netapp_aggregate_metric_sample_duration_seconds";
 pub const METRIC_AGGR_METRIC_SAMPLE_DURATION_HELP: &str =
@@ -215,3 +214,102 @@ pub const METRIC_VOL_EFFICIENCY_CROSS_VOLUME_DEDUPE_NAME: &str =
     "netapp_volume_efficiency_cross_volume_dedupe_info";
 pub const METRIC_VOL_EFFICIENCY_CROSS_VOLUME_DEDUPE_HELP: &str =
     "Cross volume deduplication state of the volume";
+pub const METRIC_VOL_METRIC_SAMPLE_DURATION_NAME: &str =
+    "netapp_volume_metric_sample_duration_seconds";
+pub const METRIC_VOL_METRIC_SAMPLE_DURATION_HELP: &str =
+    "The duration over which the sample are calculated";
+pub const METRIC_VOL_METRIC_IOPS_READ_NAME: &str = "netapp_volume_metric_iops_read_iops_per_second";
+pub const METRIC_VOL_METRIC_IOPS_READ_HELP: &str =
+    "The rate of I/O operations observed at the storage object for read operations";
+pub const METRIC_VOL_METRIC_IOPS_WRITE_NAME: &str =
+    "netapp_volume_metric_iops_write_iops_per_second";
+pub const METRIC_VOL_METRIC_IOPS_WRITE_HELP: &str =
+    "The rate of I/O operations observed at the storage object for write operations";
+pub const METRIC_VOL_METRIC_IOPS_OTHER_NAME: &str =
+    "netapp_volume_metric_iops_other_iops_per_second";
+pub const METRIC_VOL_METRIC_IOPS_OTHER_HELP: &str =
+    "The rate of I/O operations observed at the storage object for other operations";
+pub const METRIC_VOL_METRIC_IOPS_TOTAL_NAME: &str =
+    "netapp_volume_metric_iops_total_iops_per_second";
+pub const METRIC_VOL_METRIC_IOPS_TOTAL_HELP: &str =
+    "The rate of I/O operations observed at the storage object for all operations";
+
+pub const METRIC_VOL_METRIC_LATENCY_READ_NAME: &str = "netapp_volume_metric_latency_read_seconds";
+pub const METRIC_VOL_METRIC_LATENCY_READ_HELP: &str =
+    "The round trip latency in microseconds observed at the storage object for read operations";
+pub const METRIC_VOL_METRIC_LATENCY_WRITE_NAME: &str = "netapp_volume_metric_latency_write_seconds";
+pub const METRIC_VOL_METRIC_LATENCY_WRITE_HELP: &str =
+    "The round trip latency in microseconds observed at the storage object for write operations";
+pub const METRIC_VOL_METRIC_LATENCY_OTHER_NAME: &str = "netapp_volume_metric_latency_other_seconds";
+pub const METRIC_VOL_METRIC_LATENCY_OTHER_HELP: &str =
+    "The round trip latency in microseconds observed at the storage object for other operations";
+pub const METRIC_VOL_METRIC_LATENCY_TOTAL_NAME: &str = "netapp_volume_metric_latency_total_seconds";
+pub const METRIC_VOL_METRIC_LATENCY_TOTAL_HELP: &str =
+    "The round trip latency in microseconds observed at the storage object for all operations";
+
+pub const METRIC_VOL_METRIC_THROUGHPUT_READ_NAME: &str =
+    "netapp_volume_metric_throughput_read_bytes_per_second";
+pub const METRIC_VOL_METRIC_THROUGHPUT_READ_HELP: &str =
+    "Performance metric for read I/O operations in bytes per second";
+pub const METRIC_VOL_METRIC_THROUGHPUT_WRITE_NAME: &str =
+    "netapp_volume_metric_throughput_write_bytes_per_second";
+pub const METRIC_VOL_METRIC_THROUGHPUT_WRITE_HELP: &str =
+    "Performance metric for write I/O operations in bytes per second";
+pub const METRIC_VOL_METRIC_THROUGHPUT_OTHER_NAME: &str =
+    "netapp_volume_metric_throughput_other_bytes_per_second";
+pub const METRIC_VOL_METRIC_THROUGHPUT_OTHER_HELP: &str =
+    "Performance metric for other I/O operations in bytes per second";
+pub const METRIC_VOL_METRIC_THROUGHPUT_TOTAL_NAME: &str =
+    "netapp_volume_metric_throughput_total_bytes_per_second";
+pub const METRIC_VOL_METRIC_THROUGHPUT_TOTAL_HELP: &str =
+    "Performance metric for all I/O operations in bytes per second";
+
+pub const METRIC_VOL_METRIC_CLOUD_IOPS_READ_NAME: &str =
+    "netapp_volume_metric_cloud_iops_read_iops_per_second";
+pub const METRIC_VOL_METRIC_CLOUD_IOPS_READ_HELP: &str =
+    "The rate of I/O operations observed at the cloud storage object for read operations";
+pub const METRIC_VOL_METRIC_CLOUD_IOPS_WRITE_NAME: &str =
+    "netapp_volume_metric_cloud_iops_write_iops_per_second";
+pub const METRIC_VOL_METRIC_CLOUD_IOPS_WRITE_HELP: &str =
+    "The rate of I/O operations observed at the cloud storage object for write operations";
+pub const METRIC_VOL_METRIC_CLOUD_IOPS_OTHER_NAME: &str =
+    "netapp_volume_metric_cloud_iops_other_iops_per_second";
+pub const METRIC_VOL_METRIC_CLOUD_IOPS_OTHER_HELP: &str =
+    "The rate of I/O operations observed at the cloud storage object for other operations";
+pub const METRIC_VOL_METRIC_CLOUD_IOPS_TOTAL_NAME: &str =
+    "netapp_volume_metric_cloud_iops_total_iops_per_second";
+pub const METRIC_VOL_METRIC_CLOUD_IOPS_TOTAL_HELP: &str =
+    "The rate of I/O operations observed at the cloud storage object for all operations";
+
+pub const METRIC_VOL_METRIC_CLOUD_LATENCY_READ_NAME: &str =
+    "netapp_volume_metric_cloud_latency_read_seconds";
+pub const METRIC_VOL_METRIC_CLOUD_LATENCY_READ_HELP: &str =
+    "The round trip latency in microseconds observed at the cloud storage object for read operations";
+pub const METRIC_VOL_METRIC_CLOUD_LATENCY_WRITE_NAME: &str =
+    "netapp_volume_metric_cloud_latency_write_seconds";
+pub const METRIC_VOL_METRIC_CLOUD_LATENCY_WRITE_HELP: &str =
+    "The round trip latency in microseconds observed at the cloud storage object for write operations";
+pub const METRIC_VOL_METRIC_CLOUD_LATENCY_OTHER_NAME: &str =
+    "netapp_volume_metric_cloud_latency_other_seconds";
+pub const METRIC_VOL_METRIC_CLOUD_LATENCY_OTHER_HELP: &str =
+    "The round trip latency in microseconds observed at the cloud storage object for other operations";
+pub const METRIC_VOL_METRIC_CLOUD_LATENCY_TOTAL_NAME: &str =
+    "netapp_volume_metric_cloud_latency_total_seconds";
+pub const METRIC_VOL_METRIC_CLOUD_LATENCY_TOTAL_HELP: &str =
+    "The round trip latency in microseconds observed at the cloud storage object for all operations";
+pub const METRIC_VOL_METRIC_CLOUD_SAMPLE_DURATION_NAME: &str =
+    "netapp_volume_metric_sample_cloud_storage_duration_seconds";
+pub const METRIC_VOL_METRIC_CLOUD_SAMPLE_DURATION_HELP: &str =
+    "The duration over which the sample are calculated";
+
+pub const METRIC_VOL_METRIC_FLEXCACHE_SAMPLE_DURATION_NAME: &str =
+    "netapp_volume_metric_flexcache_sample_duration_seconds";
+pub const METRIC_VOL_METRIC_FLEXCACHE_SAMPLE_DURATION_HELP: &str =
+    "The duration over which the sample are calculated";
+pub const METRIC_VOL_METRIC_FLEXCACHE_CACHE_MISS_PERCENT_NAME: &str =
+    "netapp_volume_metric_flexcache_cache_miss_percent";
+pub const METRIC_VOL_METRIC_FLEXCACHE_CACHE_MISS_PERCENT_HELP: &str = "Cache miss percentage";
+
+pub const METRIC_VOL_ACCESS_TIME_ENABLED_NAME: &str = "netapp_volume_metric_access_time_enabled";
+pub const METRIC_VOL_ACCESS_TIME_ENABLED_HELP: &str =
+    "Indicates whether or not access time updates are enabled on the volume";

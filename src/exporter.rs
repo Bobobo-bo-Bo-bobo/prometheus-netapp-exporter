@@ -164,7 +164,10 @@ lazy_static! {
         Opts::new(constants::METRIC_AGGR_METRIC_SAMPLE_DURATION_NAME, constants::METRIC_AGGR_METRIC_SAMPLE_DURATION_HELP),
         &["filer", "home_node", "aggregate"],
     ).unwrap();
+}
 
+// NOTE: macro split is required to suppress the "recursion limit reached while expanding `__lazy_static_internal!`" error
+lazy_static! {
     // Volume data
     pub static ref VOLUME_FILES_MAX: IntGaugeVec = IntGaugeVec::new(
         Opts::new(constants::METRIC_VOL_FILES_MAXIMUM_NAME, constants::METRIC_VOL_FILES_MAXIMUM_HELP),
@@ -244,6 +247,113 @@ lazy_static! {
     pub static ref VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE: IntGaugeVec = IntGaugeVec::new(
         Opts::new(constants::METRIC_VOL_EFFICIENCY_CROSS_VOLUME_DEDUPE_NAME, constants::METRIC_VOL_EFFICIENCY_CROSS_VOLUME_DEDUPE_HELP),
         &["filer", "volume", "state"]
+    ).unwrap();
+    pub static ref VOLUME_METRIC_SAMPLE_DURATION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_SAMPLE_DURATION_NAME, constants::METRIC_VOL_METRIC_SAMPLE_DURATION_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_THROUGHPUT_READ: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_THROUGHPUT_READ_NAME, constants::METRIC_VOL_METRIC_THROUGHPUT_READ_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_THROUGHPUT_WRITE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_THROUGHPUT_WRITE_NAME, constants::METRIC_VOL_METRIC_THROUGHPUT_WRITE_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_THROUGHPUT_OTHER: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_THROUGHPUT_OTHER_NAME, constants::METRIC_VOL_METRIC_THROUGHPUT_OTHER_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_THROUGHPUT_TOTAL: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_THROUGHPUT_TOTAL_NAME, constants::METRIC_VOL_METRIC_THROUGHPUT_TOTAL_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_IOPS_READ: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_IOPS_READ_NAME, constants::METRIC_VOL_METRIC_IOPS_READ_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_IOPS_WRITE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_IOPS_WRITE_NAME, constants::METRIC_VOL_METRIC_IOPS_WRITE_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_IOPS_OTHER: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_IOPS_OTHER_NAME, constants::METRIC_VOL_METRIC_IOPS_OTHER_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_IOPS_TOTAL: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_IOPS_TOTAL_NAME, constants::METRIC_VOL_METRIC_IOPS_TOTAL_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_LATENCY_READ: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_LATENCY_READ_NAME, constants::METRIC_VOL_METRIC_LATENCY_READ_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_LATENCY_WRITE: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_LATENCY_WRITE_NAME, constants::METRIC_VOL_METRIC_LATENCY_WRITE_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_LATENCY_OTHER: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_LATENCY_OTHER_NAME, constants::METRIC_VOL_METRIC_LATENCY_OTHER_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_LATENCY_TOTAL: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_LATENCY_TOTAL_NAME, constants::METRIC_VOL_METRIC_LATENCY_TOTAL_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_CLOUD_SAMPLE_DURATION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_SAMPLE_DURATION_NAME, constants::METRIC_VOL_METRIC_CLOUD_SAMPLE_DURATION_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_CLOUD_IOPS_READ: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_IOPS_READ_NAME, constants::METRIC_VOL_METRIC_CLOUD_IOPS_READ_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_CLOUD_IOPS_WRITE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_IOPS_WRITE_NAME, constants::METRIC_VOL_METRIC_CLOUD_IOPS_WRITE_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_CLOUD_IOPS_OTHER: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_IOPS_OTHER_NAME, constants::METRIC_VOL_METRIC_CLOUD_IOPS_OTHER_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_CLOUD_IOPS_TOTAL: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_IOPS_TOTAL_NAME, constants::METRIC_VOL_METRIC_CLOUD_IOPS_TOTAL_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_CLOUD_LATENCY_READ: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_LATENCY_READ_NAME, constants::METRIC_VOL_METRIC_CLOUD_LATENCY_READ_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_CLOUD_LATENCY_WRITE: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_LATENCY_WRITE_NAME, constants::METRIC_VOL_METRIC_CLOUD_LATENCY_WRITE_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_CLOUD_LATENCY_OTHER: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_LATENCY_OTHER_NAME, constants::METRIC_VOL_METRIC_CLOUD_LATENCY_OTHER_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_CLOUD_LATENCY_TOTAL: GaugeVec = GaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_CLOUD_LATENCY_TOTAL_NAME, constants::METRIC_VOL_METRIC_CLOUD_LATENCY_TOTAL_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_FLEXCACHE_SAMPLE_DURATION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_FLEXCACHE_SAMPLE_DURATION_NAME, constants::METRIC_VOL_METRIC_FLEXCACHE_SAMPLE_DURATION_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_FLEXCACHE_CACHE_MISS_PERCENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_METRIC_FLEXCACHE_CACHE_MISS_PERCENT_NAME, constants::METRIC_VOL_METRIC_FLEXCACHE_CACHE_MISS_PERCENT_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_ACCESS_TIME_ENABLED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_ACCESS_TIME_ENABLED_NAME, constants::METRIC_VOL_ACCESS_TIME_ENABLED_HELP),
+        &["filer", "volume"],
     ).unwrap();
 }
 
@@ -433,6 +543,86 @@ pub fn register_metrics() {
         .unwrap();
     REGISTRY
         .register(Box::new(VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SAMPLE_DURATION.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_THROUGHPUT_READ.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_THROUGHPUT_WRITE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_THROUGHPUT_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_THROUGHPUT_TOTAL.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_IOPS_READ.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_IOPS_WRITE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_IOPS_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_IOPS_TOTAL.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_LATENCY_READ.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_LATENCY_WRITE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_LATENCY_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_LATENCY_TOTAL.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_SAMPLE_DURATION.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_IOPS_READ.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_IOPS_WRITE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_IOPS_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_IOPS_TOTAL.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_LATENCY_READ.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_LATENCY_WRITE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_LATENCY_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_CLOUD_LATENCY_TOTAL.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_FLEXCACHE_SAMPLE_DURATION.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_FLEXCACHE_CACHE_MISS_PERCENT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_ACCESS_TIME_ENABLED.clone()))
         .unwrap();
 }
 

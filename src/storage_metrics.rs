@@ -8,6 +8,24 @@ pub struct StorageMetric {
     pub status: String,
     pub throughput: StorageMetricData,
     pub timestamp: String,
+    pub cloud: Option<StorageMetricCloud>,
+    pub flexcache: Option<StorageMetricFlexCache>,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct StorageMetricFlexCache {
+    pub status: String,
+    pub duration: String,
+    pub cache_miss_percent: i64,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct StorageMetricCloud {
+    pub timestamp: String,
+    pub status: String,
+    pub iops: StorageMetricData,
+    pub latency: StorageMetricData,
+    pub duration: String,
 }
 
 #[derive(Deserialize, Clone, Debug)]

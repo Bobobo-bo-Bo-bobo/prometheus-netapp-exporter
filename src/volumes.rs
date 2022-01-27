@@ -29,6 +29,8 @@ pub struct Volume {
     pub cloud_retrieval_policy: Option<String>,
     pub quota: Option<VolumeQuota>,
     pub efficiency: Option<VolumeEfficiency>,
+    pub metric: Option<storage_metrics::StorageMetric>,
+    pub access_time_enabled: Option<bool>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -632,6 +634,270 @@ pub fn update_volumes(
                 exporter::VOLUME_EFFICIENCY_CROSS_VOLUME_DEDUPE
                     .with_label_values(&[&filer.name, &vol.name, "mixed"])
                     .set(mixed);
+            }
+        }
+        if let Some(v) = vol.metric {
+            if v.status == "ok" {
+                debug!(
+                    "Updating metrics for volume metric duration: {} {} -> {}",
+                    filer.name, vol.name, v.duration
+                );
+                let duration: i64 = match v.duration.as_str() {
+                    "PT15S" => 15,
+                    "PT1D" => 86400,
+                    "PT2H" => 7200,
+                    "PT30M" => 1800,
+                    "PT4M" => 240,
+                    "PT5M" => 300,
+                    _ => {
+                        error!(
+                            "Invalid or unsupported sample duration {} for aggregate {} on {}",
+                            v.duration, vol.name, filer.name
+                        );
+                        continue;
+                    }
+                };
+                exporter::VOLUME_METRIC_SAMPLE_DURATION
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(duration);
+
+                debug!(
+                    "Updating metrics for volume metric throughput read: {} {} -> {}",
+                    filer.name, vol.name, v.throughput.read
+                );
+                exporter::VOLUME_METRIC_THROUGHPUT_READ
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.throughput.read);
+
+                debug!(
+                    "Updating metrics for volume metric throughput write: {} {} -> {}",
+                    filer.name, vol.name, v.throughput.write
+                );
+                exporter::VOLUME_METRIC_THROUGHPUT_WRITE
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.throughput.write);
+
+                debug!(
+                    "Updating metrics for volume metric throughput other: {} {} -> {}",
+                    filer.name, vol.name, v.throughput.other
+                );
+                exporter::VOLUME_METRIC_THROUGHPUT_OTHER
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.throughput.other);
+
+                debug!(
+                    "Updating metrics for volume metric throughput total: {} {} -> {}",
+                    filer.name, vol.name, v.throughput.total
+                );
+                exporter::VOLUME_METRIC_THROUGHPUT_TOTAL
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.throughput.total);
+
+                debug!(
+                    "Updating metrics for volume metric latency read: {} {} -> {}",
+                    filer.name, vol.name, v.latency.read
+                );
+                exporter::VOLUME_METRIC_LATENCY_READ
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.latency.read as f64 / 1e+06);
+
+                debug!(
+                    "Updating metrics for volume metric latency write: {} {} -> {}",
+                    filer.name, vol.name, v.latency.write
+                );
+                exporter::VOLUME_METRIC_LATENCY_WRITE
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.latency.write as f64 / 1e+06);
+
+                debug!(
+                    "Updating metrics for volume metric latency other: {} {} -> {}",
+                    filer.name, vol.name, v.latency.other
+                );
+                exporter::VOLUME_METRIC_LATENCY_OTHER
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.latency.other as f64 / 1e+06);
+
+                debug!(
+                    "Updating metrics for volume metric latency total: {} {} -> {}",
+                    filer.name, vol.name, v.latency.total
+                );
+                exporter::VOLUME_METRIC_LATENCY_TOTAL
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.latency.total as f64 / 1e+06);
+
+                debug!(
+                    "Updating metrics for volume metric iops read: {} {} -> {}",
+                    filer.name, vol.name, v.iops.read
+                );
+                exporter::VOLUME_METRIC_IOPS_READ
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.iops.read);
+                debug!(
+                    "Updating metrics for volume metric iops write: {} {} -> {}",
+                    filer.name, vol.name, v.iops.write
+                );
+                exporter::VOLUME_METRIC_IOPS_WRITE
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.iops.write);
+
+                debug!(
+                    "Updating metrics for volume metric iops other: {} {} -> {}",
+                    filer.name, vol.name, v.iops.other
+                );
+                exporter::VOLUME_METRIC_IOPS_OTHER
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.iops.other);
+
+                debug!(
+                    "Updating metrics for volume metric iops total: {} {} -> {}",
+                    filer.name, vol.name, v.iops.total
+                );
+                exporter::VOLUME_METRIC_IOPS_TOTAL
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(v.iops.total);
+
+                if let Some(vc) = v.cloud {
+                    if vc.status == "ok" {
+                        debug!(
+                            "Updating metrics for volume metric cloud duration: {} {} -> {}",
+                            filer.name, vol.name, vc.duration
+                        );
+                        let duration: i64 = match vc.duration.as_str() {
+                            "PT15S" => 15,
+                            "PT1D" => 86400,
+                            "PT2H" => 7200,
+                            "PT30M" => 1800,
+                            "PT4M" => 240,
+                            "PT5M" => 300,
+                            _ => {
+                                error!(
+                                    "Invalid or unsupported sample cloud storage duration {} for aggregate {} on {}",
+                                    vc.duration, vol.name, filer.name
+                                );
+                                continue;
+                            }
+                        };
+                        exporter::VOLUME_METRIC_CLOUD_SAMPLE_DURATION
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(duration);
+
+                        debug!(
+                            "Updating metrics for volume metric cloud latency read: {} {} -> {}",
+                            filer.name, vol.name, vc.latency.read
+                        );
+                        exporter::VOLUME_METRIC_CLOUD_LATENCY_READ
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vc.latency.read as f64 / 1e+06);
+
+                        debug!(
+                            "Updating metrics for volume metric cloud latency write: {} {} -> {}",
+                            filer.name, vol.name, vc.latency.write
+                        );
+                        exporter::VOLUME_METRIC_CLOUD_LATENCY_WRITE
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vc.latency.write as f64 / 1e+06);
+
+                        debug!(
+                            "Updating metrics for volume metric cloud latency other: {} {} -> {}",
+                            filer.name, vol.name, vc.latency.other
+                        );
+                        exporter::VOLUME_METRIC_CLOUD_LATENCY_OTHER
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vc.latency.other as f64 / 1e+06);
+
+                        debug!(
+                            "Updating metrics for volume metric cloud latency total: {} {} -> {}",
+                            filer.name, vol.name, vc.latency.total
+                        );
+                        exporter::VOLUME_METRIC_CLOUD_LATENCY_TOTAL
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vc.latency.total as f64 / 1e+06);
+
+                        debug!(
+                            "Updating metrics for volume metric cloud iops read: {} {} -> {}",
+                            filer.name, vol.name, vc.iops.read
+                        );
+                        exporter::VOLUME_METRIC_CLOUD_IOPS_READ
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vc.iops.read);
+
+                        debug!(
+                            "Updating metrics for volume metric iops write: {} {} -> {}",
+                            filer.name, vol.name, vc.iops.write
+                        );
+                        exporter::VOLUME_METRIC_CLOUD_IOPS_WRITE
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vc.iops.write);
+
+                        debug!(
+                            "Updating metrics for volume metric iops other: {} {} -> {}",
+                            filer.name, vol.name, vc.iops.other
+                        );
+                        exporter::VOLUME_METRIC_CLOUD_IOPS_OTHER
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vc.iops.other);
+
+                        debug!(
+                            "Updating metrics for volume metric iops total: {} {} -> {}",
+                            filer.name, vol.name, vc.iops.total
+                        );
+                        exporter::VOLUME_METRIC_CLOUD_IOPS_TOTAL
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vc.iops.total);
+                    } else {
+                        warn!("Skipping metrics from volume {} on {} because metric state was reported as \"{}\" instead of \"ok\"", vol.name, filer.name, v.status);
+                    }
+                }
+                if let Some(vf) = v.flexcache {
+                    if vf.status == "ok" {
+                        debug!(
+                            "Updating metrics for volume metric flexcache duration: {} {} -> {}",
+                            filer.name, vol.name, vf.duration
+                        );
+                        let duration: i64 = match vf.duration.as_str() {
+                            "PT15S" => 15,
+                            "PT1D" => 86400,
+                            "PT2H" => 7200,
+                            "PT30M" => 1800,
+                            "PT4M" => 240,
+                            "PT5M" => 300,
+                            _ => {
+                                error!(
+                                    "Invalid or unsupported sample flexcache duration {} for aggregate {} on {}",
+                                    vf.duration, vol.name, filer.name
+                                );
+                                continue;
+                            }
+                        };
+                        exporter::VOLUME_METRIC_FLEXCACHE_SAMPLE_DURATION
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(duration);
+
+                        debug!("Updating metrics for volume metric flexcache cache_miss_percent {} {} -> {}", filer.name, vol.name, vf.cache_miss_percent);
+                        exporter::VOLUME_METRIC_FLEXCACHE_CACHE_MISS_PERCENT
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(vf.cache_miss_percent);
+                    } else {
+                        warn!("Skipping metrics from volume {} on {} because flexcache metric state was reported as \"{}\" instead of \"ok\"", vol.name, filer.name, vf.status);
+                    }
+                }
+            } else {
+                warn!("Skipping metrics from volume {} on {} because metric state was reported as \"{}\" instead of \"ok\"", vol.name, filer.name, v.status);
+            }
+        }
+        if let Some(v) = vol.access_time_enabled {
+            debug!(
+                "Updating metrics for volume access_time_enabled {} {} -> {}",
+                filer.name, vol.name, v
+            );
+            if v {
+                exporter::VOLUME_METRIC_ACCESS_TIME_ENABLED
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(1);
+            } else {
+                exporter::VOLUME_METRIC_ACCESS_TIME_ENABLED
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(0);
             }
         }
     }

@@ -466,129 +466,128 @@ pub fn update_aggregates(
             .set(unknown);
 
         if let Some(v) = aggr.metric {
-            if v.status != "ok" {
+            if v.status == "ok" {
+                debug!(
+                    "Updating metrics for aggregate metric duration: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.duration
+                );
+                let duration: i64 = match v.duration.as_str() {
+                    "PT15S" => 15,
+                    "PT1D" => 86400,
+                    "PT2H" => 7200,
+                    "PT30M" => 1800,
+                    "PT4M" => 240,
+                    "PT5M" => 300,
+                    _ => {
+                        error!(
+                            "Invalid or unsupported sample duration {} for aggregate {} on {}",
+                            v.duration, aggr.name, filer.name
+                        );
+                        continue;
+                    }
+                };
+                exporter::AGGREGATE_METRIC_SAMPLE_DURATION
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(duration);
+
+                debug!(
+                    "Updating metrics for aggregate metric throughput read: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.throughput.read
+                );
+                exporter::AGGREGATE_METRIC_THROUGHPUT_READ
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.throughput.read);
+
+                debug!(
+                    "Updating metrics for aggregate metric throughput write: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.throughput.write
+                );
+                exporter::AGGREGATE_METRIC_THROUGHPUT_WRITE
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.throughput.write);
+
+                debug!(
+                    "Updating metrics for aggregate metric throughput other: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.throughput.other
+                );
+                exporter::AGGREGATE_METRIC_THROUGHPUT_OTHER
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.throughput.other);
+
+                debug!(
+                    "Updating metrics for aggregate metric throughput total: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.throughput.total
+                );
+                exporter::AGGREGATE_METRIC_THROUGHPUT_TOTAL
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.throughput.total);
+
+                debug!(
+                    "Updating metrics for aggregate metric latency read: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.latency.read
+                );
+                exporter::AGGREGATE_METRIC_LATENCY_READ
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.latency.read as f64 / 1e+06);
+
+                debug!(
+                    "Updating metrics for aggregate metric latency write: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.latency.write
+                );
+                exporter::AGGREGATE_METRIC_LATENCY_WRITE
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.latency.write as f64 / 1e+06);
+
+                debug!(
+                    "Updating metrics for aggregate metric latency other: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.latency.other
+                );
+                exporter::AGGREGATE_METRIC_LATENCY_OTHER
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.latency.other as f64 / 1e+06);
+
+                debug!(
+                    "Updating metrics for aggregate metric latency total: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.latency.total
+                );
+                exporter::AGGREGATE_METRIC_LATENCY_TOTAL
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.latency.total as f64 / 1e+06);
+
+                debug!(
+                    "Updating metrics for aggregate metric iops read: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.iops.read
+                );
+                exporter::AGGREGATE_METRIC_IOPS_READ
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.iops.read);
+
+                debug!(
+                    "Updating metrics for aggregate metric iops write: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.iops.write
+                );
+                exporter::AGGREGATE_METRIC_IOPS_WRITE
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.iops.write);
+
+                debug!(
+                    "Updating metrics for aggregate metric iops other: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.iops.other
+                );
+                exporter::AGGREGATE_METRIC_IOPS_OTHER
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.iops.other);
+
+                debug!(
+                    "Updating metrics for aggregate metric iops total: {} {} {} -> {}",
+                    filer.name, aggr.home_node.name, aggr.name, v.iops.total
+                );
+                exporter::AGGREGATE_METRIC_IOPS_TOTAL
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                    .set(v.iops.total);
+            } else {
                 warn!("Skipping metrics from aggregate {} on {} because metric state was reported as \"{}\" instead of \"ok\"", aggr.name, filer.name, v.status);
-                continue;
             };
-
-            debug!(
-                "Updating metrics for aggregate metric duration: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.duration
-            );
-            let duration: i64 = match v.duration.as_str() {
-                "PT15S" => 15,
-                "PT1D" => 86400,
-                "PT2H" => 7200,
-                "PT30M" => 1800,
-                "PT4M" => 240,
-                "PT5M" => 300,
-                _ => {
-                    error!(
-                        "Invalid or unsupported sample duration {} for aggregate {} on {}",
-                        v.duration, aggr.name, filer.name
-                    );
-                    continue;
-                }
-            };
-            exporter::AGGREGATE_METRIC_SAMPLE_DURATION
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(duration);
-
-            debug!(
-                "Updating metrics for aggregate metric throughput read: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.throughput.read
-            );
-            exporter::AGGREGATE_METRIC_THROUGHPUT_READ
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.throughput.read);
-
-            debug!(
-                "Updating metrics for aggregate metric throughput write: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.throughput.write
-            );
-            exporter::AGGREGATE_METRIC_THROUGHPUT_WRITE
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.throughput.write);
-
-            debug!(
-                "Updating metrics for aggregate metric throughput other: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.throughput.other
-            );
-            exporter::AGGREGATE_METRIC_THROUGHPUT_OTHER
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.throughput.other);
-
-            debug!(
-                "Updating metrics for aggregate metric throughput total: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.throughput.total
-            );
-            exporter::AGGREGATE_METRIC_THROUGHPUT_TOTAL
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.throughput.total);
-
-            debug!(
-                "Updating metrics for aggregate metric latency read: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.latency.read
-            );
-            exporter::AGGREGATE_METRIC_LATENCY_READ
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.latency.read as f64 / 1e+06);
-
-            debug!(
-                "Updating metrics for aggregate metric latency write: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.latency.write
-            );
-            exporter::AGGREGATE_METRIC_LATENCY_WRITE
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.latency.write as f64 / 1e+06);
-
-            debug!(
-                "Updating metrics for aggregate metric latency other: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.latency.other
-            );
-            exporter::AGGREGATE_METRIC_LATENCY_OTHER
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.latency.other as f64 / 1e+06);
-
-            debug!(
-                "Updating metrics for aggregate metric latency total: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.latency.total
-            );
-            exporter::AGGREGATE_METRIC_LATENCY_TOTAL
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.latency.total as f64 / 1e+06);
-
-            debug!(
-                "Updating metrics for aggregate metric iops read: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.iops.read
-            );
-            exporter::AGGREGATE_METRIC_IOPS_READ
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.iops.read);
-
-            debug!(
-                "Updating metrics for aggregate metric iops write: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.iops.write
-            );
-            exporter::AGGREGATE_METRIC_IOPS_WRITE
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.iops.write);
-
-            debug!(
-                "Updating metrics for aggregate metric iops other: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.iops.other
-            );
-            exporter::AGGREGATE_METRIC_IOPS_OTHER
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.iops.other);
-
-            debug!(
-                "Updating metrics for aggregate metric iops total: {} {} {} -> {}",
-                filer.name, aggr.home_node.name, aggr.name, v.iops.total
-            );
-            exporter::AGGREGATE_METRIC_IOPS_TOTAL
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                .set(v.iops.total);
         }
     }
 
