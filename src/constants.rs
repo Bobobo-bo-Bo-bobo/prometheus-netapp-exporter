@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220128";
+pub const VERSION: &str = "0.1.1-20220129";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -314,17 +314,40 @@ pub const METRIC_VOL_ACCESS_TIME_ENABLED_NAME: &str = "netapp_volume_metric_acce
 pub const METRIC_VOL_ACCESS_TIME_ENABLED_HELP: &str =
     "Indicates whether or not access time updates are enabled on the volume";
 pub const METRIC_VOL_QUEUE_FOR_ENCRYPTION_NAME: &str = "netapp_volume_queued_for_encryption";
-pub const METRIC_VOL_QUEUE_FOR_ENCRYPTION_HELP: &str = "Specifies whether the volume is queued for encryption";
+pub const METRIC_VOL_QUEUE_FOR_ENCRYPTION_HELP: &str =
+    "Specifies whether the volume is queued for encryption";
 
-pub const METRIC_VOL_SNAPLOCK_APPEND_MODE_ENABLED_NAME: &str = "netapp_volume_snaplock_append_mode_enabled";
-pub const METRIC_VOL_SNAPLOCK_APPEND_MODE_ENABLED_HELP: &str = "Specifies if the volume append mode is enabled or disabled";
-pub const METRIC_VOL_SNAPLOCK_LITIGATION_COUNT_NAME: &str = "netapp_volume_snaplock_litigation_count";
-pub const METRIC_VOL_SNAPLOCK_LITIGATION_COUNT_HELP: &str = "Litigation count indicates the number of active legal-holds on the volume";
-pub const METRIC_VOL_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT_NAME: &str = "netapp_volume_snaplock_unspecified_retention_files";
-pub const METRIC_VOL_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT_HELP: &str = "Indicates the number of files with an unspecified retention time in the volume";
+pub const METRIC_VOL_SNAPLOCK_APPEND_MODE_ENABLED_NAME: &str =
+    "netapp_volume_snaplock_append_mode_enabled";
+pub const METRIC_VOL_SNAPLOCK_APPEND_MODE_ENABLED_HELP: &str =
+    "Specifies if the volume append mode is enabled or disabled";
+pub const METRIC_VOL_SNAPLOCK_LITIGATION_COUNT_NAME: &str =
+    "netapp_volume_snaplock_litigation_count";
+pub const METRIC_VOL_SNAPLOCK_LITIGATION_COUNT_HELP: &str =
+    "Litigation count indicates the number of active legal-holds on the volume";
+pub const METRIC_VOL_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT_NAME: &str =
+    "netapp_volume_snaplock_unspecified_retention_files";
+pub const METRIC_VOL_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT_HELP: &str =
+    "Indicates the number of files with an unspecified retention time in the volume";
 pub const METRIC_VOL_SNAPLOCK_IS_AUDIT_LOG_NAME: &str = "netapp_volume_snaplock_is_audit_log";
-pub const METRIC_VOL_SNAPLOCK_IS_AUDIT_LOG_HELP: &str = "Indicates if this volume has been configured as SnapLock audit log volume for the SVM";
-pub const METRIC_VOL_SNAPLOCK_PRIVILEGED_DELETE_NAME: &str = "netapp_volume_snaplock_privileged_delete";
-pub const METRIC_VOL_SNAPLOCK_PRIVILEGED_DELETE_HELP: &str = "Specifies the privileged-delete attribute of a SnapLock volume";
+pub const METRIC_VOL_SNAPLOCK_IS_AUDIT_LOG_HELP: &str =
+    "Indicates if this volume has been configured as SnapLock audit log volume for the SVM";
+pub const METRIC_VOL_SNAPLOCK_PRIVILEGED_DELETE_NAME: &str =
+    "netapp_volume_snaplock_privileged_delete";
+pub const METRIC_VOL_SNAPLOCK_PRIVILEGED_DELETE_HELP: &str =
+    "Specifies the privileged-delete attribute of a SnapLock volume";
 pub const METRIC_VOL_SNAPLOCK_TYPE_NAME: &str = "netapp_volume_snaplock_type_info";
 pub const METRIC_VOL_SNAPLOCK_TYPE_HELP: &str = "The SnapLock type of the volume";
+
+pub const METRIC_VOL_MOVEMENT_PERCENT_COMPLETE_NAME: &str =
+    "netapp_volume_movemet_complete_percent";
+pub const METRIC_VOL_MOVEMENT_PERCENT_COMPLETE_HELP: &str =
+    "Completion percentage of volume movement";
+pub const METRIC_VOL_MOVEMENT_CUTOVER_WINDOW_NAME: &str =
+    "netapp_volume_movement_cutover_window_seconds";
+pub const METRIC_VOL_MOVEMENT_CUTOVER_WINDOW_HELP: &str = "Time window in seconds for cutover";
+pub const METRIC_VOL_MOVEMENT_TIERING_POLICY_NAME: &str =
+    "netapp_volume_movement_tiering_policy_info";
+pub const METRIC_VOL_MOVEMENT_TIERING_POLICY_HELP: &str = "Tiering policy for FabricPool";
+pub const METRIC_VOL_MOVEMENT_STATE_NAME: &str = "netapp_volume_movement_state_info";
+pub const METRIC_VOL_MOVEMENT_STATE_HELP: &str = "State of volume move operation";

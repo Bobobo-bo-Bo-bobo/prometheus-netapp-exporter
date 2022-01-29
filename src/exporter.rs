@@ -375,16 +375,34 @@ lazy_static! {
     ).unwrap();
     pub static ref VOLUME_METRIC_SNAPLOCK_IS_AUDIT_LOG: IntGaugeVec = IntGaugeVec::new(
         Opts::new(constants::METRIC_VOL_SNAPLOCK_IS_AUDIT_LOG_NAME, constants::METRIC_VOL_SNAPLOCK_IS_AUDIT_LOG_HELP),
-        &["filter", "volume"],
+        &["filer", "volume"],
     ).unwrap();
     pub static ref VOLUME_METRIC_SNAPLOCK_PRIVILEGED_DELETE_TYPE: IntGaugeVec = IntGaugeVec::new(
         Opts::new(constants::METRIC_VOL_SNAPLOCK_PRIVILEGED_DELETE_NAME, constants::METRIC_VOL_SNAPLOCK_PRIVILEGED_DELETE_HELP),
-        &["filter", "volume", "type"],
+        &["filer", "volume", "type"],
     ).unwrap();
     pub static ref VOLUME_METRIC_SNAPLOCK_TYPE: IntGaugeVec = IntGaugeVec::new(
         Opts::new(constants::METRIC_VOL_SNAPLOCK_TYPE_NAME, constants::METRIC_VOL_SNAPLOCK_TYPE_HELP),
-        &["filter", "volume", "type"],
+        &["filer", "volume", "type"],
     ).unwrap();
+
+    pub static ref VOLUME_METRIC_MOVEMENT_PERCENT_COMPLETE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_MOVEMENT_PERCENT_COMPLETE_NAME, constants::METRIC_VOL_MOVEMENT_PERCENT_COMPLETE_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_MOVEMENT_CUTOVER_WINDOW: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_MOVEMENT_CUTOVER_WINDOW_NAME, constants::METRIC_VOL_MOVEMENT_CUTOVER_WINDOW_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_MOVEMENT_TIERING_POLICY: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_MOVEMENT_TIERING_POLICY_NAME, constants::METRIC_VOL_MOVEMENT_TIERING_POLICY_HELP),
+        &["filer", "volume", "tiering_policy"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_MOVEMENT_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_MOVEMENT_STATE_NAME, constants::METRIC_VOL_MOVEMENT_STATE_HELP),
+        &["filer", "volume", "state"],
+    ).unwrap();
+
 }
 
 pub fn register_metrics() {
@@ -654,16 +672,45 @@ pub fn register_metrics() {
     REGISTRY
         .register(Box::new(VOLUME_METRIC_ACCESS_TIME_ENABLED.clone()))
         .unwrap();
-    REGISTRY.register(Box::new(VOLUME_METRIC_QUEUE_FOR_ENCRYPTION.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_QUEUE_FOR_ENCRYPTION.clone()))
+        .unwrap();
 
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SNAPLOCK_APPEND_MODE_ENABLED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SNAPLOCK_LITIGATION_COUNT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SNAPLOCK_IS_AUDIT_LOG.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SNAPLOCK_PRIVILEGED_DELETE_TYPE.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SNAPLOCK_TYPE.clone()))
+        .unwrap();
 
-    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_APPEND_MODE_ENABLED.clone())).unwrap();
-    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_LITIGATION_COUNT.clone())).unwrap();
-    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT.clone())).unwrap();
-    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_IS_AUDIT_LOG.clone())).unwrap();
-    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_PRIVILEGED_DELETE_TYPE.clone())).unwrap();
-    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_TYPE.clone())).unwrap();
-
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_MOVEMENT_PERCENT_COMPLETE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_MOVEMENT_CUTOVER_WINDOW.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_MOVEMENT_TIERING_POLICY.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_MOVEMENT_STATE.clone()))
+        .unwrap();
 }
 
 fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blocking::Client) {

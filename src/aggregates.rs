@@ -328,6 +328,7 @@ pub fn update_aggregates(
             let mut degraded: i64 = 0;
             let mut resynchronizing: i64 = 0;
             let mut failed: i64 = 0;
+            let mut ok: bool = true;
 
             match v.as_str() {
                 "unmirrored" => {
@@ -346,33 +347,40 @@ pub fn update_aggregates(
                     failed = 1;
                 }
                 _ => {
+                    ok = false;
                     error!(
                         "Unknown state for SyncMirror on aggregate {} of {}: {}",
                         aggr.name, filer.name, v
                     );
-                    continue;
                 }
             };
-            exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "unmirrored"])
-                .set(unmirrored);
-            exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "normal"])
-                .set(normal);
-            exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "degraded"])
-                .set(degraded);
-            exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
-                .with_label_values(&[
-                    &filer.name,
-                    &aggr.home_node.name,
-                    &aggr.name,
-                    "resynchronizing",
-                ])
-                .set(resynchronizing);
-            exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
-                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "failed"])
-                .set(failed);
+            if ok {
+                exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
+                    .with_label_values(&[
+                        &filer.name,
+                        &aggr.home_node.name,
+                        &aggr.name,
+                        "unmirrored",
+                    ])
+                    .set(unmirrored);
+                exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "normal"])
+                    .set(normal);
+                exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "degraded"])
+                    .set(degraded);
+                exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
+                    .with_label_values(&[
+                        &filer.name,
+                        &aggr.home_node.name,
+                        &aggr.name,
+                        "resynchronizing",
+                    ])
+                    .set(resynchronizing);
+                exporter::AGGREGATE_BLOCK_STORAGE_MIRROR_STATE
+                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "failed"])
+                    .set(failed);
+            }
         }
         debug!(
             "Updating metrics for aggregate state: {} {} {} -> {}",
@@ -388,6 +396,7 @@ pub fn update_aggregates(
         let mut inconsistent: i64 = 0;
         let mut failed: i64 = 0;
         let mut unknown: i64 = 0;
+        let mut ok: bool = true;
 
         match aggr.state.as_str() {
             "online" => {
@@ -421,49 +430,50 @@ pub fn update_aggregates(
                 unknown = 1;
             }
             _ => {
+                ok = false;
                 error!(
                     "Unknown aggregate state {} for aggregate {} on {}",
                     aggr.state, aggr.name, filer.name
                 );
-                continue;
             }
         };
-
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "online"])
-            .set(online);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "onlining"])
-            .set(onlining);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "offline"])
-            .set(offline);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "offlining"])
-            .set(offlining);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "relocating"])
-            .set(relocating);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "unmounted"])
-            .set(unmounted);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "restricted"])
-            .set(restricted);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[
-                &filer.name,
-                &aggr.home_node.name,
-                &aggr.name,
-                "inconsistent",
-            ])
-            .set(inconsistent);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "failed"])
-            .set(failed);
-        exporter::AGGREGATE_STATE
-            .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "unknown"])
-            .set(unknown);
+        if ok {
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "online"])
+                .set(online);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "onlining"])
+                .set(onlining);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "offline"])
+                .set(offline);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "offlining"])
+                .set(offlining);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "relocating"])
+                .set(relocating);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "unmounted"])
+                .set(unmounted);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "restricted"])
+                .set(restricted);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[
+                    &filer.name,
+                    &aggr.home_node.name,
+                    &aggr.name,
+                    "inconsistent",
+                ])
+                .set(inconsistent);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "failed"])
+                .set(failed);
+            exporter::AGGREGATE_STATE
+                .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name, "unknown"])
+                .set(unknown);
+        }
 
         if let Some(v) = aggr.metric {
             if v.status == "ok" {
@@ -471,6 +481,8 @@ pub fn update_aggregates(
                     "Updating metrics for aggregate metric duration: {} {} {} -> {}",
                     filer.name, aggr.home_node.name, aggr.name, v.duration
                 );
+                let mut ok: bool = true;
+
                 let duration: i64 = match v.duration.as_str() {
                     "PT15S" => 15,
                     "PT1D" => 86400,
@@ -479,16 +491,19 @@ pub fn update_aggregates(
                     "PT4M" => 240,
                     "PT5M" => 300,
                     _ => {
+                        ok = false;
                         error!(
                             "Invalid or unsupported sample duration {} for aggregate {} on {}",
                             v.duration, aggr.name, filer.name
                         );
-                        continue;
+                        -1
                     }
                 };
-                exporter::AGGREGATE_METRIC_SAMPLE_DURATION
-                    .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
-                    .set(duration);
+                if ok {
+                    exporter::AGGREGATE_METRIC_SAMPLE_DURATION
+                        .with_label_values(&[&filer.name, &aggr.home_node.name, &aggr.name])
+                        .set(duration);
+                }
 
                 debug!(
                     "Updating metrics for aggregate metric throughput read: {} {} {} -> {}",
