@@ -361,3 +361,10 @@ pub const METRIC_VOL_ENCRYPTION_STATE_NAME: &str = "netapp_volume_encryption_sta
 pub const METRIC_VOL_ENCRYPTION_STATE_HELP: &str = "Volume encryption state";
 pub const METRIC_VOL_ENCRYPTION_ENABLED_NAME: &str = "neapp_volume_encryption_enabled";
 pub const METRIC_VOL_ENCRYPTION_ENABLED_HELP: &str = "Volume encryption state";
+
+pub const METRIC_VOL_TIERING_POLICY_NAME: &str = "netapp_volume_tiering_policy_info";
+pub const METRIC_VOL_TIERING_POLICY_HELP: &str = "Policy that determines whether the user data blocks of a volume in a FabricPool will be tiered to the cloud store when they become cold";
+pub const METRIC_VOL_TIERING_SUPPORTED_NAME: &str = "netapp_volume_tiering_supported";
+pub const METRIC_VOL_TIERING_SUPPORTED_HELP: &str = "Whether or not FabricPools are selected when provisioning a FlexGroup without specifying aggregates.name or aggregates.uuid";
+pub const METRIC_VOL_TIERING_MIN_COOLING_DAYS_NAME: &str = "netapp_volume_tiering_min_cooling_days";
+pub const METRIC_VOL_TIERING_MIN_COOLING_DAYS_HELP: &str = "Minimum number of days that user data blocks of the volume must be cooled before they can be considered cold and tiered out to the cloud tier";

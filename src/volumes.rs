@@ -36,6 +36,14 @@ pub struct Volume {
     pub movement: Option<VolumeMovement>,
     pub style: Option<String>,
     pub encryption: Option<VolumeEncryption>,
+    pub tiering: Option<VolumeTiering>,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeTiering {
+    pub policy: String,
+    pub supported: Option<bool>,
+    pub min_cooling_days: Option<i64>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -1446,6 +1454,86 @@ pub fn update_volumes(
                     exporter::VOLUME_METRIC_ENCRYPTION_ENABLED
                         .with_label_values(&[&filer.name, &vol.name])
                         .set(0);
+                }
+            }
+
+            if let Some(tier) = vol.tiering {
+                debug!(
+                    "Updating metrics for volume tiering policy {} {} -> {}",
+                    filer.name, vol.name, tier.policy
+                );
+                let mut all: i64 = 0;
+                let mut auto: i64 = 0;
+                let mut backup: i64 = 0;
+                let mut none: i64 = 0;
+                let mut snapshot_only: i64 = 0;
+                let mut ok: bool = true;
+                match tier.policy.as_str() {
+                    "all" => {
+                        all = 1;
+                    }
+                    "auto" => {
+                        auto = 1;
+                    }
+                    "backup" => {
+                        backup = 1;
+                    }
+                    "none" => {
+                        none = 1;
+                    }
+                    "snapshot_only" => {
+                        snapshot_only = 1;
+                    }
+                    _ => {
+                        error!(
+                            "Invalid value {} for volume tiering policy for volume {} on filer {}",
+                            filer.name, vol.name, tier.policy
+                        );
+                        ok = false;
+                    }
+                };
+                if ok {
+                    exporter::VOLUME_METRIC_TIERING_POLICY
+                        .with_label_values(&[&filer.name, &vol.name, "all"])
+                        .set(all);
+                    exporter::VOLUME_METRIC_TIERING_POLICY
+                        .with_label_values(&[&filer.name, &vol.name, "auto"])
+                        .set(auto);
+                    exporter::VOLUME_METRIC_TIERING_POLICY
+                        .with_label_values(&[&filer.name, &vol.name, "backup"])
+                        .set(backup);
+                    exporter::VOLUME_METRIC_TIERING_POLICY
+                        .with_label_values(&[&filer.name, &vol.name, "none"])
+                        .set(none);
+                    exporter::VOLUME_METRIC_TIERING_POLICY
+                        .with_label_values(&[&filer.name, &vol.name, "snapshot_only"])
+                        .set(snapshot_only);
+                }
+
+                if let Some(spt) = tier.supported {
+                    debug!(
+                        "Updating volume metrics tiering supported {} {} -> {}",
+                        filer.name, vol.name, spt
+                    );
+                    if spt {
+                        exporter::VOLUME_METRIC_TIERING_SUPPORTED
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(1);
+                    } else {
+                        exporter::VOLUME_METRIC_TIERING_SUPPORTED
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(0);
+                    }
+                }
+
+                if let Some(min) = tier.min_cooling_days {
+                    debug!(
+                        "Updating metrics for volume tiering min_cooling_days {} {} -> {}",
+                        filer.name, vol.name, min
+                    );
+                    exporter::VOLUME_METRIC_TIERING_MIN_COOLING_DAYS
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(min);
                 }
             }
         }

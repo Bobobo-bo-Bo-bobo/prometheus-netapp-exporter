@@ -420,6 +420,19 @@ lazy_static! {
         Opts::new(constants::METRIC_VOL_ENCRYPTION_ENABLED_NAME, constants::METRIC_VOL_ENCRYPTION_ENABLED_HELP),
         &["filer", "volume"],
     ).unwrap();
+
+    pub static ref VOLUME_METRIC_TIERING_POLICY: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_TIERING_POLICY_NAME, constants::METRIC_VOL_TIERING_POLICY_HELP),
+        &["filer", "volume", "policy"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_TIERING_SUPPORTED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_TIERING_SUPPORTED_NAME, constants::METRIC_VOL_TIERING_SUPPORTED_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_TIERING_MIN_COOLING_DAYS: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_TIERING_MIN_COOLING_DAYS_NAME, constants::METRIC_VOL_TIERING_MIN_COOLING_DAYS_HELP),
+        &["filer", "volume"],
+    ).unwrap();
 }
 
 pub fn register_metrics() {
@@ -740,6 +753,16 @@ pub fn register_metrics() {
         .unwrap();
     REGISTRY
         .register(Box::new(VOLUME_METRIC_ENCRYPTION_ENABLED.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_TIERING_POLICY.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_TIERING_SUPPORTED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_TIERING_MIN_COOLING_DAYS.clone()))
         .unwrap();
 }
 
