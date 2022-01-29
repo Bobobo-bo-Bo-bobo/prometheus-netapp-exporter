@@ -720,7 +720,7 @@ pub fn update_volumes(
                     _ => {
                         ok = false;
                         error!(
-                            "Invalid or unsupported sample duration {} for aggregate {} on {}",
+                            "Invalid or unsupported sample duration {} for volume {} on {}",
                             v.duration, vol.name, filer.name
                         );
                         -1
@@ -845,7 +845,7 @@ pub fn update_volumes(
                             _ => {
                                 ok = false;
                                 error!(
-                                    "Invalid or unsupported sample cloud storage duration {} for aggregate {} on {}",
+                                    "Invalid or unsupported sample cloud storage duration {} for volume {} on {}",
                                     vc.duration, vol.name, filer.name
                                 );
                                 -1
@@ -942,7 +942,7 @@ pub fn update_volumes(
                             _ => {
                                 ok = false;
                                 error!(
-                                    "Invalid or unsupported sample flexcache duration {} for aggregate {} on {}",
+                                    "Invalid or unsupported sample flexcache duration {} for volume {} on {}",
                                     vf.duration, vol.name, filer.name
                                 );
                                 -1
