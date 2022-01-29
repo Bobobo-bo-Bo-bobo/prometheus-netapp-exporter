@@ -31,6 +31,19 @@ pub struct Volume {
     pub efficiency: Option<VolumeEfficiency>,
     pub metric: Option<storage_metrics::StorageMetric>,
     pub access_time_enabled: Option<bool>,
+    pub queue_for_encryption: Option<bool>,
+    pub snaplock: Option<VolumeSnaplock>
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeSnaplock {
+    pub append_mode_enabled: Option<bool>,
+    pub litigation_count: Option<i64>,
+    pub unspecified_retention_file_count: Option<i64>,
+    pub is_audit_log: Option<bool>,
+    pub privileged_delete: Option<String>,
+    #[serde(rename = "type")]
+    pub snaplock_type: String,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -247,6 +260,7 @@ pub fn update_volumes(
                 .with_label_values(&[&filer.name, &vol.name])
                 .set(v.grow_threshold);
         }
+
         if let Some(v) = vol.is_object_store {
             debug!(
                 "Updating metrics for volume is_object_store {} {} -> {}",
@@ -262,6 +276,7 @@ pub fn update_volumes(
                     .set(0);
             }
         }
+
         if let Some(v) = vol.aggregates {
             debug!(
                 "Updating metrics for volume aggregates {} {} -> {}",
@@ -273,6 +288,7 @@ pub fn update_volumes(
                 .with_label_values(&[&filer.name, &vol.name])
                 .set(v.len() as i64);
         }
+
         if let Some(v) = vol.flexcache_endpoint_type {
             let mut none: i64 = 0;
             let mut cache: i64 = 0;
@@ -310,6 +326,7 @@ pub fn update_volumes(
                 .with_label_values(&[&filer.name, &vol.name, "origin"])
                 .set(origin);
         }
+
         if let Some(v) = vol.vol_type {
             let mut rw: i64 = 0;
             let mut dp: i64 = 0;
@@ -347,6 +364,7 @@ pub fn update_volumes(
                 .with_label_values(&[&filer.name, &vol.name, "ls"])
                 .set(ls);
         }
+
         if let Some(v) = vol.cloud_retrieval_policy {
             let mut default: i64 = 0;
             let mut on_read: i64 = 0;
@@ -391,6 +409,7 @@ pub fn update_volumes(
                 .with_label_values(&[&filer.name, &vol.name, "promote"])
                 .set(promote);
         }
+
         if let Some(v) = vol.quota {
             debug!(
                 "Updating metrics for volume quota state {} {} -> {}",
@@ -448,6 +467,7 @@ pub fn update_volumes(
                 .with_label_values(&[&filer.name, &vol.name, "resizing"])
                 .set(resizing);
         }
+
         if let Some(v) = vol.efficiency {
             if let Some(c) = v.compression {
                 let mut inline: i64 = 0;
@@ -636,6 +656,7 @@ pub fn update_volumes(
                     .set(mixed);
             }
         }
+
         if let Some(v) = vol.metric {
             if v.status == "ok" {
                 debug!(
@@ -885,6 +906,7 @@ pub fn update_volumes(
                 warn!("Skipping metrics from volume {} on {} because metric state was reported as \"{}\" instead of \"ok\"", vol.name, filer.name, v.status);
             }
         }
+
         if let Some(v) = vol.access_time_enabled {
             debug!(
                 "Updating metrics for volume access_time_enabled {} {} -> {}",
@@ -898,6 +920,94 @@ pub fn update_volumes(
                 exporter::VOLUME_METRIC_ACCESS_TIME_ENABLED
                     .with_label_values(&[&filer.name, &vol.name])
                     .set(0);
+            }
+        }
+
+        if let Some(v) = vol.queue_for_encryption {
+            debug!("Updating metrics for volume queue_for_encryption {} {} -> {}", filer.name, vol.name, v);
+            if v {
+                exporter::VOLUME_METRIC_QUEUE_FOR_ENCRYPTION.with_label_values(&[&filer.name, &vol.name]).set(1);
+            } else {
+                exporter::VOLUME_METRIC_QUEUE_FOR_ENCRYPTION.with_label_values(&[&filer.name, &vol.name]).set(0);
+            }
+        }
+
+        if let Some(v) = vol.snaplock {
+
+            debug!("Updating metrics for volume snaplock type {} {} -> {}", filer.name, vol.name, v.snaplock_type);
+            let mut compliance: i64 = 0;
+            let mut enterprise: i64 = 0;
+            let mut non_snaplock: i64 = 0;
+            match v.snaplock_type.as_str() {
+                "compliance" => {
+                    compliance = 1;
+                },
+                "enterprise" => {
+                    enterprise = 1;
+                },
+                "non_snaplock" => {
+                    non_snaplock = 1;
+                },
+                _ => {
+                    error!("Invalid snaplock type {} on volume {} of filer {}", v.snaplock_type, vol.name, filer.name);
+                    continue;
+                }
+            };
+            exporter::VOLUME_METRIC_SNAPLOCK_TYPE.with_label_values(&[&filer.name, &vol.name, "compliance"]).set(compliance);
+            exporter::VOLUME_METRIC_SNAPLOCK_TYPE.with_label_values(&[&filer.name, &vol.name, "enterprise"]).set(enterprise);
+            exporter::VOLUME_METRIC_SNAPLOCK_TYPE.with_label_values(&[&filer.name, &vol.name, "non_snaplock"]).set(non_snaplock);
+
+            if let Some(am) = v.append_mode_enabled {
+                debug!("Updating metrics for volume snaplock append_mode_enabled {} {} -> {}", filer.name, vol.name, am);
+                if am {
+                    exporter::VOLUME_METRIC_SNAPLOCK_APPEND_MODE_ENABLED.with_label_values(&[&filer.name, &vol.name]).set(1);
+                } else {
+                    exporter::VOLUME_METRIC_SNAPLOCK_APPEND_MODE_ENABLED.with_label_values(&[&filer.name, &vol.name]).set(0);
+                }
+            }
+
+            if let Some(lc) = v.litigation_count {
+                debug!("Updating metrics for volume snaplock litigation_count {} {} -> {}", filer.name, vol.name, lc);
+                exporter::VOLUME_METRIC_SNAPLOCK_LITIGATION_COUNT.with_label_values(&[&filer.name, &vol.name]).set(lc);
+            }
+
+            if let Some(urfc) = v.unspecified_retention_file_count {
+                debug!("Updating metrics for volume snaplock unspecified_retention_file_count {} {} -> {}", filer.name, vol.name, urfc);
+                exporter::VOLUME_METRIC_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT.with_label_values(&[&filer.name, &vol.name]).set(urfc);
+            }
+
+            if let Some(al) = v.is_audit_log {
+                debug!("Updating metrics for volume snaplock is_audit_log {} {} -> {}", filer.name, vol.name, al);
+                if al {
+                    exporter::VOLUME_METRIC_SNAPLOCK_IS_AUDIT_LOG.with_label_values(&[&filer.name, &vol.name]).set(1);
+                } else {
+                    exporter::VOLUME_METRIC_SNAPLOCK_IS_AUDIT_LOG.with_label_values(&[&filer.name, &vol.name]).set(0);
+                }
+            }
+
+            if let Some(pd) = v.privileged_delete {
+                debug!("Updating metrics for volume snaplock privileged_delete {} {} -> {}", filer.name, vol.name, pd);
+                let mut disabled: i64 = 0;
+                let mut enabled: i64 = 0;
+                let mut permanently_disabled: i64 = 0;
+                match pd.as_str() {
+                    "disabled" => {
+                        disabled = 1;
+                    },
+                    "enabled" => {
+                        enabled = 1;
+                    },
+                    "permanently_disabled" => {
+                        permanently_disabled = 1;
+                    },
+                    _ => {
+                        error!("Invalid snaplock privileged_delete value {} on volume {} of filer {}", pd, vol.name, filer.name);
+                        continue;
+                    }
+                };
+                exporter::VOLUME_METRIC_SNAPLOCK_PRIVILEGED_DELETE_TYPE.with_label_values(&[&filer.name, &vol.name, "disabled"]).set(disabled);
+                exporter::VOLUME_METRIC_SNAPLOCK_PRIVILEGED_DELETE_TYPE.with_label_values(&[&filer.name, &vol.name, "enabled"]).set(enabled);
+                exporter::VOLUME_METRIC_SNAPLOCK_PRIVILEGED_DELETE_TYPE.with_label_values(&[&filer.name, &vol.name, "permanently_disabled"]).set(permanently_disabled);
             }
         }
     }

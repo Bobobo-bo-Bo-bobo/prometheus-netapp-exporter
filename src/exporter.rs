@@ -355,6 +355,36 @@ lazy_static! {
         Opts::new(constants::METRIC_VOL_ACCESS_TIME_ENABLED_NAME, constants::METRIC_VOL_ACCESS_TIME_ENABLED_HELP),
         &["filer", "volume"],
     ).unwrap();
+
+    pub static ref VOLUME_METRIC_QUEUE_FOR_ENCRYPTION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_QUEUE_FOR_ENCRYPTION_NAME, constants::METRIC_VOL_QUEUE_FOR_ENCRYPTION_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_SNAPLOCK_APPEND_MODE_ENABLED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_SNAPLOCK_APPEND_MODE_ENABLED_NAME, constants::METRIC_VOL_SNAPLOCK_APPEND_MODE_ENABLED_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_SNAPLOCK_LITIGATION_COUNT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_SNAPLOCK_LITIGATION_COUNT_NAME, constants::METRIC_VOL_SNAPLOCK_LITIGATION_COUNT_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT_NAME, constants::METRIC_VOL_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_SNAPLOCK_IS_AUDIT_LOG: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_SNAPLOCK_IS_AUDIT_LOG_NAME, constants::METRIC_VOL_SNAPLOCK_IS_AUDIT_LOG_HELP),
+        &["filter", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_SNAPLOCK_PRIVILEGED_DELETE_TYPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_SNAPLOCK_PRIVILEGED_DELETE_NAME, constants::METRIC_VOL_SNAPLOCK_PRIVILEGED_DELETE_HELP),
+        &["filter", "volume", "type"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_SNAPLOCK_TYPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_SNAPLOCK_TYPE_NAME, constants::METRIC_VOL_SNAPLOCK_TYPE_HELP),
+        &["filter", "volume", "type"],
+    ).unwrap();
 }
 
 pub fn register_metrics() {
@@ -624,6 +654,16 @@ pub fn register_metrics() {
     REGISTRY
         .register(Box::new(VOLUME_METRIC_ACCESS_TIME_ENABLED.clone()))
         .unwrap();
+    REGISTRY.register(Box::new(VOLUME_METRIC_QUEUE_FOR_ENCRYPTION.clone())).unwrap();
+
+
+    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_APPEND_MODE_ENABLED.clone())).unwrap();
+    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_LITIGATION_COUNT.clone())).unwrap();
+    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_UNSPECIFIED_RETENTION_FILE_COUNT.clone())).unwrap();
+    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_IS_AUDIT_LOG.clone())).unwrap();
+    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_PRIVILEGED_DELETE_TYPE.clone())).unwrap();
+    REGISTRY.register(Box::new(VOLUME_METRIC_SNAPLOCK_TYPE.clone())).unwrap();
+
 }
 
 fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blocking::Client) {
