@@ -351,3 +351,13 @@ pub const METRIC_VOL_MOVEMENT_TIERING_POLICY_NAME: &str =
 pub const METRIC_VOL_MOVEMENT_TIERING_POLICY_HELP: &str = "Tiering policy for FabricPool";
 pub const METRIC_VOL_MOVEMENT_STATE_NAME: &str = "netapp_volume_movement_state_info";
 pub const METRIC_VOL_MOVEMENT_STATE_HELP: &str = "State of volume move operation";
+
+pub const METRIC_VOL_STYLE_NAME: &str = "netapp_volume_style";
+pub const METRIC_VOL_STYLE_HELP: &str = "The style of the volume";
+
+pub const METRIC_VOL_ENCRYPTION_TYPE_NAME: &str = "netapp_volume_encryption_type_info";
+pub const METRIC_VOL_ENCRYPTION_TYPE_HELP: &str = "Volume encryption type";
+pub const METRIC_VOL_ENCRYPTION_STATE_NAME: &str = "netapp_volume_encryption_state_info";
+pub const METRIC_VOL_ENCRYPTION_STATE_HELP: &str = "Volume encryption state";
+pub const METRIC_VOL_ENCRYPTION_ENABLED_NAME: &str = "neapp_volume_encryption_enabled";
+pub const METRIC_VOL_ENCRYPTION_ENABLED_HELP: &str = "Volume encryption state";

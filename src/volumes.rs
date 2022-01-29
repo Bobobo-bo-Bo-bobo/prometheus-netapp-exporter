@@ -34,6 +34,23 @@ pub struct Volume {
     pub queue_for_encryption: Option<bool>,
     pub snaplock: Option<VolumeSnaplock>,
     pub movement: Option<VolumeMovement>,
+    pub style: Option<String>,
+    pub encryption: Option<VolumeEncryption>,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeEncryption {
+    pub status: Option<VolumeEncryptionStatus>,
+    #[serde(rename = "type")]
+    pub enc_type: Option<String>,
+    pub state: Option<String>,
+    pub enabled: bool,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeEncryptionStatus {
+    pub message: Option<String>,
+    pub key_id: Option<String>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -1282,6 +1299,153 @@ pub fn update_volumes(
                             .with_label_values(&[&filer.name, &vol.name, "success"])
                             .set(success);
                     }
+                }
+            }
+
+            if let Some(v) = vol.style {
+                debug!(
+                    "Updating metrics for volume style {} {} -> {}",
+                    filer.name, vol.name, v
+                );
+                let mut ok: bool = true;
+                let mut flexvol: i64 = 0;
+                let mut flexgroup: i64 = 0;
+
+                match v.as_str() {
+                    "flexvol" => {
+                        flexvol = 1;
+                    }
+                    "flexgroup" => {
+                        flexgroup = 1;
+                    }
+                    _ => {
+                        ok = false;
+                        error!(
+                            "Invalid value {} for volume style for volume {} on filer {}",
+                            v, vol.name, filer.name
+                        );
+                    }
+                };
+
+                if ok {
+                    exporter::VOLUME_METRIC_STYLE
+                        .with_label_values(&[&filer.name, &vol.name, "flexvol"])
+                        .set(flexvol);
+                    exporter::VOLUME_METRIC_STYLE
+                        .with_label_values(&[&filer.name, &vol.name, "flexgroup"])
+                        .set(flexgroup);
+                }
+            }
+
+            if let Some(enc) = vol.encryption {
+                if let Some(tpe) = enc.enc_type {
+                    let mut none: i64 = 0;
+                    let mut volume: i64 = 0;
+                    let mut aggregate: i64 = 0;
+                    let mut ok: bool = true;
+
+                    debug!(
+                        "Updating metrics for volume enryption type {} {} -> {}",
+                        filer.name, vol.name, tpe
+                    );
+                    match tpe.as_str() {
+                        "none" => {
+                            none = 1;
+                        }
+                        "volume" => {
+                            volume = 1;
+                        }
+                        "aggregate" => {
+                            aggregate = 1;
+                        }
+                        _ => {
+                            error!(
+                                "Invalid value {} for encryption type for volume {} on filer {}",
+                                tpe, vol.name, filer.name
+                            );
+                            ok = false;
+                        }
+                    };
+                    if ok {
+                        exporter::VOLUME_METRIC_ENCRYPTION_TYPE
+                            .with_label_values(&[&filer.name, &vol.name, "none"])
+                            .set(none);
+                        exporter::VOLUME_METRIC_ENCRYPTION_TYPE
+                            .with_label_values(&[&filer.name, &vol.name, "volume"])
+                            .set(volume);
+                        exporter::VOLUME_METRIC_ENCRYPTION_TYPE
+                            .with_label_values(&[&filer.name, &vol.name, "aggregate"])
+                            .set(aggregate);
+                    }
+                }
+
+                if let Some(state) = enc.state {
+                    let mut encrypted: i64 = 0;
+                    let mut encrypting: i64 = 0;
+                    let mut partial: i64 = 0;
+                    let mut rekeying: i64 = 0;
+                    let mut unencrypted: i64 = 0;
+                    let mut ok: bool = true;
+
+                    debug!(
+                        "Updating metrics for volume encryption state {} {} -> {}",
+                        filer.name, vol.name, state
+                    );
+                    match state.as_str() {
+                        "encrypted" => {
+                            encrypted = 1;
+                        }
+                        "encrypting" => {
+                            encrypting = 1;
+                        }
+                        "partial" => {
+                            partial = 1;
+                        }
+                        "rekeying" => {
+                            rekeying = 1;
+                        }
+                        "unencrypted" => {
+                            unencrypted = 1;
+                        }
+                        _ => {
+                            error!(
+                                "Invalid value {} for encryption state for volume {} on filer {}",
+                                state, vol.name, filer.name
+                            );
+                            ok = false;
+                        }
+                    };
+                    if ok {
+                        exporter::VOLUME_METRIC_ENCRYPTION_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "encrypted"])
+                            .set(encrypted);
+                        exporter::VOLUME_METRIC_ENCRYPTION_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "encrypting"])
+                            .set(encrypting);
+                        exporter::VOLUME_METRIC_ENCRYPTION_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "partial"])
+                            .set(partial);
+                        exporter::VOLUME_METRIC_ENCRYPTION_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "rekeying"])
+                            .set(rekeying);
+                        exporter::VOLUME_METRIC_ENCRYPTION_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "unencrypted"])
+                            .set(unencrypted);
+                    }
+                }
+
+                debug!(
+                    "Updating metrics for volume encryption enabled {} {} -> {}",
+                    filer.name, vol.name, enc.enabled
+                );
+                if enc.enabled {
+                    exporter::VOLUME_METRIC_ENCRYPTION_ENABLED
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(1);
+                } else {
+                    exporter::VOLUME_METRIC_ENCRYPTION_ENABLED
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(0);
                 }
             }
         }

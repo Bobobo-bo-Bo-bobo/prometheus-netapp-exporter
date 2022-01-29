@@ -403,6 +403,23 @@ lazy_static! {
         &["filer", "volume", "state"],
     ).unwrap();
 
+    pub static ref VOLUME_METRIC_STYLE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_STYLE_NAME, constants::METRIC_VOL_STYLE_HELP),
+        &["filer", "volume", "style"],
+    ).unwrap();
+
+    pub static ref VOLUME_METRIC_ENCRYPTION_TYPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_ENCRYPTION_TYPE_NAME, constants::METRIC_VOL_ENCRYPTION_TYPE_HELP),
+        &["filer", "volume", "type"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_ENCRYPTION_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_ENCRYPTION_STATE_NAME, constants::METRIC_VOL_ENCRYPTION_STATE_HELP),
+        &["filer", "volume", "state"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_ENCRYPTION_ENABLED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_ENCRYPTION_ENABLED_NAME, constants::METRIC_VOL_ENCRYPTION_ENABLED_HELP),
+        &["filer", "volume"],
+    ).unwrap();
 }
 
 pub fn register_metrics() {
@@ -710,6 +727,19 @@ pub fn register_metrics() {
         .unwrap();
     REGISTRY
         .register(Box::new(VOLUME_METRIC_MOVEMENT_STATE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_STYLE.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_ENCRYPTION_TYPE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_ENCRYPTION_STATE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_ENCRYPTION_ENABLED.clone()))
         .unwrap();
 }
 
