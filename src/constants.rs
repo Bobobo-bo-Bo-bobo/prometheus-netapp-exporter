@@ -368,3 +368,64 @@ pub const METRIC_VOL_TIERING_SUPPORTED_NAME: &str = "netapp_volume_tiering_suppo
 pub const METRIC_VOL_TIERING_SUPPORTED_HELP: &str = "Whether or not FabricPools are selected when provisioning a FlexGroup without specifying aggregates.name or aggregates.uuid";
 pub const METRIC_VOL_TIERING_MIN_COOLING_DAYS_NAME: &str = "netapp_volume_tiering_min_cooling_days";
 pub const METRIC_VOL_TIERING_MIN_COOLING_DAYS_HELP: &str = "Minimum number of days that user data blocks of the volume must be cooled before they can be considered cold and tiered out to the cloud tier";
+
+pub const METRIC_VOL_SPACE_BLOCKSTORAGE_INACTIVE_USER_DATA_NAME: &str =
+    "netapp_volume_space_blockstorage_inactive_user_data_bytes";
+pub const METRIC_VOL_SPACE_BLOCKSTORAGE_INACTIVE_USER_DATA_HELP: &str = "The size that is physically used in the block storage of the volume and has a cold temperature";
+pub const METRIC_VOL_SPACE_OVER_PROVISIONED_NAME: &str =
+    "netapp_volume_space_over_provisioned_bytes";
+pub const METRIC_VOL_SPACE_OVER_PROVISIONED_HELP: &str =
+    "The amount of space not available for this volume in the aggregate, in bytes";
+pub const METRIC_VOL_SPACE_PERFORMANCE_TIER_FOOTPRINT_NAME: &str =
+    "netapp_volume_space_performance_tier_footprint_bytes";
+pub const METRIC_VOL_SPACE_PERFORMANCE_TIER_FOOTPRINT_HELP: &str =
+    "Space used by the performance tier for this volume in the FabricPool aggregate, in bytes";
+pub const METRIC_VOL_SPACE_FOOTPRINT_NAME: &str = "netapp_volume_space_footprint_bytes";
+pub const METRIC_VOL_SPACE_FOOTPRINT_HELP: &str = "Data used for this volume in the aggregate";
+pub const METRIC_VOL_SPACE_CAPACITY_TIER_FOOTPRINT_NAME: &str =
+    "netapp_volume_space_capacity_tier_footprint_bytes";
+pub const METRIC_VOL_SPACE_CAPACITY_TIER_FOOTPRINT_HELP: &str =
+    "Space used by capacity tier for this volume in the FabricPool aggregate";
+pub const METRIC_VOL_SPACE_TOTAL_FOOTPRINT_NAME: &str = "netapp_volume_space_total_footprint_bytes";
+pub const METRIC_VOL_SPACE_TOTAL_FOOTPRINT_HELP: &str =
+    "Data and metadata used for this volume in the aggregate";
+pub const METRIC_VOL_SPACE_SIZE_NAME: &str = "netapp_volume_space_size_bytes";
+pub const METRIC_VOL_SPACE_SIZE_HELP: &str = "Total provisioned size";
+pub const METRIC_VOL_SPACE_LOGICAL_SPACE_REPORTING_NAME: &str =
+    "netapp_volume_space_logical_space_reporting_enabled";
+pub const METRIC_VOL_SPACE_LOGICAL_SPACE_REPORTING_HELP: &str =
+    "Whether space reporting on the volume is done along with storage efficiency";
+pub const METRIC_VOL_SPACE_LOGICAL_SPACE_ENFORCEMENT_NAME: &str =
+    "netapp_volume_space_logical_space_enforcement_enabled";
+pub const METRIC_VOL_SPACE_LOGICAL_SPACE_ENFORCEMENT_HELP: &str =
+    "Whether space accounting for operations on the volume is done along with storage efficiency";
+pub const METRIC_VOL_SPACE_LOGICAL_SPACE_USED_BY_AFS_NAME: &str =
+    "netapp_volume_space_logical_space_used_by_afs_bytes";
+pub const METRIC_VOL_SPACE_LOGICAL_SPACE_USED_BY_AFS_HELP: &str = "The virtual space used by AFS alone (includes volume reserves) and along with storage efficiency";
+pub const METRIC_VOL_SPACE_LOGICAL_SPACE_AVAILABLE_NAME: &str =
+    "netapp_volume_space_logical_space_available_bytes";
+pub const METRIC_VOL_SPACE_LOGICAL_SPACE_AVAILABLE_HELP: &str =
+    "The amount of space available in this volume with storage efficiency space considered used";
+pub const METRIC_VOL_SPACE_USED_NAME: &str = "netapp_volume_space_used_bytes";
+pub const METRIC_VOL_SPACE_USED_HELP: &str =
+    "The virtual space used (includes volume reserves) before storage efficiency";
+pub const METRIC_VOL_SPACE_SNAPSHOT_AUTODELETE_ENABLED_NAME: &str =
+    "netapp_volume_space_snapshot_autodalete_enabled";
+pub const METRIC_VOL_SPACE_SNAPSHOT_AUTODELETE_ENABLED_HELP: &str =
+    "Whether Snapshot copy autodelete is currently enabled on this volume";
+pub const METRIC_VOL_SPACE_SNAPSHOT_USED_NAME: &str = "netapp_volume_space_snapshot_used_bytes";
+pub const METRIC_VOL_SPACE_SNAPSHOT_USED_HELP: &str =
+    "The total space used by Snapshot copies in the volume";
+pub const METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_NAME: &str =
+    "netapp_volume_space_snapshot_reserve_percent";
+pub const METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_HELPE: &str =
+    "The space that has been set aside as a reserve for Snapshot copy usage";
+pub const METRIC_VOL_SPACE_METADATA_NAME: &str = "netapp_volume_space_metadata_bytes";
+pub const METRIC_VOL_SPACE_METADATA_HELP: &str =
+    "Space used by the volume metadata in the aggregate";
+pub const METRIC_VOL_SPACE_AVAILABLE_NAME: &str = "netapp_volume_space_available_bytes";
+pub const METRIC_VOL_SPACE_AVAILABLE_HELP: &str = "The available space";
+pub const METRIC_VOL_SPACE_LOCAL_TIER_FOOTPRINT_NAME: &str =
+    "netapp_volume_space_local_tier_footprint_bytes";
+pub const METRIC_VOL_SPACE_LOCAL_TIER_FOOTPRINT_HELP: &str =
+    "Space used by the local tier for this volume in the aggregate";

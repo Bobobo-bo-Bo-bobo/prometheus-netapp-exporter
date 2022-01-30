@@ -435,6 +435,158 @@ lazy_static! {
     ).unwrap();
 }
 
+// NOTE: macro split is required to suppress the "recursion limit reached while expanding `__lazy_static_internal!`" error
+lazy_static! {
+    pub static ref VOLUME_METRIC_SPACE_BLOCK_STORAGE_INACTIVE_USER_DATA: IntGaugeVec =
+        IntGaugeVec::new(
+            Opts::new(
+                constants::METRIC_VOL_SPACE_BLOCKSTORAGE_INACTIVE_USER_DATA_NAME,
+                constants::METRIC_VOL_SPACE_BLOCKSTORAGE_INACTIVE_USER_DATA_HELP
+            ),
+            &["filer", "volume"],
+        )
+        .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_OVER_PROVISIONED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_OVER_PROVISIONED_NAME,
+            constants::METRIC_VOL_SPACE_OVER_PROVISIONED_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_PERFORMANCE_TIER_FOOTPRINT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_PERFORMANCE_TIER_FOOTPRINT_NAME,
+            constants::METRIC_VOL_SPACE_PERFORMANCE_TIER_FOOTPRINT_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_FOOTPRINT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_FOOTPRINT_NAME,
+            constants::METRIC_VOL_SPACE_FOOTPRINT_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_CAPACITY_TIER_FOOTPRINT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_CAPACITY_TIER_FOOTPRINT_NAME,
+            constants::METRIC_VOL_SPACE_CAPACITY_TIER_FOOTPRINT_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_TOTAL_FOOTPRINT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_TOTAL_FOOTPRINT_NAME,
+            constants::METRIC_VOL_SPACE_TOTAL_FOOTPRINT_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_SIZE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_SIZE_NAME,
+            constants::METRIC_VOL_SPACE_SIZE_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_LOGICAL_SPACE_REPORTING: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_LOGICAL_SPACE_REPORTING_NAME,
+            constants::METRIC_VOL_SPACE_LOGICAL_SPACE_REPORTING_HELP
+        ),
+        &["filer", "volume",]
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_LOGICAL_SPACE_ENFORCMENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_LOGICAL_SPACE_ENFORCEMENT_NAME,
+            constants::METRIC_VOL_SPACE_LOGICAL_SPACE_ENFORCEMENT_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_LOGICAL_SPACE_USED_BY_AFS: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_LOGICAL_SPACE_USED_BY_AFS_NAME,
+            constants::METRIC_VOL_SPACE_LOGICAL_SPACE_USED_BY_AFS_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_LOGICAL_SPACE_AVAILABLE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_LOGICAL_SPACE_AVAILABLE_NAME,
+            constants::METRIC_VOL_SPACE_LOGICAL_SPACE_AVAILABLE_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_USED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_USED_NAME,
+            constants::METRIC_VOL_SPACE_USED_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_SNAPSHOT_AUTODELETE_ENABLED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_SNAPSHOT_AUTODELETE_ENABLED_NAME,
+            constants::METRIC_VOL_SPACE_SNAPSHOT_AUTODELETE_ENABLED_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_SNAPSHOT_USED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_SNAPSHOT_USED_NAME,
+            constants::METRIC_VOL_SPACE_SNAPSHOT_USED_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_SNAPSHOT_RESERVE_PERCENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_NAME,
+            constants::METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_HELPE
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_METADATA: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_METADATA_NAME,
+            constants::METRIC_VOL_SPACE_METADATA_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_AVAILABLE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_AVAILABLE_NAME,
+            constants::METRIC_VOL_SPACE_AVAILABLE_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SPACE_LOCAL_TIER_FOOTPRINT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SPACE_LOCAL_TIER_FOOTPRINT_NAME,
+            constants::METRIC_VOL_SPACE_LOCAL_TIER_FOOTPRINT_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+}
+
+/*
+*/
+
 pub fn register_metrics() {
     REGISTRY
         .register(Box::new(AGGREGATE_FOOTPRINT.clone()))
@@ -763,6 +915,79 @@ pub fn register_metrics() {
         .unwrap();
     REGISTRY
         .register(Box::new(VOLUME_METRIC_TIERING_MIN_COOLING_DAYS.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_BLOCK_STORAGE_INACTIVE_USER_DATA.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SPACE_OVER_PROVISIONED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_PERFORMANCE_TIER_FOOTPRINT.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SPACE_FOOTPRINT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_CAPACITY_TIER_FOOTPRINT.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SPACE_TOTAL_FOOTPRINT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SPACE_SIZE.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_LOGICAL_SPACE_REPORTING.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_LOGICAL_SPACE_ENFORCMENT.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_LOGICAL_SPACE_USED_BY_AFS.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_LOGICAL_SPACE_AVAILABLE.clone(),
+        ))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_SNAPSHOT_AUTODELETE_ENABLED.clone(),
+        ))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SPACE_SNAPSHOT_USED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(
+            VOLUME_METRIC_SPACE_SNAPSHOT_RESERVE_PERCENT.clone(),
+        ))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SPACE_METADATA.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SPACE_AVAILABLE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SPACE_LOCAL_TIER_FOOTPRINT.clone()))
         .unwrap();
 }
 

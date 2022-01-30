@@ -37,6 +37,39 @@ pub struct Volume {
     pub style: Option<String>,
     pub encryption: Option<VolumeEncryption>,
     pub tiering: Option<VolumeTiering>,
+    pub space: Option<VolumeSpace>,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeSpace {
+    pub block_storage_inactive_user_data: Option<i64>,
+    pub over_provisioned: Option<i64>,
+    pub performance_tier_footprint: Option<i64>,
+    pub footprint: Option<i64>,
+    pub capacity_tier_footprint: Option<i64>,
+    pub total_footprint: Option<i64>,
+    pub size: i64,
+    pub logical_space: Option<VolumeSpaceLogicalSpace>,
+    pub used: i64,
+    pub snapshot: Option<VolumeSpaceSnapshot>,
+    pub metadata: Option<i64>,
+    pub available: i64,
+    pub local_tier_footprint: Option<i64>,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeSpaceSnapshot {
+    pub autodelete_enabled: bool,
+    pub used: i64,
+    pub reserve_percent: i64,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeSpaceLogicalSpace {
+    pub reporting: Option<bool>,
+    pub enforcement: Option<bool>,
+    pub used_by_afs: Option<i64>,
+    pub available: Option<i64>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -1534,6 +1567,181 @@ pub fn update_volumes(
                     exporter::VOLUME_METRIC_TIERING_MIN_COOLING_DAYS
                         .with_label_values(&[&filer.name, &vol.name])
                         .set(min);
+                }
+            }
+
+            if let Some(space) = vol.space {
+                if let Some(bs) = space.block_storage_inactive_user_data {
+                    debug!("Updating metrics for volume space block_storage_inactive_user_data {} {} -> {}", filer.name, vol.name, bs);
+                    exporter::VOLUME_METRIC_SPACE_BLOCK_STORAGE_INACTIVE_USER_DATA
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(bs);
+                }
+                if let Some(op) = space.over_provisioned {
+                    debug!(
+                        "Updating metrics for volumme space over_provisioned {} {} -> {}",
+                        filer.name, vol.name, op
+                    );
+                    exporter::VOLUME_METRIC_SPACE_OVER_PROVISIONED
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(op);
+                }
+                if let Some(pt) = space.performance_tier_footprint {
+                    debug!(
+                        "Updating metrics for volume space performance_tier_footprint {} {} -> {}",
+                        filer.name, vol.name, pt
+                    );
+                    exporter::VOLUME_METRIC_SPACE_PERFORMANCE_TIER_FOOTPRINT
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(pt);
+                }
+                if let Some(fp) = space.footprint {
+                    debug!(
+                        "Updating metrics for volume space footprint {} {} -> {}",
+                        filer.name, vol.name, fp
+                    );
+                    exporter::VOLUME_METRIC_SPACE_FOOTPRINT
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(fp);
+                }
+                if let Some(cf) = space.capacity_tier_footprint {
+                    debug!(
+                        "Updating metrics for volume space capacity_tier_footprint {} {} -> {}",
+                        filer.name, vol.name, cf
+                    );
+                    exporter::VOLUME_METRIC_SPACE_CAPACITY_TIER_FOOTPRINT
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(cf);
+                }
+                if let Some(tf) = space.total_footprint {
+                    debug!(
+                        "Updating metrics for volume space total_footprint {} {} -> {}",
+                        filer.name, vol.name, tf
+                    );
+                    exporter::VOLUME_METRIC_SPACE_TOTAL_FOOTPRINT
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(tf);
+                }
+
+                debug!(
+                    "Updating metrics for volume space size {} {} -> {}",
+                    filer.name, vol.name, space.size
+                );
+                exporter::VOLUME_METRIC_SPACE_SIZE
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(space.size);
+
+                if let Some(logical) = space.logical_space {
+                    if let Some(rp) = logical.reporting {
+                        debug!(
+                            "Updating metrics for volume space logical_space reporting {} {} -> {}",
+                            filer.name, vol.name, rp
+                        );
+                        if rp {
+                            exporter::VOLUME_METRIC_SPACE_LOGICAL_SPACE_REPORTING
+                                .with_label_values(&[&filer.name, &vol.name])
+                                .set(1);
+                        } else {
+                            exporter::VOLUME_METRIC_SPACE_LOGICAL_SPACE_REPORTING
+                                .with_label_values(&[&filer.name, &vol.name])
+                                .set(0);
+                        }
+                    }
+                    if let Some(en) = logical.enforcement {
+                        debug!("Updating metrics for volume space logical_space enforcement {} {} -> {}", filer.name, vol.name, en);
+                        if en {
+                            exporter::VOLUME_METRIC_SPACE_LOGICAL_SPACE_ENFORCMENT
+                                .with_label_values(&[&filer.name, &vol.name])
+                                .set(1);
+                        } else {
+                            exporter::VOLUME_METRIC_SPACE_LOGICAL_SPACE_ENFORCMENT
+                                .with_label_values(&[&filer.name, &vol.name])
+                                .set(0);
+                        }
+                    }
+                    if let Some(afs) = logical.used_by_afs {
+                        debug!("Updating metrics for volume space logical_space used_by_afs {} {} -> {}", filer.name, vol.name, afs);
+                        exporter::VOLUME_METRIC_SPACE_LOGICAL_SPACE_USED_BY_AFS
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(afs);
+                    }
+                    if let Some(avl) = logical.available {
+                        debug!(
+                            "Updating metrics volume space logical_space available {} {} -> {}",
+                            filer.name, vol.name, avl
+                        );
+                        exporter::VOLUME_METRIC_SPACE_LOGICAL_SPACE_AVAILABLE
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(avl);
+                    }
+                }
+
+                debug!(
+                    "Updating metrics for volume space used {} {} -> {}",
+                    filer.name, vol.name, space.used
+                );
+                exporter::VOLUME_METRIC_SPACE_USED
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(space.used);
+
+                if let Some(snap) = space.snapshot {
+                    debug!(
+                        "Updating metrics for volume space snapshot autodelete_enabled {} {} -> {}",
+                        filer.name, vol.name, snap.autodelete_enabled
+                    );
+                    if snap.autodelete_enabled {
+                        exporter::VOLUME_METRIC_SPACE_SNAPSHOT_AUTODELETE_ENABLED
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(1);
+                    } else {
+                        exporter::VOLUME_METRIC_SPACE_SNAPSHOT_AUTODELETE_ENABLED
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(0);
+                    }
+
+                    debug!(
+                        "Updating metrics for volume space snapshot used {} {} -> {}",
+                        filer.name, vol.name, snap.used
+                    );
+                    exporter::VOLUME_METRIC_SPACE_SNAPSHOT_USED
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(snap.used);
+
+                    debug!(
+                        "Updating metrics for volume space snapshot reserve_percent {} {} -> {}",
+                        filer.name, vol.name, snap.reserve_percent
+                    );
+                    exporter::VOLUME_METRIC_SPACE_SNAPSHOT_RESERVE_PERCENT
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(snap.reserve_percent);
+                }
+
+                if let Some(meta) = space.metadata {
+                    debug!(
+                        "Updating metrics for volume space metadata {} {} -> {}",
+                        filer.name, vol.name, meta
+                    );
+                    exporter::VOLUME_METRIC_SPACE_METADATA
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(meta);
+                }
+
+                debug!(
+                    "Updating metrics for volume available {} {} -> {}",
+                    filer.name, vol.name, space.available
+                );
+                exporter::VOLUME_METRIC_SPACE_AVAILABLE
+                    .with_label_values(&[&filer.name, &vol.name])
+                    .set(space.available);
+
+                if let Some(ltf) = space.local_tier_footprint {
+                    debug!(
+                        "Updating metrics for volume space local_tier_footprint {} {} -> {}",
+                        filer.name, vol.name, ltf
+                    );
+                    exporter::VOLUME_METRIC_SPACE_LOCAL_TIER_FOOTPRINT
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(ltf);
                 }
             }
         }
