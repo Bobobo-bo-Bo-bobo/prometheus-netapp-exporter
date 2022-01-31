@@ -1,6 +1,6 @@
 [package]
 name = "prometheus-netapp-exporter"
-version = "0.1.0-20220130"
+version = "0.1.0-20220131"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,6 +11,7 @@ fern = "0.6.0"
 getopts = "0.2.21"
 lazy_static = "1.4.0"
 log = "0.4.14"
+# oxhttp 0.1.4+ requires rustc 1.58 or newer
 oxhttp = "0.1.4"
 prometheus = { version = "0.13.0", features = ["process"] }
 reqwest = { version = "0.11.9", features = ["blocking", "native-tls"] }

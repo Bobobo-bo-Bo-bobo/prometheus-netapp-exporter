@@ -38,11 +38,27 @@ pub struct Volume {
     pub encryption: Option<VolumeEncryption>,
     pub tiering: Option<VolumeTiering>,
     pub space: Option<VolumeSpace>,
-    pub analytics: Option<VolumeSpaceAnalytics>,
+    pub analytics: Option<VolumeAnalytics>,
+    pub guarantee: Option<VolumeGuarantee>,
+    pub is_svm_root: Option<bool>,
+    pub use_mirrored_aggregates: Option<bool>,
+    pub snapmirror: Option<VolumeSnapmirror>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
-pub struct VolumeSpaceAnalytics {
+pub struct VolumeSnapmirror {
+    pub is_protected: bool,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeGuarantee {
+    #[serde(rename = "type")]
+    pub guarantee_type: String,
+    pub honored: bool,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeAnalytics {
     pub scan_progress: Option<i64>,
     pub supported: Option<bool>,
     pub state: Option<String>,
@@ -1587,7 +1603,7 @@ pub fn update_volumes(
                 }
                 if let Some(op) = space.over_provisioned {
                     debug!(
-                        "Updating metrics for volumme space over_provisioned {} {} -> {}",
+                        "Updating metrics for volume space over_provisioned {} {} -> {}",
                         filer.name, vol.name, op
                     );
                     exporter::VOLUME_METRIC_SPACE_OVER_PROVISIONED
@@ -1755,21 +1771,36 @@ pub fn update_volumes(
 
             if let Some(anal) = vol.analytics {
                 if let Some(prg) = anal.scan_progress {
-                    debug!("Updating metrics for volume analytics scan_progress {} {} -> {}", filer.name, vol.name, prg);
-                    exporter::VOLUME_METRIC_ANALYTICS_SCAN_PROGRESS.with_label_values(&[&filer.name, &vol.name]).set(prg);
+                    debug!(
+                        "Updating metrics for volume analytics scan_progress {} {} -> {}",
+                        filer.name, vol.name, prg
+                    );
+                    exporter::VOLUME_METRIC_ANALYTICS_SCAN_PROGRESS
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(prg);
                 }
 
                 if let Some(sup) = anal.supported {
-                    debug!("Updating metrics for volume analytics supported {} {} -> {}", filer.name, vol.name, sup);
+                    debug!(
+                        "Updating metrics for volume analytics supported {} {} -> {}",
+                        filer.name, vol.name, sup
+                    );
                     if sup {
-                        exporter::VOLUME_METRIC_ANALYTIC_SUPPORTED.with_label_values(&[&filer.name, &vol.name]).set(1);
+                        exporter::VOLUME_METRIC_ANALYTIC_SUPPORTED
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(1);
                     } else {
-                        exporter::VOLUME_METRIC_ANALYTIC_SUPPORTED.with_label_values(&[&filer.name, &vol.name]).set(0);
+                        exporter::VOLUME_METRIC_ANALYTIC_SUPPORTED
+                            .with_label_values(&[&filer.name, &vol.name])
+                            .set(0);
                     }
                 }
 
                 if let Some(state) = anal.state {
-                    debug!("Updating metrics for volume analytics state {} {} -> {}", filer.name, vol.name, state);
+                    debug!(
+                        "Updating metrics for volume analytics state {} {} -> {}",
+                        filer.name, vol.name, state
+                    );
                     let mut unknown: i64 = 0;
                     let mut initializing: i64 = 0;
                     let mut off: i64 = 0;
@@ -1779,28 +1810,135 @@ pub fn update_volumes(
                     match state.as_str() {
                         "unknown" => {
                             unknown = 1;
-                        },
+                        }
                         "initializing" => {
                             initializing = 1;
-                        },
+                        }
                         "off" => {
                             off = 1;
-                        },
+                        }
                         "on" => {
                             on = 1;
-                        },
+                        }
                         _ => {
-                            error!("Invalid value {} for analytics state for volume {} on filer {}", state, vol.name, filer.name);
+                            error!(
+                                "Invalid value {} for analytics state for volume {} on filer {}",
+                                state, vol.name, filer.name
+                            );
                             ok = false;
                         }
                     };
 
                     if ok {
-                        exporter::VOLUME_METRIC_ANALYTICS_STATE.with_label_values(&[&filer.name, &vol.name, "unknown"]).set(unknown);
-                        exporter::VOLUME_METRIC_ANALYTICS_STATE.with_label_values(&[&filer.name, &vol.name, "initializing"]).set(initializing);
-                        exporter::VOLUME_METRIC_ANALYTICS_STATE.with_label_values(&[&filer.name, &vol.name, "off"]).set(off);
-                        exporter::VOLUME_METRIC_ANALYTICS_STATE.with_label_values(&[&filer.name, &vol.name, "on"]).set(on);
+                        exporter::VOLUME_METRIC_ANALYTICS_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "unknown"])
+                            .set(unknown);
+                        exporter::VOLUME_METRIC_ANALYTICS_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "initializing"])
+                            .set(initializing);
+                        exporter::VOLUME_METRIC_ANALYTICS_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "off"])
+                            .set(off);
+                        exporter::VOLUME_METRIC_ANALYTICS_STATE
+                            .with_label_values(&[&filer.name, &vol.name, "on"])
+                            .set(on);
                     }
+                }
+            }
+
+            if let Some(guarantee) = vol.guarantee {
+                debug!(
+                    "Updating metrics for volume guarantee type {} {} -> {}",
+                    filer.name, vol.name, guarantee.guarantee_type
+                );
+                let mut volume: i64 = 0;
+                let mut none: i64 = 0;
+                let mut ok: bool = true;
+
+                match guarantee.guarantee_type.as_str() {
+                    "volume" => {
+                        volume = 1;
+                    }
+                    "none" => {
+                        none = 1;
+                    }
+                    _ => {
+                        error!(
+                            "Invalid value {} for guarantee type for volume {} on filer {}",
+                            guarantee.guarantee_type, vol.name, filer.name
+                        );
+                        ok = false;
+                    }
+                };
+                if ok {
+                    exporter::VOLUME_METRIC_GUARANTEE_TYPE
+                        .with_label_values(&[&filer.name, &vol.name, "volume"])
+                        .set(volume);
+                    exporter::VOLUME_METRIC_GUARANTEE_TYPE
+                        .with_label_values(&[&filer.name, &vol.name, "none"])
+                        .set(none);
+                }
+
+                debug!(
+                    "Updating metrics for volume guarantee honored {} {} -> {}",
+                    filer.name, vol.name, guarantee.honored
+                );
+                if guarantee.honored {
+                    exporter::VOLUME_METRIC_GUARANTEE_HONORED
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(1);
+                } else {
+                    exporter::VOLUME_METRIC_GUARANTEE_HONORED
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(0);
+                }
+            }
+
+            if let Some(svm) = vol.is_svm_root {
+                debug!(
+                    "Updating metrics for volume is_svm_root {} {} -> {}",
+                    filer.name, vol.name, svm
+                );
+                if svm {
+                    exporter::VOLUME_METRIC_IS_SVM_ROOT
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(1);
+                } else {
+                    exporter::VOLUME_METRIC_IS_SVM_ROOT
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(0);
+                }
+            }
+
+            if let Some(mir) = vol.use_mirrored_aggregates {
+                debug!(
+                    "Updating metrics for volume use_mirrored_aggregates {} {} -> {}",
+                    filer.name, vol.name, mir
+                );
+                if mir {
+                    exporter::VOLUME_METRIC_USE_MIRRORED_AGGREGATES
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(1);
+                } else {
+                    exporter::VOLUME_METRIC_USE_MIRRORED_AGGREGATES
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(0);
+                }
+            }
+
+            if let Some(snap) = vol.snapmirror {
+                debug!(
+                    "Updating metrics for volume snapmirror is_protected {} {} -> {}",
+                    filer.name, vol.name, snap.is_protected
+                );
+                if snap.is_protected {
+                    exporter::VOLUME_METRIC_SNAPMIRROR_PROTECTED
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(1);
+                } else {
+                    exporter::VOLUME_METRIC_SNAPMIRROR_PROTECTED
+                        .with_label_values(&[&filer.name, &vol.name])
+                        .set(0);
                 }
             }
         }

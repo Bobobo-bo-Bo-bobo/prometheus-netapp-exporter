@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220130";
+pub const VERSION: &str = "0.1.1-20220131";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -429,13 +429,25 @@ pub const METRIC_VOL_SPACE_LOCAL_TIER_FOOTPRINT_NAME: &str =
     "netapp_volume_space_local_tier_footprint_bytes";
 pub const METRIC_VOL_SPACE_LOCAL_TIER_FOOTPRINT_HELP: &str =
     "Space used by the local tier for this volume in the aggregate";
-pub const METRIC_VOL_ANALYTICS_SCAN_PROGRESS_NAME: &str = "netapp_volume_analytics_scan_progress_percent";
+pub const METRIC_VOL_ANALYTICS_SCAN_PROGRESS_NAME: &str =
+    "netapp_volume_analytics_scan_progress_percent";
 pub const METRIC_VOL_ANALYTICS_SCAN_PROGRESS_HELP: &str = "Percentage of files in the volume that the file system analytics initialization scan has processed";
 pub const METRIC_VOL_ANALYTICS_SUPPORTED_NAME: &str = "netapp_volume_analytics_supported";
-pub const METRIC_VOL_ANALYTICS_SUPPORTED_HELP: &str = "Whether or not file system analytics is supported on the volume";
+pub const METRIC_VOL_ANALYTICS_SUPPORTED_HELP: &str =
+    "Whether or not file system analytics is supported on the volume";
 pub const METRIC_VOL_ANALYTICS_STATE_NAME: &str = "netapp_volume_analytics_state_info";
 pub const METRIC_VOL_ANALYTICS_STATE_HELP: &str = "File system analytics state of the volume";
 pub const METRIC_VOL_GUARANTEE_TYPE_NAME: &str = "netapp_volume_guarantee_type_info";
-pub const METRIC_VOL_GUARANTEE_TYPE_HELP: &str = "The type of space guarantee of this volume in the aggregate";
+pub const METRIC_VOL_GUARANTEE_TYPE_HELP: &str =
+    "The type of space guarantee of this volume in the aggregate";
 pub const METRIC_VOL_GUARANTEE_HONORED_NAME: &str = "netapp_volume_guarantee_honored";
-pub const METRIC_VOL_GUARANTEE_HONORED_HELP: &str = "Wheter the space guarantee of this volume honored in the aggregate";
+pub const METRIC_VOL_GUARANTEE_HONORED_HELP: &str =
+    "Wheter the space guarantee of this volume honored in the aggregate";
+
+pub const METRIC_VOL_IS_SVM_ROOT_NAME: &str = "netapp_volume_is_svm_root";
+pub const METRIC_VOL_IS_SVM_ROOT_HELP: &str =
+    "Whether the volume is a root volume of the SVM it belongs to";
+pub const METRIC_VOL_USE_MIRRORED_AGGREGATES_NAME: &str = "netapp_volume_use_mirrored_aggregates";
+pub const METRIC_VOL_USE_MIRRORED_AGGREGATES_HELP: &str = "Specifies whether mirrored aggregates are selected when provisioning a FlexGroup without specifying aggregates.name or aggregates.uuid";
+pub const METRIC_VOL_SNAPMIRROR_PROTECTED_NAME: &str = "netapp_volume_snapmirror_protected";
+pub const METRIC_VOL_SNAPMIRROR_PROTECTED_HELP: &str = "Specifies whether a volume is a SnapMirror source volume, using SnapMirror to protect its data";

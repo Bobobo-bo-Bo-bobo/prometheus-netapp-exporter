@@ -582,20 +582,70 @@ lazy_static! {
         &["filer", "volume"],
     )
     .unwrap();
-
     pub static ref VOLUME_METRIC_ANALYTICS_SCAN_PROGRESS: IntGaugeVec = IntGaugeVec::new(
-        Opts::new(constants::METRIC_VOL_ANALYTICS_SCAN_PROGRESS_NAME, constants::METRIC_VOL_ANALYTICS_SCAN_PROGRESS_HELP),
+        Opts::new(
+            constants::METRIC_VOL_ANALYTICS_SCAN_PROGRESS_NAME,
+            constants::METRIC_VOL_ANALYTICS_SCAN_PROGRESS_HELP
+        ),
         &["filer", "volume"],
-    ).unwrap();
+    )
+    .unwrap();
     pub static ref VOLUME_METRIC_ANALYTIC_SUPPORTED: IntGaugeVec = IntGaugeVec::new(
-        Opts::new(constants::METRIC_VOL_ANALYTICS_SUPPORTED_NAME, constants::METRIC_VOL_ANALYTICS_SUPPORTED_HELP),
+        Opts::new(
+            constants::METRIC_VOL_ANALYTICS_SUPPORTED_NAME,
+            constants::METRIC_VOL_ANALYTICS_SUPPORTED_HELP
+        ),
         &["filer", "volume"],
-    ).unwrap();
+    )
+    .unwrap();
     pub static ref VOLUME_METRIC_ANALYTICS_STATE: IntGaugeVec = IntGaugeVec::new(
-        Opts::new(constants::METRIC_VOL_ANALYTICS_STATE_NAME, constants::METRIC_VOL_ANALYTICS_STATE_HELP),
+        Opts::new(
+            constants::METRIC_VOL_ANALYTICS_STATE_NAME,
+            constants::METRIC_VOL_ANALYTICS_STATE_HELP
+        ),
         &["filer", "volume", "state"],
-    ).unwrap();
-
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_GUARANTEE_TYPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_GUARANTEE_TYPE_NAME,
+            constants::METRIC_VOL_GUARANTEE_TYPE_HELP
+        ),
+        &["filer", "volume", "type"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_GUARANTEE_HONORED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_GUARANTEE_HONORED_NAME,
+            constants::METRIC_VOL_GUARANTEE_HONORED_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_IS_SVM_ROOT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_IS_SVM_ROOT_NAME,
+            constants::METRIC_VOL_IS_SVM_ROOT_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_USE_MIRRORED_AGGREGATES: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_USE_MIRRORED_AGGREGATES_NAME,
+            constants::METRIC_VOL_USE_MIRRORED_AGGREGATES_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref VOLUME_METRIC_SNAPMIRROR_PROTECTED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_VOL_SNAPMIRROR_PROTECTED_NAME,
+            constants::METRIC_VOL_SNAPMIRROR_PROTECTED_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
 }
 
 /*
@@ -1015,8 +1065,24 @@ pub fn register_volume_metrics() {
     REGISTRY
         .register(Box::new(VOLUME_METRIC_ANALYTICS_STATE.clone()))
         .unwrap();
-        
-    }
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_GUARANTEE_TYPE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_GUARANTEE_HONORED.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_IS_SVM_ROOT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_USE_MIRRORED_AGGREGATES.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_SNAPMIRROR_PROTECTED.clone()))
+        .unwrap();
+}
 
 fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blocking::Client) {
     if filer.targets_mask & constants::TARGET_AGGREGATES == constants::TARGET_AGGREGATES {
