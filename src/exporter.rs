@@ -582,12 +582,26 @@ lazy_static! {
         &["filer", "volume"],
     )
     .unwrap();
+
+    pub static ref VOLUME_METRIC_ANALYTICS_SCAN_PROGRESS: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_ANALYTICS_SCAN_PROGRESS_NAME, constants::METRIC_VOL_ANALYTICS_SCAN_PROGRESS_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_ANALYTIC_SUPPORTED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_ANALYTICS_SUPPORTED_NAME, constants::METRIC_VOL_ANALYTICS_SUPPORTED_HELP),
+        &["filer", "volume"],
+    ).unwrap();
+    pub static ref VOLUME_METRIC_ANALYTICS_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_VOL_ANALYTICS_STATE_NAME, constants::METRIC_VOL_ANALYTICS_STATE_HELP),
+        &["filer", "volume", "state"],
+    ).unwrap();
+
 }
 
 /*
 */
 
-pub fn register_metrics() {
+pub fn register_aggregate_metrics() {
     REGISTRY
         .register(Box::new(AGGREGATE_FOOTPRINT.clone()))
         .unwrap();
@@ -717,7 +731,9 @@ pub fn register_metrics() {
     REGISTRY
         .register(Box::new(AGGREGATE_METRIC_SAMPLE_DURATION.clone()))
         .unwrap();
+}
 
+pub fn register_volume_metrics() {
     REGISTRY
         .register(Box::new(VOLUME_FILES_MAX.clone()))
         .unwrap();
@@ -989,7 +1005,18 @@ pub fn register_metrics() {
     REGISTRY
         .register(Box::new(VOLUME_METRIC_SPACE_LOCAL_TIER_FOOTPRINT.clone()))
         .unwrap();
-}
+
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_ANALYTICS_SCAN_PROGRESS.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_ANALYTIC_SUPPORTED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(VOLUME_METRIC_ANALYTICS_STATE.clone()))
+        .unwrap();
+        
+    }
 
 fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blocking::Client) {
     if filer.targets_mask & constants::TARGET_AGGREGATES == constants::TARGET_AGGREGATES {

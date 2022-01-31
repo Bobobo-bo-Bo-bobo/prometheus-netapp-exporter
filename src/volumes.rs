@@ -38,6 +38,14 @@ pub struct Volume {
     pub encryption: Option<VolumeEncryption>,
     pub tiering: Option<VolumeTiering>,
     pub space: Option<VolumeSpace>,
+    pub analytics: Option<VolumeSpaceAnalytics>,
+}
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct VolumeSpaceAnalytics {
+    pub scan_progress: Option<i64>,
+    pub supported: Option<bool>,
+    pub state: Option<String>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -1742,6 +1750,57 @@ pub fn update_volumes(
                     exporter::VOLUME_METRIC_SPACE_LOCAL_TIER_FOOTPRINT
                         .with_label_values(&[&filer.name, &vol.name])
                         .set(ltf);
+                }
+            }
+
+            if let Some(anal) = vol.analytics {
+                if let Some(prg) = anal.scan_progress {
+                    debug!("Updating metrics for volume analytics scan_progress {} {} -> {}", filer.name, vol.name, prg);
+                    exporter::VOLUME_METRIC_ANALYTICS_SCAN_PROGRESS.with_label_values(&[&filer.name, &vol.name]).set(prg);
+                }
+
+                if let Some(sup) = anal.supported {
+                    debug!("Updating metrics for volume analytics supported {} {} -> {}", filer.name, vol.name, sup);
+                    if sup {
+                        exporter::VOLUME_METRIC_ANALYTIC_SUPPORTED.with_label_values(&[&filer.name, &vol.name]).set(1);
+                    } else {
+                        exporter::VOLUME_METRIC_ANALYTIC_SUPPORTED.with_label_values(&[&filer.name, &vol.name]).set(0);
+                    }
+                }
+
+                if let Some(state) = anal.state {
+                    debug!("Updating metrics for volume analytics state {} {} -> {}", filer.name, vol.name, state);
+                    let mut unknown: i64 = 0;
+                    let mut initializing: i64 = 0;
+                    let mut off: i64 = 0;
+                    let mut on: i64 = 0;
+                    let mut ok: bool = true;
+
+                    match state.as_str() {
+                        "unknown" => {
+                            unknown = 1;
+                        },
+                        "initializing" => {
+                            initializing = 1;
+                        },
+                        "off" => {
+                            off = 1;
+                        },
+                        "on" => {
+                            on = 1;
+                        },
+                        _ => {
+                            error!("Invalid value {} for analytics state for volume {} on filer {}", state, vol.name, filer.name);
+                            ok = false;
+                        }
+                    };
+
+                    if ok {
+                        exporter::VOLUME_METRIC_ANALYTICS_STATE.with_label_values(&[&filer.name, &vol.name, "unknown"]).set(unknown);
+                        exporter::VOLUME_METRIC_ANALYTICS_STATE.with_label_values(&[&filer.name, &vol.name, "initializing"]).set(initializing);
+                        exporter::VOLUME_METRIC_ANALYTICS_STATE.with_label_values(&[&filer.name, &vol.name, "off"]).set(off);
+                        exporter::VOLUME_METRIC_ANALYTICS_STATE.with_label_values(&[&filer.name, &vol.name, "on"]).set(on);
+                    }
                 }
             }
         }
