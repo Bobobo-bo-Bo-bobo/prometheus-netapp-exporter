@@ -2,6 +2,7 @@ use crate::aggregates;
 use crate::config;
 use crate::constants;
 use crate::http;
+use crate::quotas;
 use crate::volumes;
 
 use lazy_static::lazy_static;
@@ -648,8 +649,125 @@ lazy_static! {
     .unwrap();
 }
 
+lazy_static! {
+    pub static ref QUOTA_METRIC_TREE_SPACE_USED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_SPACE_USED_NAME,
+            constants::METRIC_QUOTA_QTREE_SPACE_USED_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_SPACE_HARD_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_PERCENT_NAME,
+            constants::METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_PERCENT_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_PERCENT_NAME,
+            constants::METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_PERCENT_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_SPACE_HARD_LIMIT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_NAME,
+            constants::METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_NAME,
+            constants::METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_FILES_USED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_FILES_USED_NAME,
+            constants::METRIC_QUOTA_QTREE_FILES_USED_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_FILES_HARD_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_PERCENT_NAME,
+            constants::METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_PERCENT_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_FILES_SOFT_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_PERCENT_NAME,
+            constants::METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_PERCENT_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_FILES_HARD_LIMIT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_NAME,
+            constants::METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+    pub static ref QUOTA_METRIC_TREE_FILES_SOFT_LIMIT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_NAME,
+            constants::METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_HELP
+        ),
+        &["filer", "volume", "type", "name"],
+    )
+    .unwrap();
+}
+
 /*
 */
+
+pub fn register_quota_metrics() {
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_SPACE_USED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_SPACE_HARD_LIMIT_PERCENT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT_PERCENT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_SPACE_HARD_LIMIT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT.clone()))
+        .unwrap();
+
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_FILES_USED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_FILES_HARD_LIMIT_PERCENT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_FILES_SOFT_LIMIT_PERCENT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_FILES_HARD_LIMIT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(QUOTA_METRIC_TREE_FILES_SOFT_LIMIT.clone()))
+        .unwrap();
+}
 
 pub fn register_aggregate_metrics() {
     REGISTRY
@@ -1095,6 +1213,18 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
         }
     } else {
         info!("Aggregate information has been disabled for {}", filer.name);
+    }
+
+    if filer.targets_mask & constants::TARGET_QUOTAS == constants::TARGET_QUOTAS {
+        info!("Requesting quota information from {}", filer.name);
+        if let Err(e) = quotas::update_quotas(filer, client) {
+            error!(
+                "Unable to update quota statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!("Quota information has been disabled for {}", filer.name);
     }
 
     if filer.targets_mask & constants::TARGET_VOLUMES == constants::TARGET_VOLUMES {

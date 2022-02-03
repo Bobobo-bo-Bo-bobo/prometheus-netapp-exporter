@@ -30,6 +30,11 @@ pub fn build_target_masks(scrape: &config::ScrapeTargets) -> u64 {
             result |= constants::TARGET_AGGREGATES;
         }
     }
+    if let Some(val) = scrape.quotas {
+        if val {
+            result |= constants::TARGET_QUOTAS;
+        }
+    }
     if let Some(val) = scrape.volumes {
         if val {
             result |= constants::TARGET_VOLUMES;

@@ -31,6 +31,7 @@ pub struct NetAppConfiguration {
 #[derive(Clone, Default, Deserialize)]
 pub struct ScrapeTargets {
     pub aggregates: Option<bool>,
+    pub quotas: Option<bool>,
     pub volumes: Option<bool>,
 }
 
@@ -74,7 +75,6 @@ pub fn parse_config_file(f: &str) -> Result<Configuration, Box<dyn Error>> {
     for filer in config.filer.iter_mut() {
         if let Some(target) = &filer.targets {
             filer.targets_mask = register::build_target_masks(target);
-            //            register::targets(&mut config.register, &target);
         }
     }
 
