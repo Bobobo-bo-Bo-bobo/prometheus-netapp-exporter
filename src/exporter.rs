@@ -650,82 +650,82 @@ lazy_static! {
 }
 
 lazy_static! {
-    pub static ref QUOTA_METRIC_TREE_SPACE_USED: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_SPACE_USED: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_SPACE_USED_NAME,
-            constants::METRIC_QUOTA_QTREE_SPACE_USED_HELP
+            constants::METRIC_QUOTA_SPACE_USED_NAME,
+            constants::METRIC_QUOTA_SPACE_USED_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_SPACE_HARD_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_SPACE_HARD_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_PERCENT_NAME,
-            constants::METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_PERCENT_HELP
+            constants::METRIC_QUOTA_SPACE_HARD_LIMIT_PERCENT_NAME,
+            constants::METRIC_QUOTA_SPACE_HARD_LIMIT_PERCENT_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_SPACE_SOFT_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_PERCENT_NAME,
-            constants::METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_PERCENT_HELP
+            constants::METRIC_QUOTA_SPACE_SOFT_LIMIT_PERCENT_NAME,
+            constants::METRIC_QUOTA_SPACE_SOFT_LIMIT_PERCENT_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_SPACE_HARD_LIMIT: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_SPACE_HARD_LIMIT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_NAME,
-            constants::METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_HELP
+            constants::METRIC_QUOTA_SPACE_HARD_LIMIT_NAME,
+            constants::METRIC_QUOTA_SPACE_HARD_LIMIT_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_SPACE_SOFT_LIMIT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_NAME,
-            constants::METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_HELP
+            constants::METRIC_QUOTA_SPACE_SOFT_LIMIT_NAME,
+            constants::METRIC_QUOTA_SPACE_SOFT_LIMIT_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_FILES_USED: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_FILES_USED: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_FILES_USED_NAME,
-            constants::METRIC_QUOTA_QTREE_FILES_USED_HELP
+            constants::METRIC_QUOTA_FILES_USED_NAME,
+            constants::METRIC_QUOTA_FILES_USED_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_FILES_HARD_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_FILES_HARD_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_PERCENT_NAME,
-            constants::METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_PERCENT_HELP
+            constants::METRIC_QUOTA_FILES_HARD_LIMIT_PERCENT_NAME,
+            constants::METRIC_QUOTA_FILES_HARD_LIMIT_PERCENT_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_FILES_SOFT_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_FILES_SOFT_LIMIT_PERCENT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_PERCENT_NAME,
-            constants::METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_PERCENT_HELP
+            constants::METRIC_QUOTA_FILES_SOFT_LIMIT_PERCENT_NAME,
+            constants::METRIC_QUOTA_FILES_SOFT_LIMIT_PERCENT_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_FILES_HARD_LIMIT: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_FILES_HARD_LIMIT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_NAME,
-            constants::METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_HELP
+            constants::METRIC_QUOTA_FILES_HARD_LIMIT_NAME,
+            constants::METRIC_QUOTA_FILES_HARD_LIMIT_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
     .unwrap();
-    pub static ref QUOTA_METRIC_TREE_FILES_SOFT_LIMIT: IntGaugeVec = IntGaugeVec::new(
+    pub static ref QUOTA_METRIC_FILES_SOFT_LIMIT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
-            constants::METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_NAME,
-            constants::METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_HELP
+            constants::METRIC_QUOTA_FILES_SOFT_LIMIT_NAME,
+            constants::METRIC_QUOTA_FILES_SOFT_LIMIT_HELP
         ),
         &["filer", "volume", "type", "name"],
     )
@@ -737,35 +737,35 @@ lazy_static! {
 
 pub fn register_quota_metrics() {
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_SPACE_USED.clone()))
+        .register(Box::new(QUOTA_METRIC_SPACE_USED.clone()))
         .unwrap();
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_SPACE_HARD_LIMIT_PERCENT.clone()))
+        .register(Box::new(QUOTA_METRIC_SPACE_HARD_LIMIT_PERCENT.clone()))
         .unwrap();
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT_PERCENT.clone()))
+        .register(Box::new(QUOTA_METRIC_SPACE_SOFT_LIMIT_PERCENT.clone()))
         .unwrap();
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_SPACE_HARD_LIMIT.clone()))
+        .register(Box::new(QUOTA_METRIC_SPACE_HARD_LIMIT.clone()))
         .unwrap();
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT.clone()))
+        .register(Box::new(QUOTA_METRIC_SPACE_SOFT_LIMIT.clone()))
         .unwrap();
 
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_FILES_USED.clone()))
+        .register(Box::new(QUOTA_METRIC_FILES_USED.clone()))
         .unwrap();
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_FILES_HARD_LIMIT_PERCENT.clone()))
+        .register(Box::new(QUOTA_METRIC_FILES_HARD_LIMIT_PERCENT.clone()))
         .unwrap();
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_FILES_SOFT_LIMIT_PERCENT.clone()))
+        .register(Box::new(QUOTA_METRIC_FILES_SOFT_LIMIT_PERCENT.clone()))
         .unwrap();
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_FILES_HARD_LIMIT.clone()))
+        .register(Box::new(QUOTA_METRIC_FILES_HARD_LIMIT.clone()))
         .unwrap();
     REGISTRY
-        .register(Box::new(QUOTA_METRIC_TREE_FILES_SOFT_LIMIT.clone()))
+        .register(Box::new(QUOTA_METRIC_FILES_SOFT_LIMIT.clone()))
         .unwrap();
 }
 

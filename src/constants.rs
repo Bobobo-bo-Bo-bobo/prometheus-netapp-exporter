@@ -455,34 +455,32 @@ pub const METRIC_VOL_SNAPMIRROR_PROTECTED_NAME: &str = "netapp_volume_snapmirror
 pub const METRIC_VOL_SNAPMIRROR_PROTECTED_HELP: &str = "Specifies whether a volume is a SnapMirror source volume, using SnapMirror to protect its data";
 
 // Quota metrics
-pub const METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_NAME: &str =
-    "netapp_quota_tree_space_hard_limit_bytes";
-pub const METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_HELP: &str = "Space hard limit in bytes";
-pub const METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_PERCENT_NAME: &str =
-    "netapp_quota_tree_space_hard_limit_percent";
-pub const METRIC_QUOTA_QTREE_SPACE_HARD_LIMIT_PERCENT_HELP: &str =
+pub const METRIC_QUOTA_SPACE_HARD_LIMIT_NAME: &str = "netapp_quota_space_hard_limit_bytes";
+pub const METRIC_QUOTA_SPACE_HARD_LIMIT_HELP: &str = "Space hard limit in bytes";
+pub const METRIC_QUOTA_SPACE_HARD_LIMIT_PERCENT_NAME: &str =
+    "netapp_quota_space_hard_limit_percent";
+pub const METRIC_QUOTA_SPACE_HARD_LIMIT_PERCENT_HELP: &str =
     "Total space used as a percentage of space hard limit";
-pub const METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_NAME: &str =
-    "netapp_quota_tree_space_soft_limit_bytes";
-pub const METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_HELP: &str = "Space soft limit in bytes";
-pub const METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_PERCENT_NAME: &str =
-    "netapp_quota_tree_space_soft_limit_percent";
-pub const METRIC_QUOTA_QTREE_SPACE_SOFT_LIMIT_PERCENT_HELP: &str =
+pub const METRIC_QUOTA_SPACE_SOFT_LIMIT_NAME: &str = "netapp_quota_space_soft_limit_bytes";
+pub const METRIC_QUOTA_SPACE_SOFT_LIMIT_HELP: &str = "Space soft limit in bytes";
+pub const METRIC_QUOTA_SPACE_SOFT_LIMIT_PERCENT_NAME: &str =
+    "netapp_quota_space_soft_limit_percent";
+pub const METRIC_QUOTA_SPACE_SOFT_LIMIT_PERCENT_HELP: &str =
     "Total space used as a percentage of space soft limit";
-pub const METRIC_QUOTA_QTREE_SPACE_USED_NAME: &str = "netapp_quota_tree_space_used_bytes";
-pub const METRIC_QUOTA_QTREE_SPACE_USED_HELP: &str = "Total space used";
+pub const METRIC_QUOTA_SPACE_USED_NAME: &str = "netapp_quota_space_used_bytes";
+pub const METRIC_QUOTA_SPACE_USED_HELP: &str = "Total space used";
 
-pub const METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_NAME: &str = "netapp_quota_tree_files_hard_limit";
-pub const METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_HELP: &str = "Files hard limit";
-pub const METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_PERCENT_NAME: &str =
-    "netapp_quota_tree_files_hard_limit_percent";
-pub const METRIC_QUOTA_QTREE_FILES_HARD_LIMIT_PERCENT_HELP: &str =
+pub const METRIC_QUOTA_FILES_HARD_LIMIT_NAME: &str = "netapp_quota_files_hard_limit";
+pub const METRIC_QUOTA_FILES_HARD_LIMIT_HELP: &str = "Files hard limit";
+pub const METRIC_QUOTA_FILES_HARD_LIMIT_PERCENT_NAME: &str =
+    "netapp_quota_files_hard_limit_percent";
+pub const METRIC_QUOTA_FILES_HARD_LIMIT_PERCENT_HELP: &str =
     "Total files used as a percentage of files hard limit";
-pub const METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_NAME: &str = "netapp_quota_tree_files_soft_limit";
-pub const METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_HELP: &str = "Files soft limit";
-pub const METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_PERCENT_NAME: &str =
-    "netapp_quota_tree_files_soft_limit_percent";
-pub const METRIC_QUOTA_QTREE_FILES_SOFT_LIMIT_PERCENT_HELP: &str =
+pub const METRIC_QUOTA_FILES_SOFT_LIMIT_NAME: &str = "netapp_quota_files_soft_limit";
+pub const METRIC_QUOTA_FILES_SOFT_LIMIT_HELP: &str = "Files soft limit";
+pub const METRIC_QUOTA_FILES_SOFT_LIMIT_PERCENT_NAME: &str =
+    "netapp_quota_files_soft_limit_percent";
+pub const METRIC_QUOTA_FILES_SOFT_LIMIT_PERCENT_HELP: &str =
     "Total files used as a percentage of files soft limit";
-pub const METRIC_QUOTA_QTREE_FILES_USED_NAME: &str = "netapp_quota_tree_files_used";
-pub const METRIC_QUOTA_QTREE_FILES_USED_HELP: &str = "Total files used";
+pub const METRIC_QUOTA_FILES_USED_NAME: &str = "netapp_quota_files_used";
+pub const METRIC_QUOTA_FILES_USED_HELP: &str = "Total files used";
