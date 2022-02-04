@@ -93,10 +93,10 @@ pub fn update_quotas(
     for quota in quotas.records {
         match quota.quota_type.as_str() {
             "user" => {
-                update_user_quotas(&quota);
+                update_user_quotas(&filer.name, &quota);
             }
             "group" => {
-                update_group_quotas(&quota);
+                update_group_quotas(&filer.name, &quota);
             }
             "tree" => {
                 update_tree_quotas(&filer.name, &quota);
@@ -113,9 +113,9 @@ pub fn update_quotas(
     Ok(())
 }
 
-fn update_user_quotas(quota: &Quota) {}
+fn update_user_quotas(filer: &str, quota: &Quota) {}
 
-fn update_group_quotas(quota: &Quota) {}
+fn update_group_quotas(filer: &str, quota: &Quota) {}
 
 fn update_tree_quotas(filer: &str, quota: &Quota) {
     let qtree_name = match &quota.qtree {
@@ -138,7 +138,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                 "Updating metrics for tree quota space used total {} {} {} -> {}",
                 filer, quota.volume.name, qtree_name, used.total
             );
-            exporter::QUOTA_METRIC_TREE_SPACE_USED
+            exporter::QUOTA_METRIC_SPACE_USED
                 .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                 .set(used.total);
 
@@ -147,7 +147,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                     "Updating metrics for tree quota space used hard_limit_percent {} {} {} -> {}",
                     filer, quota.volume.name, qtree_name, uhpct
                 );
-                exporter::QUOTA_METRIC_TREE_SPACE_HARD_LIMIT_PERCENT
+                exporter::QUOTA_METRIC_SPACE_HARD_LIMIT_PERCENT
                     .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                     .set(uhpct);
             }
@@ -157,7 +157,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                     "Updating metrics for tree quota space used soft_limit_percent {} {} {} -> {}",
                     filer, quota.volume.name, qtree_name, uspct
                 );
-                exporter::QUOTA_METRIC_TREE_SPACE_SOFT_LIMIT_PERCENT
+                exporter::QUOTA_METRIC_SPACE_SOFT_LIMIT_PERCENT
                     .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                     .set(uspct);
             }
@@ -168,7 +168,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                 "Updating metrics for tree quota space hard_limit {} {} {} -> {}",
                 filer, quota.volume.name, qtree_name, shl
             );
-            exporter::QUOTA_METRIC_TREE_SPACE_HARD_LIMIT
+            exporter::QUOTA_METRIC_SPACE_HARD_LIMIT
                 .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                 .set(shl);
         }
@@ -178,7 +178,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                 "Updating metrics for tree quota space soft_limit {} {} {} -> {}",
                 filer, quota.volume.name, qtree_name, ssl
             );
-            exporter::QUOTA_METRIC_TREE_SPACE_HARD_LIMIT
+            exporter::QUOTA_METRIC_SPACE_HARD_LIMIT
                 .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                 .set(ssl);
         }
@@ -190,7 +190,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                 "Updating metrics for tree quota files used total {} {} {} -> {}",
                 filer, quota.volume.name, qtree_name, used.total
             );
-            exporter::QUOTA_METRIC_TREE_FILES_USED
+            exporter::QUOTA_METRIC_FILES_USED
                 .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                 .set(used.total);
 
@@ -199,7 +199,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                     "Updating metrics for tree quota files used hard_limit_percent {} {} {} -> {}",
                     filer, quota.volume.name, qtree_name, uhpct
                 );
-                exporter::QUOTA_METRIC_TREE_FILES_HARD_LIMIT_PERCENT
+                exporter::QUOTA_METRIC_FILES_HARD_LIMIT_PERCENT
                     .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                     .set(uhpct);
             }
@@ -209,7 +209,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                     "Updating metrics for tree quota files used soft_limit_percent {} {} {} -> {}",
                     filer, quota.volume.name, qtree_name, uspct
                 );
-                exporter::QUOTA_METRIC_TREE_FILES_SOFT_LIMIT_PERCENT
+                exporter::QUOTA_METRIC_FILES_SOFT_LIMIT_PERCENT
                     .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                     .set(uspct);
             }
@@ -220,7 +220,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                 "Updating metrics for tree quota files hard_limit {} {} {} -> {}",
                 filer, quota.volume.name, qtree_name, fhl
             );
-            exporter::QUOTA_METRIC_TREE_FILES_HARD_LIMIT
+            exporter::QUOTA_METRIC_FILES_HARD_LIMIT
                 .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                 .set(fhl);
         }
@@ -230,7 +230,7 @@ fn update_tree_quotas(filer: &str, quota: &Quota) {
                 "Updating metrics for tree quota files soft_limit {} {} {} -> {}",
                 filer, quota.volume.name, qtree_name, fsl
             );
-            exporter::QUOTA_METRIC_TREE_FILES_HARD_LIMIT
+            exporter::QUOTA_METRIC_FILES_HARD_LIMIT
                 .with_label_values(&[filer, &quota.volume.name, "tree", qtree_name])
                 .set(fsl);
         }
