@@ -1,4 +1,5 @@
 use crate::aggregates;
+use crate::chassis;
 use crate::config;
 use crate::constants;
 use crate::http;
@@ -892,8 +893,87 @@ lazy_static! {
     .unwrap();
 }
 
+lazy_static! {
+    pub static ref CHASSIS_SHELVES: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CHASSIS_SHELVES_NAME,
+            constants::METRIC_CHASSIS_SHELVES_HELP
+        ),
+        &["filer", "chassis"],
+    )
+    .unwrap();
+    pub static ref CHASSIS_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CHASSIS_STATE_NAME,
+            constants::METRIC_CHASSIS_STATE_HELP
+        ),
+        &["filer", "chassis", "state"],
+    )
+    .unwrap();
+    pub static ref CHASSIS_NODES: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CHASSIS_NODES_NAME,
+            constants::METRIC_CHASSIS_NODES_HELP
+        ),
+        &["filer", "chassis"],
+    )
+    .unwrap();
+    pub static ref CHASSIS_FRU_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CHASSIS_FRU_STATE_NAME,
+            constants::METRIC_CHASSIS_FRU_STATE_HELP
+        ),
+        &["filer", "chassis", "fru", "type", "state"],
+    )
+    .unwrap();
+    pub static ref CHASSIS_USB_SUPPORTED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CHASSIS_USB_SUPPORTED_NAME,
+            constants::METRIC_CHASSIS_USB_SUPPORTED_HELP
+        ),
+        &["filer", "chassis"]
+    )
+    .unwrap();
+    pub static ref CHASSIS_USB_ENABLED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CHASSIS_USB_ENABLED_NAME,
+            constants::METRIC_CHASSIS_USB_ENABLED_HELP
+        ),
+        &["filer", "chassis"]
+    )
+    .unwrap();
+    pub static ref CHASSIS_USB_PORT_CONNECTED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CHASSIS_USB_CONNECTED_STATE_NAME,
+            constants::METRIC_CHASSIS_USB_CONNECTED_STATE_HELP
+        ),
+        &["filer", "chassis", "state"],
+    )
+    .unwrap();
+}
+
 /*
 */
+
+pub fn register_chassis_metrics() {
+    REGISTRY
+        .register(Box::new(CHASSIS_SHELVES.clone()))
+        .unwrap();
+    REGISTRY.register(Box::new(CHASSIS_STATE.clone())).unwrap();
+    REGISTRY.register(Box::new(CHASSIS_NODES.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(CHASSIS_FRU_STATE.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CHASSIS_USB_SUPPORTED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CHASSIS_USB_ENABLED.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CHASSIS_USB_PORT_CONNECTED.clone()))
+        .unwrap();
+}
 
 pub fn register_quota_metrics() {
     REGISTRY
@@ -1466,6 +1546,21 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
         }
     } else {
         info!("Volume information has been disabled for {}", filer.name);
+    }
+
+    if filer.targets_mask & constants::TARGET_CHASSIS == constants::TARGET_CHASSIS {
+        info!("Requesting cluster chassis information from {}", filer.name);
+        if let Err(e) = chassis::update_chassis(filer, client) {
+            error!(
+                "Unable to update cluster chassis statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!(
+            "Cluster chassis information has been disabled for {}",
+            filer.name
+        );
     }
 }
 

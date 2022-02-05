@@ -40,5 +40,10 @@ pub fn build_target_masks(scrape: &config::ScrapeTargets) -> u64 {
             result |= constants::TARGET_VOLUMES;
         }
     }
+    if let Some(val) = scrape.chassis {
+        if val {
+            result |= constants::TARGET_CHASSIS;
+        }
+    }
     result
 }

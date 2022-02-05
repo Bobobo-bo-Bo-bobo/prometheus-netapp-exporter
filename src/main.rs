@@ -2,6 +2,7 @@
 extern crate simple_error;
 
 mod aggregates;
+mod chassis;
 mod config;
 mod constants;
 mod exporter;
@@ -90,6 +91,7 @@ fn main() {
     exporter::register_aggregate_metrics();
     exporter::register_quota_metrics();
     exporter::register_volume_metrics();
+    exporter::register_chassis_metrics();
 
     if let Err(e) = http::server(config, &listen_address) {
         error!("Cen't start HTTP server: {}", e);

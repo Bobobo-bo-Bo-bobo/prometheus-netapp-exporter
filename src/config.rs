@@ -31,6 +31,7 @@ pub struct NetAppConfiguration {
 #[derive(Clone, Default, Deserialize)]
 pub struct ScrapeTargets {
     pub aggregates: Option<bool>,
+    pub chassis: Option<bool>,
     pub quotas: Option<bool>,
     pub volumes: Option<bool>,
 }
@@ -63,6 +64,8 @@ impl std::fmt::Debug for ScrapeTargets {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("ScrapeTargets")
             .field("aggregates", &self.aggregates)
+            .field("chassis", &self.chassis)
+            .field("quotas", &self.quotas)
             .field("volumes", &self.volumes)
             .finish()
     }
