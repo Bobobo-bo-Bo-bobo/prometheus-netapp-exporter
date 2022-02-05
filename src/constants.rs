@@ -17,11 +17,13 @@ pub const API_AGGREGATES: &str = "/api/storage/aggregates";
 pub const API_VOLUMES: &str = "/api/storage/volumes";
 pub const API_QUOTAS: &str = "/api/storage/quota/reports";
 pub const API_CHASSIS: &str = "/api/cluster/chassis";
+pub const API_JOBS: &str = "/api/cluster/jobs";
 
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
 pub const TARGET_QUOTAS: u64 = 0x0000000000000004;
 pub const TARGET_CHASSIS: u64 = 0x0000000000000008;
+pub const TARGET_JOBS: u64 = 0x0000000000000010;
 
 pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_bytes";
 pub const METRIC_AGGR_FOOTPRINT_HELP: &str =
@@ -535,3 +537,7 @@ pub const METRIC_CHASSIS_USB_ENABLED_HELP: &str = "Chassis USB ports are enabled
 pub const METRIC_CHASSIS_USB_CONNECTED_STATE_NAME: &str = "netapp_cluster_chassis_usb_port_info";
 pub const METRIC_CHASSIS_USB_CONNECTED_STATE_HELP: &str =
     "Number of connected or disconnected USB ports";
+
+// Cluster job metrics
+pub const METRIC_JOBS_STATE_NAME: &str = "netapp_cluster_job_state";
+pub const METRIC_JOBS_STATE_HELP: &str = "The states of jobs on the cluster";

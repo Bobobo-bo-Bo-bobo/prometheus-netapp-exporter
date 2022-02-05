@@ -7,6 +7,7 @@ mod config;
 mod constants;
 mod exporter;
 mod http;
+mod jobs;
 mod logging;
 mod quotas;
 mod register;
@@ -92,6 +93,7 @@ fn main() {
     exporter::register_quota_metrics();
     exporter::register_volume_metrics();
     exporter::register_chassis_metrics();
+    exporter::register_job_metrics();
 
     if let Err(e) = http::server(config, &listen_address) {
         error!("Cen't start HTTP server: {}", e);

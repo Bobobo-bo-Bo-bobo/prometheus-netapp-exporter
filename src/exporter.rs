@@ -3,6 +3,7 @@ use crate::chassis;
 use crate::config;
 use crate::constants;
 use crate::http;
+use crate::jobs;
 use crate::quotas;
 use crate::volumes;
 
@@ -952,8 +953,25 @@ lazy_static! {
     .unwrap();
 }
 
+lazy_static! {
+    pub static ref CLUSTER_JOB_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_JOBS_STATE_NAME,
+            constants::METRIC_JOBS_STATE_HELP
+        ),
+        &["filer", "state"],
+    )
+    .unwrap();
+}
+
 /*
 */
+
+pub fn register_job_metrics() {
+    REGISTRY
+        .register(Box::new(CLUSTER_JOB_STATE.clone()))
+        .unwrap();
+}
 
 pub fn register_chassis_metrics() {
     REGISTRY
@@ -1559,6 +1577,21 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
     } else {
         info!(
             "Cluster chassis information has been disabled for {}",
+            filer.name
+        );
+    }
+
+    if filer.targets_mask & constants::TARGET_JOBS == constants::TARGET_JOBS {
+        info!("Requesting cluster job information from {}", filer.name);
+        if let Err(e) = jobs::update_jobs(filer, client) {
+            error!(
+                "Unable to update cluster job statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!(
+            "Cluster job information has been disabled for {}",
             filer.name
         );
     }
