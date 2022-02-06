@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220205";
+pub const VERSION: &str = "0.1.1-20220206";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -18,12 +18,14 @@ pub const API_VOLUMES: &str = "/api/storage/volumes";
 pub const API_QUOTAS: &str = "/api/storage/quota/reports";
 pub const API_CHASSIS: &str = "/api/cluster/chassis";
 pub const API_JOBS: &str = "/api/cluster/jobs";
+pub const API_ETHERNET: &str = "/api/network/ethernet/ports";
 
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
 pub const TARGET_QUOTAS: u64 = 0x0000000000000004;
 pub const TARGET_CHASSIS: u64 = 0x0000000000000008;
 pub const TARGET_JOBS: u64 = 0x0000000000000010;
+pub const TARGET_ETHERNET: u64 = 0x0000000000000020;
 
 pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_bytes";
 pub const METRIC_AGGR_FOOTPRINT_HELP: &str =
@@ -541,3 +543,32 @@ pub const METRIC_CHASSIS_USB_CONNECTED_STATE_HELP: &str =
 // Cluster job metrics
 pub const METRIC_JOBS_STATE_NAME: &str = "netapp_cluster_job_state";
 pub const METRIC_JOBS_STATE_HELP: &str = "The states of jobs on the cluster";
+
+// Ethernet port metrics
+pub const METRIC_ETH_SPEED_NAME: &str = "netapp_ethernet_speed";
+pub const METRIC_ETH_SPEED_HELP: &str = "Link speed in Bits per second";
+pub const METRIC_ETH_ENABLED_NAME: &str = "netapp_ethernet_enabled";
+pub const METRIC_ETH_ENABLED_HELP: &str = "Ethernet interface is enabled";
+pub const METRIC_ETH_MTU_NAME: &str = "netapp_ethernet_mtu_bytes";
+pub const METRIC_ETH_MTU_HELP: &str = "MTU of the port";
+pub const METRIC_ETH_UP_NAME: &str = "netapp_ethernet_up";
+pub const METRIC_ETH_UP_HELP: &str = "Value of 1 if port is up, 0 otherwise";
+pub const METRIC_ETH_TYPE_NAME: &str = "netapp_ethernet_type_info";
+pub const METRIC_ETH_TYPE_HELP: &str = "Type of physical or virtual port";
+pub const METRIC_ETH_RECV_NAME: &str = "netapp_ethernet_receive_bytes_total";
+pub const METRIC_ETH_RECV_HELP: &str = "Bytes received on this interface";
+pub const METRIC_ETH_TRANSMIT_NAME: &str = "netapp_ethernet_transmit_bytes_total";
+pub const METRIC_ETH_TRANSMIT_HELP: &str = "Bytes transmitted on this interface";
+pub const METRIC_ETH_RX_ERROR_NAME: &str = "netapp_ethernet_receive_errors_total";
+pub const METRIC_ETH_RX_ERROR_HELP: &str = "Packets with errors received on this interface";
+pub const METRIC_ETH_RX_DISCARD_NAME: &str = "netapp_ethernet_receive_discards_total";
+pub const METRIC_ETH_RX_DISCARD_HELP: &str = "Received and discarded packets on this interface";
+pub const METRIC_ETH_RX_PACKET_NAME: &str = "netapp_ethernet_receive_packet_total";
+pub const METRIC_ETH_RX_PACKET_HELP: &str = "Received packets on this interface";
+
+pub const METRIC_ETH_TX_ERROR_NAME: &str = "netapp_ethernet_transmit_errors_total";
+pub const METRIC_ETH_TX_ERROR_HELP: &str = "Packets with errors transmitted on this interface";
+pub const METRIC_ETH_TX_DISCARD_NAME: &str = "netapp_ethernet_rtansmit_discards_total";
+pub const METRIC_ETH_TX_DISCARD_HELP: &str = "Discarded packets on this interface";
+pub const METRIC_ETH_TX_PACKET_NAME: &str = "netapp_ethernet_transmit_packet_total";
+pub const METRIC_ETH_TX_PACKET_HELP: &str = "Transmitted packets on this interface";

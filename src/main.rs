@@ -5,6 +5,7 @@ mod aggregates;
 mod chassis;
 mod config;
 mod constants;
+mod ethernet;
 mod exporter;
 mod http;
 mod jobs;
@@ -94,6 +95,7 @@ fn main() {
     exporter::register_volume_metrics();
     exporter::register_chassis_metrics();
     exporter::register_job_metrics();
+    exporter::register_ethernet_metrics();
 
     if let Err(e) = http::server(config, &listen_address) {
         error!("Cen't start HTTP server: {}", e);

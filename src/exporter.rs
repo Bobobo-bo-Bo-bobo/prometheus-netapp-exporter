@@ -2,6 +2,7 @@ use crate::aggregates;
 use crate::chassis;
 use crate::config;
 use crate::constants;
+use crate::ethernet;
 use crate::http;
 use crate::jobs;
 use crate::quotas;
@@ -9,7 +10,7 @@ use crate::volumes;
 
 use lazy_static::lazy_static;
 use log::{error, info};
-use prometheus::{GaugeVec, IntGaugeVec, Opts, Registry};
+use prometheus::{GaugeVec, IntCounterVec, IntGaugeVec, Opts, Registry};
 
 lazy_static! {
     pub static ref REGISTRY: Registry = Registry::new();
@@ -964,8 +965,139 @@ lazy_static! {
     .unwrap();
 }
 
-/*
-*/
+lazy_static! {
+    pub static ref ETHERNET_SPEED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_ETH_SPEED_NAME,
+            constants::METRIC_ETH_SPEED_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_ENABLED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_ETH_ENABLED_NAME,
+            constants::METRIC_ETH_ENABLED_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_MTU: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_ETH_MTU_NAME,
+            constants::METRIC_ETH_MTU_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_UP: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(constants::METRIC_ETH_UP_NAME, constants::METRIC_ETH_UP_HELP),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_TYPE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_ETH_TYPE_NAME,
+            constants::METRIC_ETH_TYPE_HELP
+        ),
+        &["filer", "node", "device", "type"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_RX: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_RECV_NAME,
+            constants::METRIC_ETH_RECV_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_TX: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_TRANSMIT_NAME,
+            constants::METRIC_ETH_TRANSMIT_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_RX_ERROR: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_RX_ERROR_NAME,
+            constants::METRIC_ETH_RX_ERROR_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_RX_DISCARD: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_RX_DISCARD_NAME,
+            constants::METRIC_ETH_RX_DISCARD_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_RX_PACKET: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_RX_PACKET_NAME,
+            constants::METRIC_ETH_RX_PACKET_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_TX_ERROR: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_TX_ERROR_NAME,
+            constants::METRIC_ETH_TX_ERROR_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_TX_DISCARD: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_TX_DISCARD_NAME,
+            constants::METRIC_ETH_TX_DISCARD_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref ETHERNET_TX_PACKET: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_TX_PACKET_NAME,
+            constants::METRIC_ETH_TX_PACKET_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+}
+
+pub fn register_ethernet_metrics() {
+    REGISTRY.register(Box::new(ETHERNET_SPEED.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(ETHERNET_ENABLED.clone()))
+        .unwrap();
+    REGISTRY.register(Box::new(ETHERNET_MTU.clone())).unwrap();
+    REGISTRY.register(Box::new(ETHERNET_UP.clone())).unwrap();
+    REGISTRY.register(Box::new(ETHERNET_TYPE.clone())).unwrap();
+    REGISTRY.register(Box::new(ETHERNET_RX.clone())).unwrap();
+    REGISTRY.register(Box::new(ETHERNET_TX.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(ETHERNET_RX_ERROR.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(ETHERNET_RX_DISCARD.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(ETHERNET_RX_PACKET.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(ETHERNET_TX_ERROR.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(ETHERNET_TX_DISCARD.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(ETHERNET_TX_PACKET.clone()))
+        .unwrap();
+}
 
 pub fn register_job_metrics() {
     REGISTRY
@@ -1592,6 +1724,21 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
     } else {
         info!(
             "Cluster job information has been disabled for {}",
+            filer.name
+        );
+    }
+
+    if filer.targets_mask & constants::TARGET_ETHERNET == constants::TARGET_ETHERNET {
+        info!("Requesting cluster job information from {}", filer.name);
+        if let Err(e) = ethernet::update_ethernet(filer, client) {
+            error!(
+                "Unable to update ethernet port statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!(
+            "Ethernet port information has been disabled for {}",
             filer.name
         );
     }
