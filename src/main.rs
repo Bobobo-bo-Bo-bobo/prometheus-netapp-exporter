@@ -7,6 +7,7 @@ mod config;
 mod constants;
 mod ethernet;
 mod exporter;
+mod fibrechannel;
 mod http;
 mod jobs;
 mod logging;
@@ -96,6 +97,7 @@ fn main() {
     exporter::register_chassis_metrics();
     exporter::register_job_metrics();
     exporter::register_ethernet_metrics();
+    exporter::register_fibrechannel_metrics();
 
     if let Err(e) = http::server(config, &listen_address) {
         error!("Cen't start HTTP server: {}", e);

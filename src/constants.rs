@@ -19,6 +19,7 @@ pub const API_QUOTAS: &str = "/api/storage/quota/reports";
 pub const API_CHASSIS: &str = "/api/cluster/chassis";
 pub const API_JOBS: &str = "/api/cluster/jobs";
 pub const API_ETHERNET: &str = "/api/network/ethernet/ports";
+pub const API_FIBRECHANNEL: &str = "/api/network/fc/ports";
 
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
@@ -26,6 +27,7 @@ pub const TARGET_QUOTAS: u64 = 0x0000000000000004;
 pub const TARGET_CHASSIS: u64 = 0x0000000000000008;
 pub const TARGET_JOBS: u64 = 0x0000000000000010;
 pub const TARGET_ETHERNET: u64 = 0x0000000000000020;
+pub const TARGET_FIBRECHANNEL: u64 = 0x0000000000000040;
 
 pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_bytes";
 pub const METRIC_AGGR_FOOTPRINT_HELP: &str =
@@ -574,3 +576,15 @@ pub const METRIC_ETH_TX_PACKET_HELP: &str = "Transmitted packets on this interfa
 pub const METRIC_ETH_LINK_DOWN_NAME: &str = "netapp_ethernet_link_down_changes_total";
 pub const METRIC_ETH_LINK_DOWN_HELP: &str =
     "The number of link state changes from up to down seen on the device";
+
+// Fibrechannel port metrics
+pub const METRIC_FC_STATE_NAME: &str = "netapp_fibrechannel_state_info";
+pub const METRIC_FC_STATE_HELP: &str = "The operational state of the FC port";
+pub const METRIC_FC_ENABLED_NAME: &str = "netapp_fibrechannel_enabled";
+pub const METRIC_FC_ENABLED_HELP: &str = "The administrative state of the FC port";
+pub const METRIC_FC_RX_NAME: &str = "netapp_fibrechannel_received_bytes_total";
+pub const METRIC_FC_RX_HELP: &str = "Bytes received on this interface";
+pub const METRIC_FC_TX_NAME: &str = "netapp_fibrechannel_transmitted_bytes_total";
+pub const METRIC_FC_TX_HELP: &str = "Bytes transmitted on this interface";
+pub const METRIC_FC_PHYS_PROTO_NAME: &str = "netapp_fibrechannel_physical_protocol_info";
+pub const METRIC_FC_PHYS_PROTO_HELP: &str = "The physical network protocol of the FC port";

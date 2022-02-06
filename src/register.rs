@@ -34,6 +34,11 @@ pub fn build_target_masks(scrape: &config::ScrapeTargets) -> u64 {
             result |= constants::TARGET_ETHERNET;
         }
     }
+    if let Some(val) = scrape.fibrechannel {
+        if val {
+            result |= constants::TARGET_FIBRECHANNEL;
+        }
+    }
 
     result
 }

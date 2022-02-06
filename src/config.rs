@@ -33,6 +33,7 @@ pub struct ScrapeTargets {
     pub aggregates: Option<bool>,
     pub chassis: Option<bool>,
     pub ethernet: Option<bool>,
+    pub fibrechannel: Option<bool>,
     pub jobs: Option<bool>,
     pub quotas: Option<bool>,
     pub volumes: Option<bool>,
@@ -68,6 +69,7 @@ impl std::fmt::Debug for ScrapeTargets {
             .field("aggregates", &self.aggregates)
             .field("chassis", &self.chassis)
             .field("ethernet", &self.ethernet)
+            .field("fibrechannel", &self.ethernet)
             .field("jobs", &self.jobs)
             .field("quotas", &self.quotas)
             .field("volumes", &self.volumes)

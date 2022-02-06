@@ -3,6 +3,7 @@ use crate::chassis;
 use crate::config;
 use crate::constants;
 use crate::ethernet;
+use crate::fibrechannel;
 use crate::http;
 use crate::jobs;
 use crate::quotas;
@@ -1077,6 +1078,51 @@ lazy_static! {
     .unwrap();
 }
 
+lazy_static! {
+    pub static ref FC_STATE: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_FC_STATE_NAME,
+            constants::METRIC_FC_STATE_HELP
+        ),
+        &["filer", "name", "device", "state"],
+    )
+    .unwrap();
+    pub static ref FC_ENABLED: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_FC_ENABLED_NAME,
+            constants::METRIC_FC_ENABLED_HELP
+        ),
+        &["filer", "name", "device"],
+    )
+    .unwrap();
+    pub static ref FC_RX: IntCounterVec = IntCounterVec::new(
+        Opts::new(constants::METRIC_FC_RX_NAME, constants::METRIC_FC_RX_HELP),
+        &["filer", "name", "device"]
+    )
+    .unwrap();
+    pub static ref FC_TX: IntCounterVec = IntCounterVec::new(
+        Opts::new(constants::METRIC_FC_TX_NAME, constants::METRIC_FC_TX_HELP),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
+    pub static ref FC_PHYS_PROTO: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_FC_PHYS_PROTO_NAME,
+            constants::METRIC_FC_PHYS_PROTO_HELP
+        ),
+        &["filer", "node", "device", "protocol"],
+    )
+    .unwrap();
+}
+
+pub fn register_fibrechannel_metrics() {
+    REGISTRY.register(Box::new(FC_STATE.clone())).unwrap();
+    REGISTRY.register(Box::new(FC_ENABLED.clone())).unwrap();
+    REGISTRY.register(Box::new(FC_RX.clone())).unwrap();
+    REGISTRY.register(Box::new(FC_TX.clone())).unwrap();
+    REGISTRY.register(Box::new(FC_PHYS_PROTO.clone())).unwrap();
+}
+
 pub fn register_ethernet_metrics() {
     REGISTRY.register(Box::new(ETHERNET_SPEED.clone())).unwrap();
     REGISTRY
@@ -1740,7 +1786,7 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
     }
 
     if filer.targets_mask & constants::TARGET_ETHERNET == constants::TARGET_ETHERNET {
-        info!("Requesting cluster job information from {}", filer.name);
+        info!("Requesting ethernet port information from {}", filer.name);
         if let Err(e) = ethernet::update_ethernet(filer, client) {
             error!(
                 "Unable to update ethernet port statistics for {} - {}",
@@ -1750,6 +1796,24 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
     } else {
         info!(
             "Ethernet port information has been disabled for {}",
+            filer.name
+        );
+    }
+
+    if filer.targets_mask & constants::TARGET_FIBRECHANNEL == constants::TARGET_FIBRECHANNEL {
+        info!(
+            "Requesting fibrechannel port information from {}",
+            filer.name
+        );
+        if let Err(e) = fibrechannel::update_fibrechannel(filer, client) {
+            error!(
+                "Unable to update fibrechannel port statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!(
+            "Fibrechannel port information has been disabled for {}",
             filer.name
         );
     }
