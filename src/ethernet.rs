@@ -49,7 +49,7 @@ pub struct PortStatisticsThroughputRaw {
 pub struct PortStatisticsDevice {
     pub receive_raw: PortStatisticsCounters,
     pub transmit_raw: PortStatisticsCounters,
-    pub link_down_count_raw: i64,
+    pub link_down_count_raw: u64,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -304,6 +304,20 @@ pub fn update_ethernet(
                 exporter::ETHERNET_TX_PACKET
                     .with_label_values(&[&filer.name, &port.node.name, &port.name])
                     .inc_by(stat.device.transmit_raw.packets - old_tx_pck);
+            }
+
+            debug!("Updating metrics for networking ethernet statistics device link_down_count_raw {} {} {} -> {}", filer.name, port.node.name, port.name, stat.device.link_down_count_raw);
+            let old_link_down = exporter::ETHERNET_LINK_DOWN
+                .with_label_values(&[&filer.name, &port.node.name, &port.name])
+                .get();
+            if old_link_down > stat.device.link_down_count_raw {
+                exporter::ETHERNET_LINK_DOWN
+                    .with_label_values(&[&filer.name, &port.node.name, &port.name])
+                    .reset();
+            } else {
+                exporter::ETHERNET_LINK_DOWN
+                    .with_label_values(&[&filer.name, &port.node.name, &port.name])
+                    .inc_by(stat.device.link_down_count_raw - old_link_down);
             }
         }
     }

@@ -1067,6 +1067,14 @@ lazy_static! {
         &["filer", "node", "device"],
     )
     .unwrap();
+    pub static ref ETHERNET_LINK_DOWN: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_ETH_LINK_DOWN_NAME,
+            constants::METRIC_ETH_LINK_DOWN_HELP
+        ),
+        &["filer", "node", "device"],
+    )
+    .unwrap();
 }
 
 pub fn register_ethernet_metrics() {
@@ -1096,6 +1104,9 @@ pub fn register_ethernet_metrics() {
         .unwrap();
     REGISTRY
         .register(Box::new(ETHERNET_TX_PACKET.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(ETHERNET_LINK_DOWN.clone()))
         .unwrap();
 }
 

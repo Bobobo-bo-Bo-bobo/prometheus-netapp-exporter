@@ -565,10 +565,12 @@ pub const METRIC_ETH_RX_DISCARD_NAME: &str = "netapp_ethernet_receive_discards_t
 pub const METRIC_ETH_RX_DISCARD_HELP: &str = "Received and discarded packets on this interface";
 pub const METRIC_ETH_RX_PACKET_NAME: &str = "netapp_ethernet_receive_packet_total";
 pub const METRIC_ETH_RX_PACKET_HELP: &str = "Received packets on this interface";
-
 pub const METRIC_ETH_TX_ERROR_NAME: &str = "netapp_ethernet_transmit_errors_total";
 pub const METRIC_ETH_TX_ERROR_HELP: &str = "Packets with errors transmitted on this interface";
 pub const METRIC_ETH_TX_DISCARD_NAME: &str = "netapp_ethernet_rtansmit_discards_total";
 pub const METRIC_ETH_TX_DISCARD_HELP: &str = "Discarded packets on this interface";
 pub const METRIC_ETH_TX_PACKET_NAME: &str = "netapp_ethernet_transmit_packet_total";
 pub const METRIC_ETH_TX_PACKET_HELP: &str = "Transmitted packets on this interface";
+pub const METRIC_ETH_LINK_DOWN_NAME: &str = "netapp_ethernet_link_down_changes_total";
+pub const METRIC_ETH_LINK_DOWN_HELP: &str =
+    "The number of link state changes from up to down seen on the device";
