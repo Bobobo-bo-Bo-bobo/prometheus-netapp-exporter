@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220206";
+pub const VERSION: &str = "0.1.1-20220207";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -547,8 +547,8 @@ pub const METRIC_JOBS_STATE_NAME: &str = "netapp_cluster_job_state";
 pub const METRIC_JOBS_STATE_HELP: &str = "The states of jobs on the cluster";
 
 // Ethernet port metrics
-pub const METRIC_ETH_SPEED_NAME: &str = "netapp_ethernet_speed";
-pub const METRIC_ETH_SPEED_HELP: &str = "Link speed in Bits per second";
+pub const METRIC_ETH_SPEED_NAME: &str = "netapp_ethernet_speed_bytes";
+pub const METRIC_ETH_SPEED_HELP: &str = "Link speed in bytes per second";
 pub const METRIC_ETH_ENABLED_NAME: &str = "netapp_ethernet_enabled";
 pub const METRIC_ETH_ENABLED_HELP: &str = "Ethernet interface is enabled";
 pub const METRIC_ETH_MTU_NAME: &str = "netapp_ethernet_mtu_bytes";

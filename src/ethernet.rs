@@ -17,7 +17,7 @@ pub struct Port {
     pub node: PortNode,
     pub mac_address: String,
     pub enabled: bool,
-    pub speed: i64,
+    pub speed: Option<i64>,
     pub mtu: i64,
     pub name: String,
     pub state: String,
@@ -103,14 +103,15 @@ pub fn update_ethernet(
                 .set(0);
         }
 
-        debug!(
-            "Updating metrics for networking ethernet port speed {} {} {} -> {}",
-            filer.name, port.node.name, port.name, port.speed
-        );
-        exporter::ETHERNET_SPEED
-            .with_label_values(&[&filer.name, &port.node.name, &port.name])
-            .set(port.speed * (1024 ^ 2));
-
+        if let Some(speed) = port.speed {
+            debug!(
+                "Updating metrics for networking ethernet port speed {} {} {} -> {}",
+                filer.name, port.node.name, port.name, speed
+            );
+            exporter::ETHERNET_SPEED
+                .with_label_values(&[&filer.name, &port.node.name, &port.name])
+                .set(speed * 1024 * 1024 / 8);
+        }
         debug!(
             "Updating metrics for networking ethernet port mtu {} {} {} -> {}",
             filer.name, port.node.name, port.name, port.mtu

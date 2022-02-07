@@ -71,6 +71,13 @@ pub fn get(
         .get(url)
         .basic_auth(user, Some(password))
         .send()?;
+    if response.status() != reqwest::StatusCode::OK {
+        bail!(
+            "HTTP connection returned HTTP status code \"{}\" instead of \"200 OK\"",
+            response.status()
+        );
+    }
+
     let reply = response.text()?;
     Ok(reply)
 }

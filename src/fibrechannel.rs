@@ -16,7 +16,6 @@ pub struct PortList {
 pub struct Port {
     pub node: PortNode,
     pub enabled: bool,
-    pub mtu: i64,
     pub name: String,
     pub state: String,
     pub statistics: Option<PortStatistics>,

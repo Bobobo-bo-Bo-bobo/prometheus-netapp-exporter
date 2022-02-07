@@ -29,7 +29,7 @@ pub struct ChassisShelves {
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct ChassisNodes {
-    pub uuid: String,
+    pub name: String,
 }
 
 #[derive(Deserialize, Clone, Debug)]
