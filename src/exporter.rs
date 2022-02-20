@@ -1,5 +1,6 @@
 use crate::aggregates;
 use crate::chassis;
+use crate::cifs;
 use crate::config;
 use crate::constants;
 use crate::ethernet;
@@ -1115,6 +1116,12 @@ lazy_static! {
     .unwrap();
 }
 
+lazy_static! {}
+
+pub fn register_cifs_metrics() {
+    //
+}
+
 pub fn register_fibrechannel_metrics() {
     REGISTRY.register(Box::new(FC_STATE.clone())).unwrap();
     REGISTRY.register(Box::new(FC_ENABLED.clone())).unwrap();
@@ -1814,6 +1821,34 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
     } else {
         info!(
             "Fibrechannel port information has been disabled for {}",
+            filer.name
+        );
+    }
+
+    if filer.targets_mask & constants::TARGET_CIFS == constants::TARGET_CIFS {
+        info!("Requesting CIFS protocol information from {}", filer.name);
+
+        let mut cifs_mapped_user = false;
+        if filer.targets_mask & constants::TARGET_CIFS_MAPPED_USER
+            == constants::TARGET_CIFS_MAPPED_USER
+        {
+            cifs_mapped_user = true
+        }
+
+        let mut cifs_user = false;
+        if filer.targets_mask & constants::TARGET_CIFS_USER == constants::TARGET_CIFS_USER {
+            cifs_mapped_user = true
+        }
+
+        if let Err(e) = cifs::update_cifs(filer, client, cifs_mapped_user, cifs_user) {
+            error!(
+                "Unable to update CIFS protocol statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!(
+            "CIFS protocol information has been disabled for {}",
             filer.name
         );
     }

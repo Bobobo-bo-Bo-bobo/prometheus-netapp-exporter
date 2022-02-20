@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220207";
+pub const VERSION: &str = "0.1.1-20220220";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -20,6 +20,7 @@ pub const API_CHASSIS: &str = "/api/cluster/chassis";
 pub const API_JOBS: &str = "/api/cluster/jobs";
 pub const API_ETHERNET: &str = "/api/network/ethernet/ports";
 pub const API_FIBRECHANNEL: &str = "/api/network/fc/ports";
+pub const API_CIFS: &str = "/api/protocols/cifs/sessions";
 
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
@@ -28,6 +29,11 @@ pub const TARGET_CHASSIS: u64 = 0x0000000000000008;
 pub const TARGET_JOBS: u64 = 0x0000000000000010;
 pub const TARGET_ETHERNET: u64 = 0x0000000000000020;
 pub const TARGET_FIBRECHANNEL: u64 = 0x0000000000000040;
+pub const TARGET_CIFS: u64 = 0x0000000000000080;
+pub const TARGET_CIFS_MAPPED_USER: u64 = 0x00000000000000100;
+pub const TARGET_CIFS_USER: u64 = 0x00000000000000200;
+
+pub const CIFS_PROTOCOLS: [&'static str; 5] = ["smb1", "smb2", "smb2_1", "smb3", "smb3_1"];
 
 pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_bytes";
 pub const METRIC_AGGR_FOOTPRINT_HELP: &str =

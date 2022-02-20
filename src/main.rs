@@ -3,6 +3,7 @@ extern crate simple_error;
 
 mod aggregates;
 mod chassis;
+mod cifs;
 mod config;
 mod constants;
 mod ethernet;

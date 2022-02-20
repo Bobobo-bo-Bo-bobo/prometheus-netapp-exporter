@@ -32,11 +32,18 @@ pub struct NetAppConfiguration {
 pub struct ScrapeTargets {
     pub aggregates: Option<bool>,
     pub chassis: Option<bool>,
+    pub cifs: Option<ScrapeTargetCIFS>,
     pub ethernet: Option<bool>,
     pub fibrechannel: Option<bool>,
     pub jobs: Option<bool>,
     pub quotas: Option<bool>,
     pub volumes: Option<bool>,
+}
+
+#[derive(Clone, Default, Deserialize)]
+pub struct ScrapeTargetCIFS {
+    pub mapped_user: Option<bool>,
+    pub user: Option<bool>,
 }
 
 impl std::fmt::Debug for Configuration {

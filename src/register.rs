@@ -39,6 +39,17 @@ pub fn build_target_masks(scrape: &config::ScrapeTargets) -> u64 {
             result |= constants::TARGET_FIBRECHANNEL;
         }
     }
+    if let Some(val) = &scrape.cifs {
+        result |= constants::TARGET_CIFS;
+        if let Some(v) = val.mapped_user {
+            if v {
+                result |= constants::TARGET_CIFS_MAPPED_USER
+            }
+        }
+        if let Some(v) = val.user {
+            result |= constants::TARGET_CIFS_USER
+        }
+    }
 
     result
 }
