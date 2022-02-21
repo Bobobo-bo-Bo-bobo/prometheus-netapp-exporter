@@ -1116,10 +1116,154 @@ lazy_static! {
     .unwrap();
 }
 
-lazy_static! {}
+lazy_static! {
+    pub static ref CIFS_PROTOCOLS: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_PROTOCOLS_NAME,
+            constants::METRIC_CIFS_PROTOCOLS_HELP
+        ),
+        &["filer", "smb_protocol"],
+    )
+    .unwrap();
+    pub static ref CIFS_SMB_ENCRYPTION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_SMB_ENCRYPTION_NAME,
+            constants::METRIC_CIFS_SMB_ENCRYPTION_HELP
+        ),
+        &["filer", "smb_encryption"],
+    )
+    .unwrap();
+    pub static ref CIFS_CONTINUOUS_AVAILABILITY: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_CONTINUOUS_AVAIABILITY_NAME,
+            constants::METRIC_CIFS_CONTINUOUS_AVAIABILITY_HELP
+        ),
+        &["filer", "continuous_availability"],
+    )
+    .unwrap();
+    pub static ref CIFS_OPEN_FILES: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_OPEN_FILES_NAME,
+            constants::METRIC_CIFS_OPEN_FILES_HELP
+        ),
+        &["filer"],
+    )
+    .unwrap();
+    pub static ref CIFS_OPEN_SHARES: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_OPEN_SHARES_NAME,
+            constants::METRIC_CIFS_OPEN_SHARES_HELP
+        ),
+        &["filer"],
+    )
+    .unwrap();
+    pub static ref CIFS_OPEN_OTHER: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_OPEN_OTHER_NAME,
+            constants::METRIC_CIFS_OPEN_OTHER_HELP
+        ),
+        &["filer"],
+    )
+    .unwrap();
+    pub static ref CIFS_AUTHENTICATION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_AUTHENTICATION_NAME,
+            constants::METRIC_CIFS_AUTHENTICATION_HELP
+        ),
+        &["filer", "authentication"],
+    )
+    .unwrap();
+    pub static ref CIFS_SMB_SIGNING: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_SMB_SIGNING_NAME,
+            constants::METRIC_CIFS_SMB_SIGNING_HELP
+        ),
+        &["filer", "smb_signing"],
+    )
+    .unwrap();
+    pub static ref CIFS_USER: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_USER_NANE,
+            constants::METRIC_CIFS_USER_HELP
+        ),
+        &["filer", "user"],
+    )
+    .unwrap();
+    pub static ref CIFS_MAPPED_UNIX_USER: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_MAPPED_UNIX_USER_NANE,
+            constants::METRIC_CIFS_MAPPED_UNIX_USER_HELP
+        ),
+        &["filer", "mapped_unix_user"],
+    )
+    .unwrap();
+    pub static ref CIFS_CLIENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_CLIENT_NAME,
+            constants::METRIC_CIFS_CLIENT_HELP
+        ),
+        &["filer", "client_ip"],
+    )
+    .unwrap();
+    pub static ref CIFS_VOLUME: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_VOLUME_NAME,
+            constants::METRIC_CIFS_VOLUME_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref CIFS_LARGE_MTU: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_LARGE_MTU_NAME,
+            constants::METRIC_CIFS_LARGE_MTU_HELP
+        ),
+        &["filer", "large_mtu"],
+    )
+    .unwrap();
+    pub static ref CIFS_CONNECTION: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_CIFS_CONNECTIONS_NAME,
+            constants::METRIC_CIFS_CONNECTIONS_HELP
+        ),
+        &["filer"],
+    )
+    .unwrap();
+}
 
 pub fn register_cifs_metrics() {
-    //
+    REGISTRY.register(Box::new(CIFS_PROTOCOLS.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_SMB_ENCRYPTION.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_CONTINUOUS_AVAILABILITY.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_OPEN_FILES.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_OPEN_SHARES.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_OPEN_OTHER.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_AUTHENTICATION.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_SMB_SIGNING.clone()))
+        .unwrap();
+    REGISTRY.register(Box::new(CIFS_USER.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_MAPPED_UNIX_USER.clone()))
+        .unwrap();
+    REGISTRY.register(Box::new(CIFS_CLIENT.clone())).unwrap();
+    REGISTRY.register(Box::new(CIFS_VOLUME.clone())).unwrap();
+    REGISTRY.register(Box::new(CIFS_LARGE_MTU.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(CIFS_CONNECTION.clone()))
+        .unwrap();
 }
 
 pub fn register_fibrechannel_metrics() {
@@ -1837,10 +1981,18 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
 
         let mut cifs_user = false;
         if filer.targets_mask & constants::TARGET_CIFS_USER == constants::TARGET_CIFS_USER {
-            cifs_mapped_user = true
+            cifs_user = true
         }
 
-        if let Err(e) = cifs::update_cifs(filer, client, cifs_mapped_user, cifs_user) {
+        let mut cifs_client_ip = false;
+        if filer.targets_mask & constants::TARGET_CIFS_CLIENT_IP == constants::TARGET_CIFS_CLIENT_IP
+        {
+            cifs_client_ip = true
+        }
+
+        if let Err(e) =
+            cifs::update_cifs(filer, client, cifs_client_ip, cifs_mapped_user, cifs_user)
+        {
             error!(
                 "Unable to update CIFS protocol statistics for {} - {}",
                 filer.name, e

@@ -47,7 +47,14 @@ pub fn build_target_masks(scrape: &config::ScrapeTargets) -> u64 {
             }
         }
         if let Some(v) = val.user {
-            result |= constants::TARGET_CIFS_USER
+            if v {
+                result |= constants::TARGET_CIFS_USER
+            }
+        }
+        if let Some(v) = val.client_ip {
+            if v {
+                result |= constants::TARGET_CIFS_CLIENT_IP
+            }
         }
     }
 

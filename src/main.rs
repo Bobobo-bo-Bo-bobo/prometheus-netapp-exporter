@@ -99,6 +99,7 @@ fn main() {
     exporter::register_job_metrics();
     exporter::register_ethernet_metrics();
     exporter::register_fibrechannel_metrics();
+    exporter::register_cifs_metrics();
 
     if let Err(e) = http::server(config, &listen_address) {
         error!("Cen't start HTTP server: {}", e);

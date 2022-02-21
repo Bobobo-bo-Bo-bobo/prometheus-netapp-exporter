@@ -42,6 +42,7 @@ pub struct ScrapeTargets {
 
 #[derive(Clone, Default, Deserialize)]
 pub struct ScrapeTargetCIFS {
+    pub client_ip: Option<bool>,
     pub mapped_user: Option<bool>,
     pub user: Option<bool>,
 }

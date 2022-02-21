@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220220";
+pub const VERSION: &str = "0.1.1-20220221";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -32,8 +32,13 @@ pub const TARGET_FIBRECHANNEL: u64 = 0x0000000000000040;
 pub const TARGET_CIFS: u64 = 0x0000000000000080;
 pub const TARGET_CIFS_MAPPED_USER: u64 = 0x00000000000000100;
 pub const TARGET_CIFS_USER: u64 = 0x00000000000000200;
+pub const TARGET_CIFS_CLIENT_IP: u64 = 0x00000000000000400;
 
-pub const CIFS_PROTOCOLS: [&'static str; 5] = ["smb1", "smb2", "smb2_1", "smb3", "smb3_1"];
+pub const CIFS_PROTOCOL_LIST: [&str; 5] = ["smb1", "smb2", "smb2_1", "smb3", "smb3_1"];
+pub const CIFS_SMB_ENCRYPTION_LIST: [&str; 3] = ["unencrypted", "encrypted", "partially_encrypted"];
+pub const CIFS_CONTINUOUS_AVAILABILITY_LIST: [&str; 3] = ["available", "unavailable", "partial"];
+pub const CIFS_AUTHENTICATION_LIST: [&str; 5] =
+    ["none", "ntlmv1", "ntlmv2", "kerberos", "anonymous"];
 
 pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_bytes";
 pub const METRIC_AGGR_FOOTPRINT_HELP: &str =
@@ -594,3 +599,39 @@ pub const METRIC_FC_TX_NAME: &str = "netapp_fibrechannel_transmitted_bytes_total
 pub const METRIC_FC_TX_HELP: &str = "Bytes transmitted on this interface";
 pub const METRIC_FC_PHYS_PROTO_NAME: &str = "netapp_fibrechannel_physical_protocol_info";
 pub const METRIC_FC_PHYS_PROTO_HELP: &str = "The physical network protocol of the FC port";
+
+// CIFS metrics
+pub const METRIC_CIFS_PROTOCOLS_NAME: &str = "netapp_cifs_protocols";
+pub const METRIC_CIFS_PROTOCOLS_HELP: &str =
+    "The SMB protocol version over which the client accesses the volumes";
+pub const METRIC_CIFS_SMB_ENCRYPTION_NAME: &str = "netapp_cifs_smb_encryptions";
+pub const METRIC_CIFS_SMB_ENCRYPTION_HELP: &str = "SMB encryption state";
+pub const METRIC_CIFS_CONTINUOUS_AVAIABILITY_NAME: &str = "netapp_cifs_continuous_availability";
+pub const METRIC_CIFS_CONTINUOUS_AVAIABILITY_HELP: &str =
+    "The level of continuous availabilty protection provided to the SMB sessions";
+pub const METRIC_CIFS_OPEN_FILES_NAME: &str = "netapp_cifs_open_files";
+pub const METRIC_CIFS_OPEN_FILES_HELP: &str = "Number of files opened by SMB sessions";
+pub const METRIC_CIFS_OPEN_SHARES_NAME: &str = "netapp_cifs_open_shares";
+pub const METRIC_CIFS_OPEN_SHARES_HELP: &str = "Number of shares opened by SMB sessions";
+pub const METRIC_CIFS_OPEN_OTHER_NAME: &str = "netapp_cifs_open_other";
+pub const METRIC_CIFS_OPEN_OTHER_HELP: &str =
+    "Number of other filesystem objects opened by SMB sessions";
+pub const METRIC_CIFS_AUTHENTICATION_NAME: &str = "netapp_cifs_authentication";
+pub const METRIC_CIFS_AUTHENTICATION_HELP: &str =
+    "SMB authentication over which the client accesses the share";
+pub const METRIC_CIFS_SMB_SIGNING_NAME: &str = "netapp_cifs_smb_signing";
+pub const METRIC_CIFS_SMB_SIGNING_HELP: &str = "Whether or not SMB signing is enabled";
+pub const METRIC_CIFS_USER_NANE: &str = "netapp_cifs_user";
+pub const METRIC_CIFS_USER_HELP: &str = "Windows user of SMB connection";
+pub const METRIC_CIFS_MAPPED_UNIX_USER_NANE: &str = "netapp_cifs_mapped_unix_user";
+pub const METRIC_CIFS_MAPPED_UNIX_USER_HELP: &str = "Mapped UNIX user of SMB connection";
+pub const METRIC_CIFS_CLIENT_NAME: &str = "netapp_cifs_clients";
+pub const METRIC_CIFS_CLIENT_HELP: &str = "Connected CIFS clients";
+pub const METRIC_CIFS_VOLUME_NAME: &str = "netapp_cifs_volmes";
+pub const METRIC_CIFS_VOLUME_HELP: &str = "Volume clients are accessing using CIFS protocol";
+pub const METRIC_CIFS_LARGE_MTU_NAME: &str = "netapp_cifs_large_mtu";
+pub const METRIC_CIFS_LARGE_MTU_HELP: &str =
+    "Whether or not a large MTU is enabled for an SMB session";
+pub const METRIC_CIFS_CONNECTIONS_NAME: &str = "netapp_cifs_connections";
+pub const METRIC_CIFS_CONNECTIONS_HELP: &str =
+    "Number of requests that are sent to the volumes to the node";
