@@ -20,7 +20,7 @@ pub struct Cifs {
     pub continuous_availability: String,
     pub open_shares: i64,
     pub authentication: String,
-    pub volumes: Vec<Volume>,
+    pub volumes: Option<Vec<Volume>>,
     pub smb_signing: bool,
     pub connection_count: i64,
     pub user: String,
@@ -107,8 +107,10 @@ pub fn update_cifs(
         open_files += cifs.open_files;
         open_others += cifs.open_other;
         *authentications.entry(cifs.authentication).or_insert(0) += 1;
-        for vol in cifs.volumes {
-            *volumes.entry(vol.name).or_insert(0) += 1;
+        if let Some(v) = cifs.volumes {
+            for vol in v {
+                *volumes.entry(vol.name).or_insert(0) += 1;
+            }
         }
         if cifs.smb_signing {
             smb_signing_on += 1;
