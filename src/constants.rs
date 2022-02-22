@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220221";
+pub const VERSION: &str = "0.1.1-20220222";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -21,6 +21,7 @@ pub const API_JOBS: &str = "/api/cluster/jobs";
 pub const API_ETHERNET: &str = "/api/network/ethernet/ports";
 pub const API_FIBRECHANNEL: &str = "/api/network/fc/ports";
 pub const API_CIFS: &str = "/api/protocols/cifs/sessions";
+pub const API_NFS: &str = "/api/protocols/nfs/connected-clients";
 
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
@@ -33,12 +34,15 @@ pub const TARGET_CIFS: u64 = 0x0000000000000080;
 pub const TARGET_CIFS_MAPPED_USER: u64 = 0x00000000000000100;
 pub const TARGET_CIFS_USER: u64 = 0x00000000000000200;
 pub const TARGET_CIFS_CLIENT_IP: u64 = 0x00000000000000400;
+pub const TARGET_NFS: u64 = 0x0000000000000800;
+pub const TARGET_NFS_CLIENT_IP: u64 = 0x00000000000001000;
 
 pub const CIFS_PROTOCOL_LIST: [&str; 5] = ["smb1", "smb2", "smb2_1", "smb3", "smb3_1"];
 pub const CIFS_SMB_ENCRYPTION_LIST: [&str; 3] = ["unencrypted", "encrypted", "partially_encrypted"];
 pub const CIFS_CONTINUOUS_AVAILABILITY_LIST: [&str; 3] = ["available", "unavailable", "partial"];
 pub const CIFS_AUTHENTICATION_LIST: [&str; 5] =
     ["none", "ntlmv1", "ntlmv2", "kerberos", "anonymous"];
+pub const NFS_PROTOCOL_LIST: [&str; 4] = ["nfs", "nfs3", "nfs4", "nfs4.1"];
 
 pub const METRIC_AGGR_FOOTPRINT_NAME: &str = "netapp_aggregate_footprint_bytes";
 pub const METRIC_AGGR_FOOTPRINT_HELP: &str =
@@ -627,7 +631,7 @@ pub const METRIC_CIFS_MAPPED_UNIX_USER_NANE: &str = "netapp_cifs_mapped_unix_use
 pub const METRIC_CIFS_MAPPED_UNIX_USER_HELP: &str = "Mapped UNIX user of SMB connection";
 pub const METRIC_CIFS_CLIENT_NAME: &str = "netapp_cifs_clients";
 pub const METRIC_CIFS_CLIENT_HELP: &str = "Connected CIFS clients";
-pub const METRIC_CIFS_VOLUME_NAME: &str = "netapp_cifs_volmes";
+pub const METRIC_CIFS_VOLUME_NAME: &str = "netapp_cifs_volumes";
 pub const METRIC_CIFS_VOLUME_HELP: &str = "Volume clients are accessing using CIFS protocol";
 pub const METRIC_CIFS_LARGE_MTU_NAME: &str = "netapp_cifs_large_mtu";
 pub const METRIC_CIFS_LARGE_MTU_HELP: &str =
@@ -635,3 +639,18 @@ pub const METRIC_CIFS_LARGE_MTU_HELP: &str =
 pub const METRIC_CIFS_CONNECTIONS_NAME: &str = "netapp_cifs_connections";
 pub const METRIC_CIFS_CONNECTIONS_HELP: &str =
     "Number of requests that are sent to the volumes to the node";
+
+// NFS metrics
+pub const METRIC_NFS_PROTOCOL_NAME: &str = "netapp_nfs_protocols";
+pub const METRIC_NFS_PROTOCOL_HELP: &str =
+    "NFS protocol version over which client is accessing the volume";
+pub const METRIC_NFS_VOLUME_NAME: &str = "netapp_nfs_volumes";
+pub const METRIC_NFS_VOLUME_HELP: &str = "Connected volume";
+pub const METRIC_NFS_LOCAL_REQUEST_COUNT_NAME: &str = "netapp_nfs_local_request_total";
+pub const METRIC_NFS_LOCAL_REQUEST_COUNT_HELP: &str =
+    "Requests that are sent to the volume with fast-path to local node";
+pub const METRIC_NFS_REMOTE_REQUEST_COUNT_NAME: &str = "netapp_nfs_remote_request_total";
+pub const METRIC_NFS_REMOTE_REQUEST_COUNT_HELP: &str =
+    "Requests that are sent to the volume with slow-path to local node";
+pub const METRIC_NFS_CLIENT_NAME: &str = "netapp_nfs_clients";
+pub const METRIC_NFS_CLIENT_HELP: &str = "Connected NFS clients";

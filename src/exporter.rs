@@ -7,6 +7,7 @@ use crate::ethernet;
 use crate::fibrechannel;
 use crate::http;
 use crate::jobs;
+use crate::nfs;
 use crate::quotas;
 use crate::volumes;
 
@@ -1231,6 +1232,61 @@ lazy_static! {
     .unwrap();
 }
 
+lazy_static! {
+    pub static ref NFS_PROTOCOL: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_NFS_PROTOCOL_NAME,
+            constants::METRIC_NFS_PROTOCOL_HELP
+        ),
+        &["filer", "protocol"],
+    )
+    .unwrap();
+    pub static ref NFS_VOLUME: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_NFS_VOLUME_NAME,
+            constants::METRIC_NFS_VOLUME_HELP
+        ),
+        &["filer", "volume"],
+    )
+    .unwrap();
+    pub static ref NFS_LOCAL_COUNT: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_NFS_LOCAL_REQUEST_COUNT_NAME,
+            constants::METRIC_NFS_LOCAL_REQUEST_COUNT_HELP
+        ),
+        &["filer"],
+    )
+    .unwrap();
+    pub static ref NFS_REMOTE_COUNT: IntCounterVec = IntCounterVec::new(
+        Opts::new(
+            constants::METRIC_NFS_REMOTE_REQUEST_COUNT_NAME,
+            constants::METRIC_NFS_REMOTE_REQUEST_COUNT_HELP
+        ),
+        &["filer"],
+    )
+    .unwrap();
+    pub static ref NFS_CLIENT: IntGaugeVec = IntGaugeVec::new(
+        Opts::new(
+            constants::METRIC_NFS_CLIENT_NAME,
+            constants::METRIC_NFS_CLIENT_HELP
+        ),
+        &["filer", "client_ip"],
+    )
+    .unwrap();
+}
+
+pub fn register_nfs_metrics() {
+    REGISTRY.register(Box::new(NFS_PROTOCOL.clone())).unwrap();
+    REGISTRY.register(Box::new(NFS_VOLUME.clone())).unwrap();
+    REGISTRY
+        .register(Box::new(NFS_LOCAL_COUNT.clone()))
+        .unwrap();
+    REGISTRY
+        .register(Box::new(NFS_REMOTE_COUNT.clone()))
+        .unwrap();
+    REGISTRY.register(Box::new(NFS_CLIENT.clone())).unwrap();
+}
+
 pub fn register_cifs_metrics() {
     REGISTRY.register(Box::new(CIFS_PROTOCOLS.clone())).unwrap();
     REGISTRY
@@ -2001,6 +2057,27 @@ fn update_metrics(filer: &config::NetAppConfiguration, client: &mut reqwest::blo
     } else {
         info!(
             "CIFS protocol information has been disabled for {}",
+            filer.name
+        );
+    }
+
+    if filer.targets_mask & constants::TARGET_NFS == constants::TARGET_NFS {
+        info!("Requesting NFS protocol information from {}", filer.name);
+
+        let mut nfs_client_ip = false;
+        if filer.targets_mask & constants::TARGET_NFS_CLIENT_IP == constants::TARGET_NFS_CLIENT_IP {
+            nfs_client_ip = true
+        }
+
+        if let Err(e) = nfs::update_nfs(filer, client, nfs_client_ip) {
+            error!(
+                "Unable to update NFS protocol statistics for {} - {}",
+                filer.name, e
+            );
+        }
+    } else {
+        info!(
+            "NFS protocol information has been disabled for {}",
             filer.name
         );
     }

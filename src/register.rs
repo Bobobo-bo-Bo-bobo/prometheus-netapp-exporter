@@ -58,5 +58,14 @@ pub fn build_target_masks(scrape: &config::ScrapeTargets) -> u64 {
         }
     }
 
+    if let Some(val) = &scrape.nfs {
+        result |= constants::TARGET_NFS;
+        if let Some(v) = val.client_ip {
+            if v {
+                result |= constants::TARGET_NFS_CLIENT_IP
+            }
+        }
+    }
+
     result
 }

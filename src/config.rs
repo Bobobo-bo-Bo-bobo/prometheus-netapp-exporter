@@ -36,6 +36,7 @@ pub struct ScrapeTargets {
     pub ethernet: Option<bool>,
     pub fibrechannel: Option<bool>,
     pub jobs: Option<bool>,
+    pub nfs: Option<ScrapeTargetNFS>,
     pub quotas: Option<bool>,
     pub volumes: Option<bool>,
 }
@@ -45,6 +46,11 @@ pub struct ScrapeTargetCIFS {
     pub client_ip: Option<bool>,
     pub mapped_user: Option<bool>,
     pub user: Option<bool>,
+}
+
+#[derive(Clone, Default, Deserialize)]
+pub struct ScrapeTargetNFS {
+    pub client_ip: Option<bool>,
 }
 
 impl std::fmt::Debug for Configuration {

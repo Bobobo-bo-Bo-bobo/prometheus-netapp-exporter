@@ -12,6 +12,7 @@ mod fibrechannel;
 mod http;
 mod jobs;
 mod logging;
+mod nfs;
 mod quotas;
 mod register;
 mod storage_metrics;
@@ -100,6 +101,7 @@ fn main() {
     exporter::register_ethernet_metrics();
     exporter::register_fibrechannel_metrics();
     exporter::register_cifs_metrics();
+    exporter::register_nfs_metrics();
 
     if let Err(e) = http::server(config, &listen_address) {
         error!("Cen't start HTTP server: {}", e);
