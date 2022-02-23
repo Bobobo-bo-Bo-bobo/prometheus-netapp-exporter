@@ -560,7 +560,7 @@ lazy_static! {
     pub static ref VOLUME_METRIC_SPACE_SNAPSHOT_RESERVE_PERCENT: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
             constants::METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_NAME,
-            constants::METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_HELPE
+            constants::METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_HELP
         ),
         &["filer", "volume"],
     )

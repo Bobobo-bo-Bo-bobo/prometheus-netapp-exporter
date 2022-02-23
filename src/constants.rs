@@ -358,7 +358,7 @@ pub const METRIC_VOL_ENCRYPTION_TYPE_NAME: &str = "netapp_volume_encryption_type
 pub const METRIC_VOL_ENCRYPTION_TYPE_HELP: &str = "Volume encryption type";
 pub const METRIC_VOL_ENCRYPTION_STATE_NAME: &str = "netapp_volume_encryption_state_info";
 pub const METRIC_VOL_ENCRYPTION_STATE_HELP: &str = "Volume encryption state";
-pub const METRIC_VOL_ENCRYPTION_ENABLED_NAME: &str = "neapp_volume_encryption_enabled";
+pub const METRIC_VOL_ENCRYPTION_ENABLED_NAME: &str = "netapp_volume_encryption_enabled";
 pub const METRIC_VOL_ENCRYPTION_ENABLED_HELP: &str = "Volume encryption state";
 pub const METRIC_VOL_TIERING_POLICY_NAME: &str = "netapp_volume_tiering_policy_info";
 pub const METRIC_VOL_TIERING_POLICY_HELP: &str = "Policy that determines whether the user data blocks of a volume in a FabricPool will be tiered to the cloud store when they become cold";
@@ -415,7 +415,7 @@ pub const METRIC_VOL_SPACE_SNAPSHOT_USED_HELP: &str =
     "The total space used by Snapshot copies in the volume";
 pub const METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_NAME: &str =
     "netapp_volume_space_snapshot_reserve_percent";
-pub const METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_HELPE: &str =
+pub const METRIC_VOL_SPACE_SNAPSHOT_RESERVE_PERCENT_HELP: &str =
     "The space that has been set aside as a reserve for Snapshot copy usage";
 pub const METRIC_VOL_SPACE_METADATA_NAME: &str = "netapp_volume_space_metadata_bytes";
 pub const METRIC_VOL_SPACE_METADATA_HELP: &str =
