@@ -2,10 +2,9 @@ use crate::register;
 
 use serde::Deserialize;
 use std::error::Error;
-use std::fmt;
 use std::fs;
 
-#[derive(Deserialize, Clone)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct Configuration {
     pub filer: Vec<NetAppConfiguration>,
     #[serde(skip)]
@@ -14,21 +13,21 @@ pub struct Configuration {
     pub register_mask: u64,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct NetAppConfiguration {
     pub address: String,
     pub ca_cert: Option<String>,
     pub insecure_ssl: Option<bool>,
     pub name: String,
-    pub timeout: Option<u64>,
-    pub user: String,
     pub password: String,
     pub targets: Option<ScrapeTargets>,
     #[serde(skip)]
     pub targets_mask: u64,
+    pub timeout: Option<u64>,
+    pub user: String,
 }
 
-#[derive(Clone, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 pub struct ScrapeTargets {
     pub aggregates: Option<bool>,
     pub chassis: Option<bool>,
@@ -41,54 +40,16 @@ pub struct ScrapeTargets {
     pub volumes: Option<bool>,
 }
 
-#[derive(Clone, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 pub struct ScrapeTargetCIFS {
     pub client_ip: Option<bool>,
     pub mapped_user: Option<bool>,
     pub user: Option<bool>,
 }
 
-#[derive(Clone, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 pub struct ScrapeTargetNFS {
     pub client_ip: Option<bool>,
-}
-
-impl std::fmt::Debug for Configuration {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Configuration")
-            .field("filer", &self.filer)
-            .field("register", &self.register)
-            .field("register_mask", &self.register_mask)
-            .finish()
-    }
-}
-
-impl std::fmt::Debug for NetAppConfiguration {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("NetAppConfiguration")
-            .field("address", &self.address)
-            .field("ca_cert", &self.ca_cert)
-            .field("insecure_ssl", &self.insecure_ssl)
-            .field("name", &self.name)
-            .field("targets", &self.targets)
-            .field("targets_mask", &self.targets_mask)
-            .field("timeout", &self.timeout)
-            .finish()
-    }
-}
-
-impl std::fmt::Debug for ScrapeTargets {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("ScrapeTargets")
-            .field("aggregates", &self.aggregates)
-            .field("chassis", &self.chassis)
-            .field("ethernet", &self.ethernet)
-            .field("fibrechannel", &self.ethernet)
-            .field("jobs", &self.jobs)
-            .field("quotas", &self.quotas)
-            .field("volumes", &self.volumes)
-            .finish()
-    }
 }
 
 pub fn parse_config_file(f: &str) -> Result<Configuration, Box<dyn Error>> {

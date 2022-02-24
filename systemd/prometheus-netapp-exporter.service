@@ -1,0 +1,14 @@
+[Unit]
+Description=Export statistics of NetApp fileserver to Prometheus
+After=network.target auditd.service sssd.service
+
+[Service]
+EnvironmentFile=-/etc/default/prometheus-netapp-exporter
+ExecStart=/usr/sbin/prometheus-netapp-exporter $OPTIONS
+Restart=on-failure
+User=prometheus
+Group=prometheus
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,15 +1,171 @@
 # Preface
+In an enterprise environment, [NetApp](https://netapp.com) storage is widely used.
+
+Starting with OnTap 9.6, a [REST API](https://library.netapp.com/ecmdocs/ECMLP2874708/html/index.html) is provided (the old XML RPC API is still present at the moment).
+
+This tool fetches statistics from the REST API of the NetApp fileserver and export the data for [Prometheus](https://prometheus.io).
 
 # Requirements
 ## Build requirements
 As a Rust programm, a current stable Rust build environment is required.
+Aditionally the development file of `libssl` are required to build the `reqwest` crate.
 
 ## Runtime requirements
+`libssl` is required to run this programm.
 
 # Usage
+## Permissions on the fileserver
+To allow REST API access of the exporter, create a role with username and password authentication mode for the API endpoints **_AND_** general web access.
+
+| *Metric* | *API* |
+|:---------|:------|
+| aggregats | `/api/storage/aggregates` |
+| chassis | `/api/cluster/chassis` |
+| cifs | `/api/protocols/cifs/sessions` |
+| ethernet | `/api/network/ethernet/ports` |
+| fibrechannel | `/api/network/fc/ports` |
+| jobs | `/api/cluster/jobs` |
+| nfs | `/api/protocols/nfs/connected-clients` |
+| quotas | `/api/storage/quota/reports` |
+| volumes | `/api/storage/volumes` |
+
 ## Command line parameters
 
+| *Option* | *Parameter* | *Note* |
+|:---------|:------------|:-------|
+| `-D` / `--debug` | - | Show debug messages |
+| `-V` / `--version` | - | Show version information |
+| `-c <cfg>` / `--config=<cfg>` | Read configuration from `<cfg>` | **mandatory** |
+| `-h` / `--help` | - | Show help text |
+| `-l <addr>` / `--listen=<addr>` | Listen on `<addr>` for metric requests | Default: `localhost:9988` |
+| `-q` / `--quiet` | - | Quiet operation. Only warnings and errors are shown |
+
 ## Configuration file
+The configuration file is expected in the YAML format, e.g.:
+
+```yaml
+filername_1:
+    # name will be used in the filer label of the metrics. Mandatory
+    name: 'netapp_filer_1'
+
+    # Name or address of filer. Mandatory
+    address: 'name.ip.or.fqdn'
+
+    # Path to CA certificate used for signing the fileservers HTTPS certificate. Optional
+    ca_cert: '/path/to/ca.crt'
+
+    # Skip verification of fileservers HTTPS certificate. Optional, default: false
+    insecure_ssl: false
+
+    # user name and passsword for authentication for accessing the REST API of the fileserver
+    user: 'reporting_user_name_on_filer'
+    password: 'ItsSoFluffyImGONNADIE!'
+
+    # Connection timeout in seconds for fetching data from the REST API. Optional, default 0 (no timeout)
+    timeout: 120
+
+    # what data to fetch and export
+    targets:
+        # Aggregate statistics. Default: false
+        aggregates: true
+
+        # Chassis statistics. Note: Fetching chassis information is a *very* time consuming task. Default: false
+        chassis: false
+
+        # CIFS statistics. Note: Requires OnTap 9.8 or newer. Default: don't export CIFS statistics
+        cifs:
+            # Export CIFS connection counters for client IPs. Default: false
+            client_ip: true
+
+            # Export user connections for mapped UNIX user. Default: false
+            # Note: This contains sensitive information and GDPR rules could prohibit collection of user names!
+            mapped_user: true
+
+            # Export user connections for Windows users. Default: false
+            # Note: This contains sensitive information and GDPR rules could prohibit collection of user names!
+            user: true
+
+        # Ethernet port statistics. Default: false
+        ethernet: true
+
+        # Fibrechannel statistics. Default: false
+        fibrechannel: true
+
+        # Export counters for internal jobs on the fileserver. Default: false
+        jobs: true
+
+        # Export NFS statistics. Default: don't export NFS statistics
+        nfs:
+            # Export CIFS connection counters for client IPs. Default: false
+            client_ip: true
+
+        # Export (user, group and tree) quota information. Default: false
+        quotas: true
+
+        # Export volume statistics. Default: false
+        volumes: true
+
+second_netapp_storage:
+    # name will be used in the filer label of the metrics. Mandatory
+    name: 'netapp_filer_2'
+
+    # Name or address of filer. Mandatory
+    address: 'name.ip.or.fqdn_2'
+
+    # Path to CA certificate used for signing the fileservers HTTPS certificate. Optional
+    ca_cert: '/path/to/ca.crt'
+
+    # Skip verification of fileservers HTTPS certificate. Optional, default: false
+    insecure_ssl: false
+
+    # user name and passsword for authentication for accessing the REST API of the fileserver
+    user: 'reporting_user_name_on_filer'
+    password: 'ItsSoFluffyImGONNADIE!'
+
+    # Connection timeout in seconds for fetching data from the REST API. Optional, default 0 (no timeout)
+    timeout: 120
+
+    # what data to fetch and export
+    targets:
+        # Aggregate statistics. Default: false
+        aggregates: true
+
+        # Chassis statistics. Note: Fetching chassis information is a *very* time consuming task. Default: false
+        chassis: false
+
+        # CIFS statistics. Note: Requires OnTap 9.8 or newer. Default: don't export CIFS statistics
+        cifs:
+            # Export CIFS connection counters for client IPs. Default: false
+            client_ip: true
+
+            # Export user connections for mapped UNIX user. Default: false
+            # Note: This contains sensitive information and GDPR rules could prohibit collection of user names!
+            mapped_user: true
+
+            # Export user connections for Windows users. Default: false
+            # Note: This contains sensitive information and GDPR rules could prohibit collection of user names!
+            user: true
+
+        # Ethernet port statistics. Default: false
+        ethernet: true
+
+        # Fibrechannel statistics. Default: false
+        fibrechannel: true
+
+        # Export counters for internal jobs on the fileserver. Default: false
+        jobs: true
+
+        # Export NFS statistics. Default: don't export NFS statistics
+        nfs:
+            # Export CIFS connection counters for client IPs. Default: false
+            client_ip: true
+
+        # Export (user, group and tree) quota information. Default: false
+        quotas: true
+
+        # Export volume statistics. Default: false
+        volumes: true
+```
 
 ## Exported metrics
 ### Aggregate metrics

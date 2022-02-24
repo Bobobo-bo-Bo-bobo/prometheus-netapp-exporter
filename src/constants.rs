@@ -1,5 +1,5 @@
 pub const NAME: &str = "prometheus-netapp-exporter";
-pub const VERSION: &str = "0.1.1-20220222";
+pub const VERSION: &str = "1.0.0";
 pub const DEFAULT_INSECURE_SSL: bool = false;
 pub const DEFAULT_TIMEOUT: u64 = 60;
 pub const DEFAULT_PROMETHEUS_ADDRESS: &str = "localhost:9988";
@@ -14,14 +14,14 @@ pub const METRICS_PATH: &str = "/metrics";
 pub const HTTP_CLIENT_TIMEOUT: u64 = 15;
 
 pub const API_AGGREGATES: &str = "/api/storage/aggregates";
-pub const API_VOLUMES: &str = "/api/storage/volumes";
-pub const API_QUOTAS: &str = "/api/storage/quota/reports";
 pub const API_CHASSIS: &str = "/api/cluster/chassis";
-pub const API_JOBS: &str = "/api/cluster/jobs";
+pub const API_CIFS: &str = "/api/protocols/cifs/sessions";
 pub const API_ETHERNET: &str = "/api/network/ethernet/ports";
 pub const API_FIBRECHANNEL: &str = "/api/network/fc/ports";
-pub const API_CIFS: &str = "/api/protocols/cifs/sessions";
+pub const API_JOBS: &str = "/api/cluster/jobs";
 pub const API_NFS: &str = "/api/protocols/nfs/connected-clients";
+pub const API_QUOTAS: &str = "/api/storage/quota/reports";
+pub const API_VOLUMES: &str = "/api/storage/volumes";
 
 pub const TARGET_AGGREGATES: u64 = 0x0000000000000001;
 pub const TARGET_VOLUMES: u64 = 0x0000000000000002;
