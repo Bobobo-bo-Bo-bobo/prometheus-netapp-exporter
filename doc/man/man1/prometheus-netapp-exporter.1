@@ -1,0 +1,205 @@
+.TH prometheus-netapp-exporter 1 "February 25th, 2022" "Version 1.0.0"
+.SH NAME
+prometheus-netapp-exporter -  Export NetApp (C-mode) metrics from the OnTap REST API to Prometheus
+
+.SH SYNOPSIS
+.B
+prometheus-netapp-exporter
+[
+.I
+-D|--debug
+]
+[
+.I
+-V|--version
+]
+.I
+-c <cfg>|--config=<cfg>
+[
+.I
+-h|--help
+]
+[
+.I
+-l <addr>|--listen=<addr>
+]
+[
+.I
+-q|--quiet
+]
+.SH DESCRIPTION
+A Prometheus exporter for NetApp fileserver metrics, provided by the OnTap REST API (OnTap 9.6 or newer)
+
+.SH OPTIONS
+.B -D, --debug
+.br
+.RS
+Show debug messages
+.RE
+
+.B -V|--version
+.br
+.RS
+Show version information
+.RE
+
+.B -c <cfg>|--config=<cfg>
+.br
+.RS
+Mandatory configuration file
+.I <cfg>
+on how to access NetApp fileserver API
+.RE
+
+.B -h|--help
+.br
+.RS
+Show help text
+.RE
+
+.B -l <addr>|--listen=<addr>
+.br
+.RS
+Listen on
+.I <addr>
+for Prometheus scrapes. Default is 
+.RE
+
+.B -q|--quiet
+.br
+.RS
+Quiet operation, only warn and error messages are logged.
+.RE
+
+.SH EXAMPLE CONFIGURATION FILE
+The configuration file is in YAML format. For example:
+
+.RS
+.nf
+filername_1:
+    # name will be used in the filer label of the metrics. Mandatory
+    name: 'netapp_filer_1'
+
+    # Name or address of filer. Mandatory
+    address: 'name.ip.or.fqdn'
+
+    # Path to CA certificate used for signing the fileservers HTTPS certificate. Optional
+    ca_cert: '/path/to/ca.crt'
+
+    # Skip verification of fileservers HTTPS certificate. Optional, default: false
+    insecure_ssl: false
+
+    # user name and passsword for authentication for accessing the REST API of the fileserver
+    user: 'reporting_user_name_on_filer'
+    password: 'ItsSoFluffyImGONNADIE!'
+
+    # Connection timeout in seconds for fetching data from the REST API. Optional, default 0 (no timeout)
+    timeout: 120
+
+    # what data to fetch and export
+    targets:
+        # Aggregate statistics. Default: false
+        aggregates: true
+
+        # Chassis statistics. Note: Fetching chassis information is a *very* time consuming task. Default: false
+        chassis: false
+
+        # CIFS statistics. Note: Requires OnTap 9.8 or newer. Default: don't export CIFS statistics
+        cifs:
+            # Export CIFS connection counters for client IPs. Default: false
+            client_ip: true
+
+            # Export user connections for mapped UNIX user. Default: false
+            # Note: This contains sensitive information and GDPR rules could prohibit collection of user names!
+            mapped_user: true
+
+            # Export user connections for Windows users. Default: false
+            # Note: This contains sensitive information and GDPR rules could prohibit collection of user names!
+            user: true
+
+        # Ethernet port statistics. Default: false
+        ethernet: true
+
+        # Fibrechannel statistics. Default: false
+        fibrechannel: true
+
+        # Export counters for internal jobs on the fileserver. Default: false
+        jobs: true
+
+        # Export NFS statistics. Default: don't export NFS statistics
+        nfs:
+            # Export CIFS connection counters for client IPs. Default: false
+            client_ip: true
+
+        # Export (user, group and tree) quota information. Default: false
+        quotas: true
+
+        # Export volume statistics. Default: false
+        volumes: true
+
+second_netapp_storage:
+    # name will be used in the filer label of the metrics. Mandatory
+    name: 'netapp_filer_2'
+
+    # Name or address of filer. Mandatory
+    address: 'name.ip.or.fqdn_2'
+
+    # Path to CA certificate used for signing the fileservers HTTPS certificate. Optional
+    ca_cert: '/path/to/ca.crt'
+
+    # Skip verification of fileservers HTTPS certificate. Optional, default: false
+    insecure_ssl: false
+
+    # user name and passsword for authentication for accessing the REST API of the fileserver
+    user: 'reporting_user_name_on_filer'
+    password: 'ItsSoFluffyImGONNADIE!'
+
+    # Connection timeout in seconds for fetching data from the REST API. Optional, default 0 (no timeout)
+    timeout: 120
+
+    # what data to fetch and export
+    targets:
+        # Aggregate statistics. Default: false
+        aggregates: true
+
+        # Chassis statistics. Note: Fetching chassis information is a *very* time consuming task. Default: false
+        chassis: false
+
+        # CIFS statistics. Note: Requires OnTap 9.8 or newer. Default: don't export CIFS statistics
+        cifs:
+            # Export CIFS connection counters for client IPs. Default: false
+            client_ip: true
+
+            # Export user connections for mapped UNIX user. Default: false
+            # Note: This contains sensitive information and GDPR rules could prohibit collection of user names!
+            mapped_user: true
+
+            # Export user connections for Windows users. Default: false
+            # Note: This contains sensitive information and GDPR rules could prohibit collection of user names!
+            user: true
+
+        # Ethernet port statistics. Default: false
+        ethernet: true
+
+        # Fibrechannel statistics. Default: false
+        fibrechannel: true
+
+        # Export counters for internal jobs on the fileserver. Default: false
+        jobs: true
+
+        # Export NFS statistics. Default: don't export NFS statistics
+        nfs:
+            # Export CIFS connection counters for client IPs. Default: false
+            client_ip: true
+
+        # Export (user, group and tree) quota information. Default: false
+        quotas: true
+
+        # Export volume statistics. Default: false
+        volumes: true
+.fi
+.RE
+
+.SH AUTHOR
+Andreas Maus <maus@ypbind.de>
+

@@ -18,7 +18,10 @@ Public License Version 3. (http://www.gnu.org/copyleft/gpl.html)
 pub fn show_usage() {
     show_version();
     println!(
-        "Usage: {} [-V|--version] -c <config>|--config=<config> [-h|--help] [-l <address>|--listen=<address>]
+        "Usage: {} [-D|--debug] [-V|--version] -c <config>|--config=<config> [-h|--help] [-l <address>|--listen=<address>]
+
+    -D                  Enable debug mode
+    --debug
 
     -V                  Show version information
     --version
