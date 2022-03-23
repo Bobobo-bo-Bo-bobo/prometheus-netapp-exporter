@@ -10,11 +10,11 @@ chrono = "0.4.19"
 fern = "0.6.0"
 getopts = "0.2.21"
 lazy_static = "1.4.0"
-log = "0.4.14"
+log = "0.4.16"
 # oxhttp 0.1.4+ requires rustc 1.58 or newer
 oxhttp = "0.1.4"
 prometheus = { version = "0.13.0", features = ["process"] }
-reqwest = { version = "0.11.9", features = ["blocking", "native-tls"] }
+reqwest = { version = "0.11.10", features = ["blocking", "native-tls"] }
 serde = { version = "1.0.136", features = ["derive"] }
 serde_json = "1.0.79"
 serde_yaml = "0.8.23"
