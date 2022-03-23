@@ -19,7 +19,7 @@ To allow REST API access of the exporter, create a role with username and passwo
 
 | *Metric* | *API* |
 |:---------|:------|
-| aggregats | `/api/storage/aggregates` |
+| aggregates | `/api/storage/aggregates` |
 | chassis | `/api/cluster/chassis` |
 | cifs | `/api/protocols/cifs/sessions` |
 | ethernet | `/api/network/ethernet/ports` |
