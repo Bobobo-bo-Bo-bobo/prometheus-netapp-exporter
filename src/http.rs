@@ -18,7 +18,7 @@ pub fn build_client(
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(
         "X-Clacks-Overhead",
-        reqwest::header::HeaderValue::from_static("X-Clacks-Overhead"),
+        reqwest::header::HeaderValue::from_static("GNU Terry Pratchett"),
     );
     headers.insert(
         "Accept",
