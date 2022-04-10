@@ -5,6 +5,10 @@ Starting with OnTap 9.6, a [REST API](https://library.netapp.com/ecmdocs/ECMLP28
 
 This tool fetches statistics from the REST API of the NetApp fileserver and export the data for [Prometheus](https://prometheus.io).
 
+# Repositories
+* Primary development repository: https://git.ypbind.de/cgit/prometheus-netapp-exporter/
+* Backup repository: https://github.com/Bobobo-bo-Bo-bobo/prometheus-netapp-exporter
+
 # Requirements
 ## Build requirements
 As a Rust programm, a current stable Rust build environment is required.
