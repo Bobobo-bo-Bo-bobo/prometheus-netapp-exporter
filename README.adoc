@@ -1,53 +1,68 @@
-# Preface
-In an enterprise environment, [NetApp](https://netapp.com) storage is widely used.
+= prometheus-netapp-exporter
+:stylesheet: asciidoc.css
 
-Starting with OnTap 9.6, a [REST API](https://library.netapp.com/ecmdocs/ECMLP2874708/html/index.html) is provided (the old XML RPC API is still present at the moment).
+== Preface
 
-This tool fetches statistics from the REST API of the NetApp fileserver and export the data for [Prometheus](https://prometheus.io).
+In an enterprise environment, https://netapp.com[NetApp] storage is widely used.
 
-# Repositories
+Starting with OnTap 9.6, a https://library.netapp.com/ecmdocs/ECMLP2874708/html/index.html[REST API] is provided (the old XML RPC API is still present at the moment).
+
+This tool fetches statistics from the REST API of the NetApp fileserver and export the data for https://prometheus.io[Prometheus].
+
+== Repositories
+
 * Primary development repository: https://git.ypbind.de/cgit/prometheus-netapp-exporter/
 * Backup repository: https://github.com/Bobobo-bo-Bo-bobo/prometheus-netapp-exporter
 
-# Requirements
-## Build requirements
-As a Rust programm, a current stable Rust build environment is required.
-Aditionally the development file of `libssl` are required to build the `reqwest` crate.
+== Requirements
 
-## Runtime requirements
+=== Build requirements
+
+As a Rust programm, a current stable Rust build environment is required. Aditionally the development file of `libssl` are required to build the `reqwest` crate.
+
+=== Runtime requirements
+
 `libssl` is required to run this programm.
 
-# Usage
-## Permissions on the fileserver
-To allow REST API access of the exporter, create a role with username and password authentication mode for the API endpoints **_AND_** general web access.
+== Usage
 
-| *Metric* | *API* |
-|:---------|:------|
-| aggregates | `/api/storage/aggregates` |
-| chassis | `/api/cluster/chassis` |
-| cifs | `/api/protocols/cifs/sessions` |
-| ethernet | `/api/network/ethernet/ports` |
-| fibrechannel | `/api/network/fc/ports` |
-| jobs | `/api/cluster/jobs` |
-| nfs | `/api/protocols/nfs/connected-clients` |
-| quotas | `/api/storage/quota/reports` |
-| volumes | `/api/storage/volumes` |
+=== Permissions on the fileserver
 
-## Command line parameters
+To allow REST API access of the exporter, create a role with username and password authentication mode for the API endpoints *_AND_* general web access.
 
-| *Option* | *Parameter* | *Note* |
-|:---------|:------------|:-------|
-| `-D` / `--debug` | - | Show debug messages |
-| `-V` / `--version` | - | Show version information |
-| `-c <cfg>` / `--config=<cfg>` | Read configuration from `<cfg>` | **mandatory** |
-| `-h` / `--help` | - | Show help text |
-| `-l <addr>` / `--listen=<addr>` | Listen on `<addr>` for metric requests | Default: `localhost:9988` |
-| `-q` / `--quiet` | - | Quiet operation. Only warnings and errors are shown |
+[cols="<,<",options="header",]
+|===
+|_Metric_ |_API_
+|aggregates |`/api/storage/aggregates`
+|chassis |`/api/cluster/chassis`
+|cifs |`/api/protocols/cifs/sessions`
+|ethernet |`/api/network/ethernet/ports`
+|fibrechannel |`/api/network/fc/ports`
+|jobs |`/api/cluster/jobs`
+|nfs |`/api/protocols/nfs/connected-clients`
+|quotas |`/api/storage/quota/reports`
+|volumes |`/api/storage/volumes`
+|===
 
-## Configuration file
+=== Command line parameters
+
+[width="100%",cols="<34%,<41%,<25%",options="header",]
+|===
+|_Option_ |_Parameter_ |_Note_
+|`-D` / `--debug` |- |Show debug messages
+|`-V` / `--version` |- |Show version information
+|`-c <cfg>` / `--config=<cfg>` |Read configuration from `<cfg>` |*mandatory*
+|`-h` / `--help` |- |Show help text
+|`-l <addr>` / `--listen=<addr>` |Listen on `<addr>` for metric requests |Default: `localhost:9988`
+|`-q` / `--quiet` |- |Quiet operation. Only warnings and errors are shown
+|===
+
+=== Configuration file
+
 The configuration file is expected in the YAML format, e.g.:
 
-```yaml
+[source,yaml]
+----
 filername_1:
     # name will be used in the filer label of the metrics. Mandatory
     name: 'netapp_filer_1'
@@ -169,280 +184,316 @@ second_netapp_storage:
 
         # Export volume statistics. Default: false
         volumes: true
-```
+----
 
-## Exported metrics
-### Aggregate metrics
+=== Exported metrics
+
+==== Aggregate metrics
+
 Aggregate metrics are fetched from the `/api/storage/aggregates` endpoint.
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_aggregate_footprint_bytes` | A summation of volume footprints (including volume guarantees), in bytes |  |
-| `netapp_aggregate_block_storage_size_bytes` | Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve |  |
-| `netapp_aggregate_block_storage_used_bytes` | Space used or reserved in bytes includes volume guarantees and aggregate metadata. |  |
-| `netapp_aggregate_block_storage_available_bytes` | Space available in bytes |  |
-| `netapp_aggregate_block_storage_full_threshold_percent` | The aggregate used percentage at which monitor.volume.full EMS is generated |  |
-| `netapp_aggregate_block_storage_efficiency_logical_used_bytes` | Logical used including snapshots |  |
-| `netapp_aggregate_block_storage_efficiency_savings_bytes` | Space saved by storage efficiencies including snapshots |  |
-| `netapp_aggregate_block_storage_efficiency_ratio` | Data reduction ratio including snapshots |  |
-| `netapp_aggregate_block_storage_efficiency_without_snapshots_logical_used_bytes` | Logical used without snapshots |  |
-| `netapp_aggregate_block_storage_efficiency_without_snapshots_savings_bytes` | Space saved by storage efficiencies without snapshots |  |
-| `netapp_aggregate_block_storage_efficiency_without_snapshots_ratio` | Data reduction ratio without snapshots |  |
-| `netapp_aggregate_cloud_storage_used_bytes` | Used space in bytes in the cloud store |  |
-| `netapp_aggregate_block_storage_plexes` | The number of plexes in the aggregate |  |
-| `netapp_aggregate_block_storage_hybrid_cache_enabled_info` | Specifies whether the aggregate uses HDDs with SSDs as a cache |  |
-| `netapp_aggregate_block_storage_hybrid_cache_disk_used` | Number of disks used in the cache tier of the aggregate |  |
-| `netapp_aggregate_block_storage_hybrid_cache_size_bytes` | Total usable space in bytes of SSD cache |  |
-| `netapp_aggregate_block_storage_hybrid_cache_used_bytes` | Space used in bytes of SSD cache |  |
-| `netapp_aggregate_block_storage_primary_disks` | Number of disks used in the aggregate including parity disks, but excluding disks in the hybrid cache |  |
-| `netapp_aggregate_block_storage_primary_raid_size` | The maximum number of disks that can be included in a RAID group |  |
-| `netapp_aggregate_block_storage_mirror_enabled_info` | Aggregate is SyncMirror protected |  |
-| `netapp_aggregate_block_storage_mirror_state_info` | Current state of SyncMirror |  |
-| `netapp_aggregate_state_info` | Operational state of the aggregate |  |
-| `netapp_aggregate_metric_throughput_read_bytes_per_second` | Performance metric for read I/O operations in bytes per second |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_throughput_write_bytes_per_second` | Performance metric for write I/O operations in bytes per second |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_throughput_other_bytes_per_second` | Performance metric for other I/O operations in bytes per second |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_throughput_total_bytes_per_second` | Performance metric for all I/O operations in bytes per second |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_latency_read_seconds` | The round trip latency in microseconds observed at the storage object for read operations |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_latency_write_seconds` | The round trip latency in microseconds observed at the storage object for write operations |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_latency_other_seconds` | The round trip latency in microseconds observed at the storage object for other operations |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_latency_total_seconds` | The round trip latency in microseconds observed at the storage object for all operations |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_iops_read_iops_per_second` | The rate of I/O operations observed at the storage object for read operations |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_iops_write_iops_per_second` | The rate of I/O operations observed at the storage object for write operations |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_iops_other_iops_per_second` | The rate of I/O operations observed at the storage object for other operations |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_iops_total_iops_per_second` | The rate of I/O operations observed at the storage object for all operations |  requires OnTap 9.7 or newer |
-| `netapp_aggregate_metric_sample_duration_seconds` | The duration over which the sample are calculated |  requires OnTap 9.7 or newer |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_aggregate_footprint_bytes` |A summation of volume footprints (including volume guarantees), in bytes |
+|`netapp_aggregate_block_storage_size_bytes` |Total usable space in bytes, not including WAFL reserve and aggregate Snapshot copy reserve |
+|`netapp_aggregate_block_storage_used_bytes` |Space used or reserved in bytes includes volume guarantees and aggregate metadata. |
+|`netapp_aggregate_block_storage_available_bytes` |Space available in bytes |
+|`netapp_aggregate_block_storage_full_threshold_percent` |The aggregate used percentage at which monitor.volume.full EMS is generated |
+|`netapp_aggregate_block_storage_efficiency_logical_used_bytes` |Logical used including snapshots |
+|`netapp_aggregate_block_storage_efficiency_savings_bytes` |Space saved by storage efficiencies including snapshots |
+|`netapp_aggregate_block_storage_efficiency_ratio` |Data reduction ratio including snapshots |
+|`netapp_aggregate_block_storage_efficiency_without_snapshots_logical_used_bytes` |Logical used without snapshots |
+|`netapp_aggregate_block_storage_efficiency_without_snapshots_savings_bytes` |Space saved by storage efficiencies without snapshots |
+|`netapp_aggregate_block_storage_efficiency_without_snapshots_ratio` |Data reduction ratio without snapshots |
+|`netapp_aggregate_cloud_storage_used_bytes` |Used space in bytes in the cloud store |
+|`netapp_aggregate_block_storage_plexes` |The number of plexes in the aggregate |
+|`netapp_aggregate_block_storage_hybrid_cache_enabled_info` |Specifies whether the aggregate uses HDDs with SSDs as a cache |
+|`netapp_aggregate_block_storage_hybrid_cache_disk_used` |Number of disks used in the cache tier of the aggregate |
+|`netapp_aggregate_block_storage_hybrid_cache_size_bytes` |Total usable space in bytes of SSD cache |
+|`netapp_aggregate_block_storage_hybrid_cache_used_bytes` |Space used in bytes of SSD cache |
+|`netapp_aggregate_block_storage_primary_disks` |Number of disks used in the aggregate including parity disks, but excluding disks in the hybrid cache |
+|`netapp_aggregate_block_storage_primary_raid_size` |The maximum number of disks that can be included in a RAID group |
+|`netapp_aggregate_block_storage_mirror_enabled_info` |Aggregate is SyncMirror protected |
+|`netapp_aggregate_block_storage_mirror_state_info` |Current state of SyncMirror |
+|`netapp_aggregate_state_info` |Operational state of the aggregate |
+|`netapp_aggregate_metric_throughput_read_bytes_per_second` |Performance metric for read I/O operations in bytes per second |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_throughput_write_bytes_per_second` |Performance metric for write I/O operations in bytes per second |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_throughput_other_bytes_per_second` |Performance metric for other I/O operations in bytes per second |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_throughput_total_bytes_per_second` |Performance metric for all I/O operations in bytes per second |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_latency_read_seconds` |The round trip latency in microseconds observed at the storage object for read operations |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_latency_write_seconds` |The round trip latency in microseconds observed at the storage object for write operations |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_latency_other_seconds` |The round trip latency in microseconds observed at the storage object for other operations |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_latency_total_seconds` |The round trip latency in microseconds observed at the storage object for all operations |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_iops_read_iops_per_second` |The rate of I/O operations observed at the storage object for read operations |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_iops_write_iops_per_second` |The rate of I/O operations observed at the storage object for write operations |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_iops_other_iops_per_second` |The rate of I/O operations observed at the storage object for other operations |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_iops_total_iops_per_second` |The rate of I/O operations observed at the storage object for all operations |requires OnTap 9.7 or newer
+|`netapp_aggregate_metric_sample_duration_seconds` |The duration over which the sample are calculated |requires OnTap 9.7 or newer
+|===
 
-### Volume metrics
+==== Volume metrics
+
 Volume metrics are fetched from the `/api/storage/volumes` endpoint.
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_volumes_files_maximum` | The maximum number of files for user-visible data allowed on the volume |  |
-| `netapp_volumes_files_used` | Number of files used for user-visible data on the volume |  |
-| `netapp_volume_state_info` | Volume state |  |
-| `netapp_volume_error_state_info` | Reason why the volume is in an error state |  |
-| `netapp_volume_autosize_minimum_bytes` | Minimum size in bytes up to which the volume shrinks automatically |  |
-| `netapp_volume_autosize_maximum_bytes` | Maximum size in bytes up to which a volume grows automatically |  |
-| `netapp_volume_autosize_shrink_threshold_percent` | Used space threshold for the automatic shrinkage of the volume |  |
-| `netapp_volume_autosize_grow_threshold_percent` | Used space threshold for the automatic growth of the volume |  |
-| `netapp_volume_autosize_mode_info` | Autosize mode for the volume |  |
-| `netapp_volume_is_object_store_info` | Specifies whether the volume is provisioned for an object store server |  |
-| `netapp_volume_number_of_aggregates` | Aggregate hosting the volume |  |
-| `netapp_volume_flex_cache_info` | FlexCache endpoint type |  |
-| `netapp_volume_type_info` | Type of the volume |  |
-| `netapp_volume_cloud_retrieval_info` | Cloud retrieval policy for the volume |  |
-| `netapp_volume_quota_state_info` | Quota state of the volume |  |
-| `netapp_volume_efficiency_compression_info` | Compression state of the volume |  |
-| `netapp_volume_efficiency_compaction_info` | Compaction state of the volume |  |
-| `netapp_volume_efficiency_dedupe_info` | Deduplication state of the volume |  |
-| `netapp_volume_efficiency_cross_volume_dedupe_info` | Cross volume deduplication state of the volume |  |
-| `netapp_volume_metric_sample_duration_seconds` | The duration over which the sample are calculated |  |
-| `netapp_volume_metric_iops_read_iops_per_second` | The rate of I/O operations observed at the storage object for read operations |  |
-| `netapp_volume_metric_iops_write_iops_per_second` | The rate of I/O operations observed at the storage object for write operations |  |
-| `netapp_volume_metric_iops_other_iops_per_second` | The rate of I/O operations observed at the storage object for other operations |  |
-| `netapp_volume_metric_iops_total_iops_per_second` | The rate of I/O operations observed at the storage object for all operations |  |
-| `netapp_volume_metric_latency_read_seconds` | The round trip latency in microseconds observed at the storage object for read operations |  |
-| `netapp_volume_metric_latency_write_seconds` | The round trip latency in microseconds observed at the storage object for write operations |  |
-| `netapp_volume_metric_latency_other_seconds` | The round trip latency in microseconds observed at the storage object for other operations |  |
-| `netapp_volume_metric_latency_total_seconds` | The round trip latency in microseconds observed at the storage object for all operations |  |
-| `netapp_volume_metric_throughput_read_bytes_per_second` | Performance metric for read I/O operations in bytes per second |  |
-| `netapp_volume_metric_throughput_write_bytes_per_second` | Performance metric for write I/O operations in bytes per second |  |
-| `netapp_volume_metric_throughput_other_bytes_per_second` | Performance metric for other I/O operations in bytes per second |  |
-| `netapp_volume_metric_throughput_total_bytes_per_second` | Performance metric for all I/O operations in bytes per second |  |
-| `netapp_volume_metric_cloud_iops_read_iops_per_second` | The rate of I/O operations observed at the cloud storage object for read operations |  requires OnTap 9.7 or newer |
-| `netapp_volume_metric_cloud_iops_write_iops_per_second` | The rate of I/O operations observed at the cloud storage object for write operations |  requires OnTap 9.7 or newer |
-| `netapp_volume_metric_cloud_iops_other_iops_per_second` | The rate of I/O operations observed at the cloud storage object for other operations |  requires OnTap 9.7 or newer |
-| `netapp_volume_metric_cloud_iops_total_iops_per_second` | The rate of I/O operations observed at the cloud storage object for all operations |  requires OnTap 9.7 or newer |
-| `netapp_volume_metric_cloud_latency_read_seconds` | The round trip latency in microseconds observed at the cloud storage object for read operations |  requires OnTap 9.7 or newer |
-| `netapp_volume_metric_cloud_latency_write_seconds` | The round trip latency in microseconds observed at the cloud storage object for write operations |  requires OnTap 9.7 or newer |
-| `netapp_volume_metric_cloud_latency_other_seconds` | The round trip latency in microseconds observed at the cloud storage object for other operations |  requires OnTap 9.7 or newer |
-| `netapp_volume_metric_cloud_latency_total_seconds` | The round trip latency in microseconds observed at the cloud storage object for all operations |  requires OnTap 9.7 or newer |
-| `netapp_volume_metric_sample_cloud_storage_duration_seconds` | The duration over which the sample are calculated |  |
-| `netapp_volume_metric_flexcache_sample_duration_seconds` | The duration over which the sample are calculated |  |
-| `netapp_volume_metric_flexcache_cache_miss_percent` | Cache miss percentage |  |
-| `netapp_volume_metric_access_time_enabled` | Indicates whether or not access time updates are enabled on the volume |  requires OnTap 9.8 or newer |
-| `netapp_volume_queued_for_encryption` | Specifies whether the volume is queued for encryption |  requires OnTap 9.8 or newer |
-| `netapp_volume_snaplock_append_mode_enabled` | Specifies if the volume append mode is enabled or disabled |  |
-| `netapp_volume_snaplock_litigation_count` | Litigation count indicates the number of active legal-holds on the volume |  |
-| `netapp_volume_snaplock_unspecified_retention_files` | Indicates the number of files with an unspecified retention time in the volume |  |
-| `netapp_volume_snaplock_is_audit_log` | Indicates if this volume has been configured as SnapLock audit log volume for the SVM |  |
-| `netapp_volume_snaplock_privileged_delete` | Specifies the privileged-delete attribute of a SnapLock volume |  |
-| `netapp_volume_snaplock_type_info` | The SnapLock type of the volume |  |
-| `netapp_volume_movemet_complete_percent` | Completion percentage of volume movement |  |
-| `netapp_volume_movement_cutover_window_seconds` | Time window in seconds for cutover |  |
-| `netapp_volume_movement_tiering_policy_info` | Tiering policy for FabricPool |  |
-| `netapp_volume_movement_state_info` | State of volume move operation |  |
-| `netapp_volume_style` | The style of the volume |  |
-| `netapp_volume_encryption_type_info` | Volume encryption type |  |
-| `netapp_volume_encryption_state_info` | Volume encryption state |  |
-| `netapp_volume_encryption_enabled` | Volume encryption state |  |
-| `netapp_volume_tiering_policy_info` | Policy that determines whether the user data blocks of a volume in a FabricPool will be tiered to the cloud store when they become cold |  |
-| `netapp_volume_tiering_supported` | Whether or not FabricPools are selected when provisioning a FlexGroup without specifying aggregates.name or aggregates.uuid |  |
-| `netapp_volume_tiering_min_cooling_days` | Minimum number of days that user data blocks of the volume must be cooled before they can be considered cold and tiered out to the cloud tier |  |
-| `netapp_volume_space_blockstorage_inactive_user_data_bytes` | The size that is physically used in the block storage of the volume and has a cold temperature |  |
-| `netapp_volume_space_over_provisioned_bytes` | The amount of space not available for this volume in the aggregate, in bytes |  |
-| `netapp_volume_space_performance_tier_footprint_bytes` | Space used by the performance tier for this volume in the FabricPool aggregate, in bytes |  |
-| `netapp_volume_space_footprint_bytes` | Data used for this volume in the aggregate |  |
-| `netapp_volume_space_capacity_tier_footprint_bytes` | Space used by capacity tier for this volume in the FabricPool aggregate |  |
-| `netapp_volume_space_total_footprint_bytes` | Data and metadata used for this volume in the aggregate |  |
-| `netapp_volume_space_size_bytes` | Total provisioned size |  |
-| `netapp_volume_space_logical_space_reporting_enabled` | Whether space reporting on the volume is done along with storage efficiency |  |
-| `netapp_volume_space_logical_space_enforcement_enabled` | Whether space accounting for operations on the volume is done along with storage efficiency |  |
-| `netapp_volume_space_logical_space_used_by_afs_bytes` | The virtual space used by AFS alone (includes volume reserves) and along with storage efficiency |  |
-| `netapp_volume_space_logical_space_available_bytes` | The amount of space available in this volume with storage efficiency space considered used |  |
-| `netapp_volume_space_used_bytes` | The virtual space used (includes volume reserves) before storage efficiency |  |
-| `netapp_volume_space_snapshot_autodalete_enabled` | Whether Snapshot copy autodelete is currently enabled on this volume |  |
-| `netapp_volume_space_snapshot_used_bytes` | The total space used by Snapshot copies in the volume |  |
-| `netapp_volume_space_snapshot_reserve_percent` | The space that has been set aside as a reserve for Snapshot copy usage |  |
-| `netapp_volume_space_metadata_bytes` | Space used by the volume metadata in the aggregate |  |
-| `netapp_volume_space_available_bytes` | The available space |  |
-| `netapp_volume_space_local_tier_footprint_bytes` | Space used by the local tier for this volume in the aggregate |  requires OnTap 9.8 or newer |
-| `netapp_volume_analytics_scan_progress_percent` | Percentage of files in the volume that the file system analytics initialization scan has processed |  requires OnTap 9.8 or newer |
-| `netapp_volume_analytics_supported` | Whether or not file system analytics is supported on the volume |  requires OnTap 9.8 or newer |
-| `netapp_volume_analytics_state_info` | File system analytics state of the volume |  requires OnTap 9.8 or newer |
-| `netapp_volume_guarantee_type_info` | The type of space guarantee of this volume in the aggregate |  |
-| `netapp_volume_guarantee_honored` | Wheter the space guarantee of this volume honored in the aggregate |  |
-| `netapp_volume_is_svm_root` | Whether the volume is a root volume of the SVM it belongs to |  requires OnTap 9.7 or newer |
-| `netapp_volume_use_mirrored_aggregates` | Specifies whether mirrored aggregates are selected when provisioning a FlexGroup without specifying aggregates.name or aggregates.uuid |  requires OnTap 9.7 or newer |
-| `netapp_volume_snapmirror_protected` | Specifies whether a volume is a SnapMirror source volume, using SnapMirror to protect its data |  requires OnTap 9.7 or newer |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_volumes_files_maximum` |The maximum number of files for user-visible data allowed on the volume |
+|`netapp_volumes_files_used` |Number of files used for user-visible data on the volume |
+|`netapp_volume_state_info` |Volume state |
+|`netapp_volume_error_state_info` |Reason why the volume is in an error state |
+|`netapp_volume_autosize_minimum_bytes` |Minimum size in bytes up to which the volume shrinks automatically |
+|`netapp_volume_autosize_maximum_bytes` |Maximum size in bytes up to which a volume grows automatically |
+|`netapp_volume_autosize_shrink_threshold_percent` |Used space threshold for the automatic shrinkage of the volume |
+|`netapp_volume_autosize_grow_threshold_percent` |Used space threshold for the automatic growth of the volume |
+|`netapp_volume_autosize_mode_info` |Autosize mode for the volume |
+|`netapp_volume_is_object_store_info` |Specifies whether the volume is provisioned for an object store server |
+|`netapp_volume_number_of_aggregates` |Aggregate hosting the volume |
+|`netapp_volume_flex_cache_info` |FlexCache endpoint type |
+|`netapp_volume_type_info` |Type of the volume |
+|`netapp_volume_cloud_retrieval_info` |Cloud retrieval policy for the volume |
+|`netapp_volume_quota_state_info` |Quota state of the volume |
+|`netapp_volume_efficiency_compression_info` |Compression state of the volume |
+|`netapp_volume_efficiency_compaction_info` |Compaction state of the volume |
+|`netapp_volume_efficiency_dedupe_info` |Deduplication state of the volume |
+|`netapp_volume_efficiency_cross_volume_dedupe_info` |Cross volume deduplication state of the volume |
+|`netapp_volume_metric_sample_duration_seconds` |The duration over which the sample are calculated |
+|`netapp_volume_metric_iops_read_iops_per_second` |The rate of I/O operations observed at the storage object for read operations |
+|`netapp_volume_metric_iops_write_iops_per_second` |The rate of I/O operations observed at the storage object for write operations |
+|`netapp_volume_metric_iops_other_iops_per_second` |The rate of I/O operations observed at the storage object for other operations |
+|`netapp_volume_metric_iops_total_iops_per_second` |The rate of I/O operations observed at the storage object for all operations |
+|`netapp_volume_metric_latency_read_seconds` |The round trip latency in microseconds observed at the storage object for read operations |
+|`netapp_volume_metric_latency_write_seconds` |The round trip latency in microseconds observed at the storage object for write operations |
+|`netapp_volume_metric_latency_other_seconds` |The round trip latency in microseconds observed at the storage object for other operations |
+|`netapp_volume_metric_latency_total_seconds` |The round trip latency in microseconds observed at the storage object for all operations |
+|`netapp_volume_metric_throughput_read_bytes_per_second` |Performance metric for read I/O operations in bytes per second |
+|`netapp_volume_metric_throughput_write_bytes_per_second` |Performance metric for write I/O operations in bytes per second |
+|`netapp_volume_metric_throughput_other_bytes_per_second` |Performance metric for other I/O operations in bytes per second |
+|`netapp_volume_metric_throughput_total_bytes_per_second` |Performance metric for all I/O operations in bytes per second |
+|`netapp_volume_metric_cloud_iops_read_iops_per_second` |The rate of I/O operations observed at the cloud storage object for read operations |requires OnTap 9.7 or newer
+|`netapp_volume_metric_cloud_iops_write_iops_per_second` |The rate of I/O operations observed at the cloud storage object for write operations |requires OnTap 9.7 or newer
+|`netapp_volume_metric_cloud_iops_other_iops_per_second` |The rate of I/O operations observed at the cloud storage object for other operations |requires OnTap 9.7 or newer
+|`netapp_volume_metric_cloud_iops_total_iops_per_second` |The rate of I/O operations observed at the cloud storage object for all operations |requires OnTap 9.7 or newer
+|`netapp_volume_metric_cloud_latency_read_seconds` |The round trip latency in microseconds observed at the cloud storage object for read operations |requires OnTap 9.7 or newer
+|`netapp_volume_metric_cloud_latency_write_seconds` |The round trip latency in microseconds observed at the cloud storage object for write operations |requires OnTap 9.7 or newer
+|`netapp_volume_metric_cloud_latency_other_seconds` |The round trip latency in microseconds observed at the cloud storage object for other operations |requires OnTap 9.7 or newer
+|`netapp_volume_metric_cloud_latency_total_seconds` |The round trip latency in microseconds observed at the cloud storage object for all operations |requires OnTap 9.7 or newer
+|`netapp_volume_metric_sample_cloud_storage_duration_seconds` |The duration over which the sample are calculated |
+|`netapp_volume_metric_flexcache_sample_duration_seconds` |The duration over which the sample are calculated |
+|`netapp_volume_metric_flexcache_cache_miss_percent` |Cache miss percentage |
+|`netapp_volume_metric_access_time_enabled` |Indicates whether or not access time updates are enabled on the volume |requires OnTap 9.8 or newer
+|`netapp_volume_queued_for_encryption` |Specifies whether the volume is queued for encryption |requires OnTap 9.8 or newer
+|`netapp_volume_snaplock_append_mode_enabled` |Specifies if the volume append mode is enabled or disabled |
+|`netapp_volume_snaplock_litigation_count` |Litigation count indicates the number of active legal-holds on the volume |
+|`netapp_volume_snaplock_unspecified_retention_files` |Indicates the number of files with an unspecified retention time in the volume |
+|`netapp_volume_snaplock_is_audit_log` |Indicates if this volume has been configured as SnapLock audit log volume for the SVM |
+|`netapp_volume_snaplock_privileged_delete` |Specifies the privileged-delete attribute of a SnapLock volume |
+|`netapp_volume_snaplock_type_info` |The SnapLock type of the volume |
+|`netapp_volume_movemet_complete_percent` |Completion percentage of volume movement |
+|`netapp_volume_movement_cutover_window_seconds` |Time window in seconds for cutover |
+|`netapp_volume_movement_tiering_policy_info` |Tiering policy for FabricPool |
+|`netapp_volume_movement_state_info` |State of volume move operation |
+|`netapp_volume_style` |The style of the volume |
+|`netapp_volume_encryption_type_info` |Volume encryption type |
+|`netapp_volume_encryption_state_info` |Volume encryption state |
+|`netapp_volume_encryption_enabled` |Volume encryption state |
+|`netapp_volume_tiering_policy_info` |Policy that determines whether the user data blocks of a volume in a FabricPool will be tiered to the cloud store when they become cold |
+|`netapp_volume_tiering_supported` |Whether or not FabricPools are selected when provisioning a FlexGroup without specifying aggregates.name or aggregates.uuid |
+|`netapp_volume_tiering_min_cooling_days` |Minimum number of days that user data blocks of the volume must be cooled before they can be considered cold and tiered out to the cloud tier |
+|`netapp_volume_space_blockstorage_inactive_user_data_bytes` |The size that is physically used in the block storage of the volume and has a cold temperature |
+|`netapp_volume_space_over_provisioned_bytes` |The amount of space not available for this volume in the aggregate, in bytes |
+|`netapp_volume_space_performance_tier_footprint_bytes` |Space used by the performance tier for this volume in the FabricPool aggregate, in bytes |
+|`netapp_volume_space_footprint_bytes` |Data used for this volume in the aggregate |
+|`netapp_volume_space_capacity_tier_footprint_bytes` |Space used by capacity tier for this volume in the FabricPool aggregate |
+|`netapp_volume_space_total_footprint_bytes` |Data and metadata used for this volume in the aggregate |
+|`netapp_volume_space_size_bytes` |Total provisioned size |
+|`netapp_volume_space_logical_space_reporting_enabled` |Whether space reporting on the volume is done along with storage efficiency |
+|`netapp_volume_space_logical_space_enforcement_enabled` |Whether space accounting for operations on the volume is done along with storage efficiency |
+|`netapp_volume_space_logical_space_used_by_afs_bytes` |The virtual space used by AFS alone (includes volume reserves) and along with storage efficiency |
+|`netapp_volume_space_logical_space_available_bytes` |The amount of space available in this volume with storage efficiency space considered used |
+|`netapp_volume_space_used_bytes` |The virtual space used (includes volume reserves) before storage efficiency |
+|`netapp_volume_space_snapshot_autodalete_enabled` |Whether Snapshot copy autodelete is currently enabled on this volume |
+|`netapp_volume_space_snapshot_used_bytes` |The total space used by Snapshot copies in the volume |
+|`netapp_volume_space_snapshot_reserve_percent` |The space that has been set aside as a reserve for Snapshot copy usage |
+|`netapp_volume_space_metadata_bytes` |Space used by the volume metadata in the aggregate |
+|`netapp_volume_space_available_bytes` |The available space |
+|`netapp_volume_space_local_tier_footprint_bytes` |Space used by the local tier for this volume in the aggregate |requires OnTap 9.8 or newer
+|`netapp_volume_analytics_scan_progress_percent` |Percentage of files in the volume that the file system analytics initialization scan has processed |requires OnTap 9.8 or newer
+|`netapp_volume_analytics_supported` |Whether or not file system analytics is supported on the volume |requires OnTap 9.8 or newer
+|`netapp_volume_analytics_state_info` |File system analytics state of the volume |requires OnTap 9.8 or newer
+|`netapp_volume_guarantee_type_info` |The type of space guarantee of this volume in the aggregate |
+|`netapp_volume_guarantee_honored` |Wheter the space guarantee of this volume honored in the aggregate |
+|`netapp_volume_is_svm_root` |Whether the volume is a root volume of the SVM it belongs to |requires OnTap 9.7 or newer
+|`netapp_volume_use_mirrored_aggregates` |Specifies whether mirrored aggregates are selected when provisioning a FlexGroup without specifying aggregates.name or aggregates.uuid |requires OnTap 9.7 or newer
+|`netapp_volume_snapmirror_protected` |Specifies whether a volume is a SnapMirror source volume, using SnapMirror to protect its data |requires OnTap 9.7 or newer
+|===
 
-## Quota metrics
+=== Quota metrics
+
 Metrics for all quota types (group, tree, user) are fetched from the `/api/storage/quota/reports` endpoint.
 
-### Tree quota metrics
+==== Tree quota metrics
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_tree_quota_space_hard_limit_bytes` | Space hard limit in bytes |  |
-| `netapp_tree_quota_space_hard_limit_percent` | Total space used as a percentage of space hard limit |  |
-| `netapp_tree_quota_space_soft_limit_bytes` | Space soft limit in bytes |  |
-| `netapp_tree_quota_space_soft_limit_percent` | Total space used as a percentage of space soft limit |  |
-| `netapp_tree_quota_space_used_bytes` | Total space used |  |
-| `netapp_tree_quota_files_hard_limit` | Files hard limit |  |
-| `netapp_tree_quota_files_hard_limit_percent` | Total files used as a percentage of files hard limit |  |
-| `netapp_tree_quota_files_soft_limit` | Files soft limit |  |
-| `netapp_tree_quota_files_soft_limit_percent` | Total files used as a percentage of files soft limit |  |
-| `netapp_tree_quota_files_used` | Total files used |  |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_tree_quota_space_hard_limit_bytes` |Space hard limit in bytes |
+|`netapp_tree_quota_space_hard_limit_percent` |Total space used as a percentage of space hard limit |
+|`netapp_tree_quota_space_soft_limit_bytes` |Space soft limit in bytes |
+|`netapp_tree_quota_space_soft_limit_percent` |Total space used as a percentage of space soft limit |
+|`netapp_tree_quota_space_used_bytes` |Total space used |
+|`netapp_tree_quota_files_hard_limit` |Files hard limit |
+|`netapp_tree_quota_files_hard_limit_percent` |Total files used as a percentage of files hard limit |
+|`netapp_tree_quota_files_soft_limit` |Files soft limit |
+|`netapp_tree_quota_files_soft_limit_percent` |Total files used as a percentage of files soft limit |
+|`netapp_tree_quota_files_used` |Total files used |
+|===
 
-### Group quota metrics
+==== Group quota metrics
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_group_quota_space_hard_limit_bytes` | Space hard limit in bytes |  |
-| `netapp_group_quota_space_hard_limit_percent` | Total space used as a percentage of space hard limit |  |
-| `netapp_group_quota_space_soft_limit_bytes` | Space soft limit in bytes |  |
-| `netapp_group_quota_space_soft_limit_percent` | Total space used as a percentage of space soft limit |  |
-| `netapp_group_quota_space_used_bytes` | Total space used |  |
-| `netapp_group_quota_files_hard_limit` | Files hard limit |  |
-| `netapp_group_quota_files_hard_limit_percent` | Total files used as a percentage of files hard limit |  |
-| `netapp_group_quota_files_soft_limit` | Files soft limit |  |
-| `netapp_group_quota_files_soft_limit_percent` | Total files used as a percentage of files soft limit |  |
-| `netapp_group_quota_files_used` | Total files used |  |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_group_quota_space_hard_limit_bytes` |Space hard limit in bytes |
+|`netapp_group_quota_space_hard_limit_percent` |Total space used as a percentage of space hard limit |
+|`netapp_group_quota_space_soft_limit_bytes` |Space soft limit in bytes |
+|`netapp_group_quota_space_soft_limit_percent` |Total space used as a percentage of space soft limit |
+|`netapp_group_quota_space_used_bytes` |Total space used |
+|`netapp_group_quota_files_hard_limit` |Files hard limit |
+|`netapp_group_quota_files_hard_limit_percent` |Total files used as a percentage of files hard limit |
+|`netapp_group_quota_files_soft_limit` |Files soft limit |
+|`netapp_group_quota_files_soft_limit_percent` |Total files used as a percentage of files soft limit |
+|`netapp_group_quota_files_used` |Total files used |
+|===
 
-### User quota metrics
+==== User quota metrics
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_user_quota_space_hard_limit_bytes` | Space hard limit in bytes |  |
-| `netapp_user_quota_space_hard_limit_percent` | Total space used as a percentage of space hard limit |  |
-| `netapp_user_quota_space_soft_limit_bytes` | Space soft limit in bytes |  |
-| `netapp_user_quota_space_soft_limit_percent` | Total space used as a percentage of space soft limit |  |
-| `netapp_user_quota_space_used_bytes` | Total space used |  |
-| `netapp_user_quota_files_hard_limit` | Files hard limit |  |
-| `netapp_user_quota_files_hard_limit_percent` | Total files used as a percentage of files hard limit |  |
-| `netapp_user_quota_files_soft_limit` | Files soft limit |  |
-| `netapp_user_quota_files_soft_limit_percent` | Total files used as a percentage of files soft limit |  |
-| `netapp_user_quota_files_used` | Total files used |  |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_user_quota_space_hard_limit_bytes` |Space hard limit in bytes |
+|`netapp_user_quota_space_hard_limit_percent` |Total space used as a percentage of space hard limit |
+|`netapp_user_quota_space_soft_limit_bytes` |Space soft limit in bytes |
+|`netapp_user_quota_space_soft_limit_percent` |Total space used as a percentage of space soft limit |
+|`netapp_user_quota_space_used_bytes` |Total space used |
+|`netapp_user_quota_files_hard_limit` |Files hard limit |
+|`netapp_user_quota_files_hard_limit_percent` |Total files used as a percentage of files hard limit |
+|`netapp_user_quota_files_soft_limit` |Files soft limit |
+|`netapp_user_quota_files_soft_limit_percent` |Total files used as a percentage of files soft limit |
+|`netapp_user_quota_files_used` |Total files used |
+|===
 
-## Chassis metrics
-**Note:** Fetching chassis data is a very time consuming process and should only be enabled if neccessary
- 
+=== Chassis metrics
+
+*Note:* Fetching chassis data is a very time consuming process and should only be enabled if neccessary
+
 All chassis metrics are fetched from the `/api/cluster/chassis` endpoint.
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_cluster_chassis_state_info` | State of chassis |  |
-| `netapp_cluster_shassis_shelves` | Number of shelves in the chassis |  |
-| `netapp_cluster_shassis_nodes` | Number of nodes in the chassis |  |
-| `netapp_cluster_chassis_fru_state_info` | State of FRU in chassis |  |
-| `netapp_cluster_chassis_usb_supported` | Chassis USB ports are supported |  requires OnTap 9.8 or newer |
-| `netapp_cluster_chassis_usb_enabled` | Chassis USB ports are enabled |  requires OnTap 9.8 or newer |
-| `netapp_cluster_chassis_usb_port_info` | Number of connected or disconnected USB ports |  requires OnTap 9.8 or newer |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_cluster_chassis_state_info` |State of chassis |
+|`netapp_cluster_shassis_shelves` |Number of shelves in the chassis |
+|`netapp_cluster_shassis_nodes` |Number of nodes in the chassis |
+|`netapp_cluster_chassis_fru_state_info` |State of FRU in chassis |
+|`netapp_cluster_chassis_usb_supported` |Chassis USB ports are supported |requires OnTap 9.8 or newer
+|`netapp_cluster_chassis_usb_enabled` |Chassis USB ports are enabled |requires OnTap 9.8 or newer
+|`netapp_cluster_chassis_usb_port_info` |Number of connected or disconnected USB ports |requires OnTap 9.8 or newer
+|===
 
-## Job metrics
+=== Job metrics
+
 All job information are fetched from the `/api/cluster/jobs` endpoinmt.
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_cluster_job_state` | The states of jobs on the cluster |  |
+[cols="<,<,<",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_cluster_job_state` |The states of jobs on the cluster |
+|===
 
-## Network metrics
-### Ethernet metrics
+=== Network metrics
+
+==== Ethernet metrics
+
 All infomration about ethernet interfaces are fetched from the `/api/network/ethernet/ports` endpoint.
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_cluster_job_state` | The states of jobs on the cluster |  |
-| `netapp_ethernet_speed_bytes` | Link speed in bytes per second |  |
-| `netapp_ethernet_enabled` | Ethernet interface is enabled |  |
-| `netapp_ethernet_mtu_bytes` | MTU of the port |  |
-| `netapp_ethernet_up` | Value of 1 if port is up, 0 otherwise |  |
-| `netapp_ethernet_type_info` | Type of physical or virtual port |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_receive_bytes_total` | Bytes received on this interface |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_transmit_bytes_total` | Bytes transmitted on this interface |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_receive_errors_total` | Packets with errors received on this interface |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_receive_discards_total` | Received and discarded packets on this interface |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_receive_packet_total` | Received packets on this interface |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_transmit_errors_total` | Packets with errors transmitted on this interface |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_rtansmit_discards_total` | Discarded packets on this interface |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_transmit_packet_total` | Transmitted packets on this interface |  requires OnTap 9.8 or newer |
-| `netapp_ethernet_link_down_changes_total` | The number of link state changes from up to down seen on the device |  requires OnTap 9.8 or newer |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_cluster_job_state` |The states of jobs on the cluster |
+|`netapp_ethernet_speed_bytes` |Link speed in bytes per second |
+|`netapp_ethernet_enabled` |Ethernet interface is enabled |
+|`netapp_ethernet_mtu_bytes` |MTU of the port |
+|`netapp_ethernet_up` |Value of 1 if port is up, 0 otherwise |
+|`netapp_ethernet_type_info` |Type of physical or virtual port |requires OnTap 9.8 or newer
+|`netapp_ethernet_receive_bytes_total` |Bytes received on this interface |requires OnTap 9.8 or newer
+|`netapp_ethernet_transmit_bytes_total` |Bytes transmitted on this interface |requires OnTap 9.8 or newer
+|`netapp_ethernet_receive_errors_total` |Packets with errors received on this interface |requires OnTap 9.8 or newer
+|`netapp_ethernet_receive_discards_total` |Received and discarded packets on this interface |requires OnTap 9.8 or newer
+|`netapp_ethernet_receive_packet_total` |Received packets on this interface |requires OnTap 9.8 or newer
+|`netapp_ethernet_transmit_errors_total` |Packets with errors transmitted on this interface |requires OnTap 9.8 or newer
+|`netapp_ethernet_rtansmit_discards_total` |Discarded packets on this interface |requires OnTap 9.8 or newer
+|`netapp_ethernet_transmit_packet_total` |Transmitted packets on this interface |requires OnTap 9.8 or newer
+|`netapp_ethernet_link_down_changes_total` |The number of link state changes from up to down seen on the device |requires OnTap 9.8 or newer
+|===
 
-### Fibrechannel metrics
+==== Fibrechannel metrics
+
 Fibrechannel statistics are fetched from the `/api/network/fc/ports` endpoint.
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_fibrechannel_state_info` | The operational state of the FC port |  |
-| `netapp_fibrechannel_enabled` | The administrative state of the FC port |  |
-| `netapp_fibrechannel_received_bytes_total` | Bytes received on this interface |  requires OnTap 9.8 or newer |
-| `netapp_fibrechannel_transmitted_bytes_total` | Bytes transmitted on this interface |  requires OnTap 9.8 or newer |
-| `netapp_fibrechannel_physical_protocol_info` | The physical network protocol of the FC port |  requires OnTap 9.8 or newer |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_fibrechannel_state_info` |The operational state of the FC port |
+|`netapp_fibrechannel_enabled` |The administrative state of the FC port |
+|`netapp_fibrechannel_received_bytes_total` |Bytes received on this interface |requires OnTap 9.8 or newer
+|`netapp_fibrechannel_transmitted_bytes_total` |Bytes transmitted on this interface |requires OnTap 9.8 or newer
+|`netapp_fibrechannel_physical_protocol_info` |The physical network protocol of the FC port |requires OnTap 9.8 or newer
+|===
 
-## Protocol metrics
-### CIFS metrics
+=== Protocol metrics
+
+==== CIFS metrics
+
 CIFS statistics are fetched from the `/api/protocols/cifs/sessions` endpoint.
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_cifs_protocols` | The SMB protocol version over which the client accesses the volumes |  requires OnTap 9.8 or newer |
-| `netapp_cifs_smb_encryptions` | SMB encryption state |  requires OnTap 9.8 or newer |
-| `netapp_cifs_continuous_availability` | The level of continuous availabilty protection provided to the SMB sessions |  requires OnTap 9.8 or newer |
-| `netapp_cifs_open_files` | Number of files opened by SMB sessions |  requires OnTap 9.8 or newer |
-| `netapp_cifs_open_shares` | Number of shares opened by SMB sessions |  requires OnTap 9.8 or newer |
-| `netapp_cifs_open_other` | Number of other filesystem objects opened by SMB sessions |  requires OnTap 9.8 or newer |
-| `netapp_cifs_authentication` | SMB authentication over which the client accesses the share |  requires OnTap 9.8 or newer |
-| `netapp_cifs_smb_signing` | Whether or not SMB signing is enabled |  requires OnTap 9.8 or newer |
-| `netapp_cifs_clients` | Connected CIFS clients |  requires OnTap 9.8 or newer |
-| `netapp_cifs_volumes` | Volume clients are accessing using CIFS protocol |  requires OnTap 9.8 or newer |
-| `netapp_cifs_large_mtu` | Whether or not a large MTU is enabled for an SMB session |  requires OnTap 9.8 or newer |
-| `netapp_cifs_connections` | Number of requests that are sent to the volumes to the node |  requires OnTap 9.8 or newer |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_cifs_protocols` |The SMB protocol version over which the client accesses the volumes |requires OnTap 9.8 or newer
+|`netapp_cifs_smb_encryptions` |SMB encryption state |requires OnTap 9.8 or newer
+|`netapp_cifs_continuous_availability` |The level of continuous availabilty protection provided to the SMB sessions |requires OnTap 9.8 or newer
+|`netapp_cifs_open_files` |Number of files opened by SMB sessions |requires OnTap 9.8 or newer
+|`netapp_cifs_open_shares` |Number of shares opened by SMB sessions |requires OnTap 9.8 or newer
+|`netapp_cifs_open_other` |Number of other filesystem objects opened by SMB sessions |requires OnTap 9.8 or newer
+|`netapp_cifs_authentication` |SMB authentication over which the client accesses the share |requires OnTap 9.8 or newer
+|`netapp_cifs_smb_signing` |Whether or not SMB signing is enabled |requires OnTap 9.8 or newer
+|`netapp_cifs_clients` |Connected CIFS clients |requires OnTap 9.8 or newer
+|`netapp_cifs_volumes` |Volume clients are accessing using CIFS protocol |requires OnTap 9.8 or newer
+|`netapp_cifs_large_mtu` |Whether or not a large MTU is enabled for an SMB session |requires OnTap 9.8 or newer
+|`netapp_cifs_connections` |Number of requests that are sent to the volumes to the node |requires OnTap 9.8 or newer
+|===
 
-### NFS metrics
+==== NFS metrics
+
 NFS information are fetched from the `/api/protocols/nfs/connected-clients` endpoint.
 
-| *Name* | *Description* | *Note* |
-|:-------|:--------------|:-------|
-| `netapp_nfs_protocols` | NFS protocol version over which client is accessing the volume |  requires OnTap 9.7 or newer |
-| `netapp_nfs_volumes` | Connected volume |  requires OnTap 9.7 or newer |
-| `netapp_nfs_local_request_total` | Requests that are sent to the volume with fast-path to local node |  requires OnTap 9.7 or newer |
-| `netapp_nfs_remote_request_total` | Requests that are sent to the volume with slow-path to local node |  requires OnTap 9.7 or newer |
-| `netapp_nfs_clients` | Connected NFS clients |  requires OnTap 9.7 or newer |
+[width="100%",cols="<27%,<48%,<25%",options="header",]
+|===
+|_Name_ |_Description_ |_Note_
+|`netapp_nfs_protocols` |NFS protocol version over which client is accessing the volume |requires OnTap 9.7 or newer
+|`netapp_nfs_volumes` |Connected volume |requires OnTap 9.7 or newer
+|`netapp_nfs_local_request_total` |Requests that are sent to the volume with fast-path to local node |requires OnTap 9.7 or newer
+|`netapp_nfs_remote_request_total` |Requests that are sent to the volume with slow-path to local node |requires OnTap 9.7 or newer
+|`netapp_nfs_clients` |Connected NFS clients |requires OnTap 9.7 or newer
+|===
 
-# License
-## prometheus-netapp-exporter
-```
+== License
+
+=== prometheus-netapp-exporter
+
+....
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
@@ -1117,5 +1168,4 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <http://www.gnu.org/philosophy/why-not-lgpl.html>.
-```
-
+....
