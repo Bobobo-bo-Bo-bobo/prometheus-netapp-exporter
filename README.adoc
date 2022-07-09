@@ -1,5 +1,7 @@
-= prometheus-netapp-exporter
+= prometheus-netapp-exporter - Export metrics from NetApp fileserver using the fileserver REST API
+:source-highlighter: pygments
 :stylesheet: asciidoc.css
+:toc: left
 
 == Preface
 
@@ -18,11 +20,11 @@ This tool fetches statistics from the REST API of the NetApp fileserver and expo
 
 === Build requirements
 
-As a Rust programm, a current stable Rust build environment is required. Aditionally the development file of `libssl` are required to build the `reqwest` crate.
+As a Rust program, a current stable Rust build environment is required. Additionally the development file of `libssl` are required to build the `reqwest` crate.
 
 === Runtime requirements
 
-`libssl` is required to run this programm.
+`libssl` is required to run this program.
 
 == Usage
 
